@@ -1,2 +1,5 @@
 class TokenStack:
-    nbToken = 0
+
+    def __init__(self):
+        self.nbToken = None
+        self.type = None
