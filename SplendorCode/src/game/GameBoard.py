@@ -1,2 +1,2 @@
-class GameBoard :
+class GameBoard:
     rien = 0
