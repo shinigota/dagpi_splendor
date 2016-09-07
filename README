@@ -1,6 +1,7 @@
 Dependencies used :
-* Pillow v3.3.1, loading jpg/png/... images in TKInter
-
+<ul>
+<li>Pillow v3.3.1, loading jpg/png/... images in TKInter</li>
+</ul>
 
 
 Installing a Python dependency :
