@@ -1,4 +1,3 @@
-from src.game.GameBoard import GameBoard
 import xml.etree.ElementTree as ET
 
 
