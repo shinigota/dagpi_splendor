@@ -1,6 +1,7 @@
 from src.game.GameBoard import GameBoard
 
-class GameRules :
+
+class GameRules:
     gameName = ""
     nbLvlCard = 0
     nbMaxResCard = 0
@@ -16,6 +17,6 @@ class GameRules :
     nbGoldTake = 0
     nbTokenEndTurn = 0
     nbTilePerTurn = 0
-    
-    def __init__(self,gameboard):
+
+    def __init__(self, gameboard):
         gameboard.rien = 0
