@@ -1,0 +1,2 @@
+class RessourceType:
+    name = {"", "", ""}
