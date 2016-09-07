@@ -1,14 +1,13 @@
-python -m pip show LIB
-python -m pip install PLUGIN
 Dependencies used :
 * Pillow v3.3.1, loading jpg/png/... images in TKInter
 
 
 
 Installing a Python dependency :
-    $ python -m pip install PLUGIN_NAME
-
+    $ python -m pip install DEPENDENCY_NAME
 
 Installing a Python dependency with a specific version :
-    $ python -m pip install PLUGIN_NAME==VERSION
+    $ python -m pip install DEPENDENCY_NAME==VERSION
 
+Showing a dependency version :
+    $ python -m pip show DEPENDENCY_NAME
