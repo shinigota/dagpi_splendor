@@ -18,5 +18,5 @@ class GameRules:
     nbTokenEndTurn = 0
     nbTilePerTurn = 0
 
-    def __init__(self,gameboard):
+    def __init__(self, gameboard):
         gameboard.rien = 0
