@@ -1,14 +1,14 @@
-Dependencies used :
+<h1>Dependencies used :</h1>
 <ul>
 <li>Pillow v3.3.1, loading jpg/png/... images in TKInter</li>
 </ul>
 
 
-Installing a Python dependency :
-    $ python -m pip install DEPENDENCY_NAME
+<h1>Installing a Python dependency :</h1>
+<span style="border: 1px solid black; padding:2px; margin-left:10px">$ python -m pip install DEPENDENCY_NAME</span>
 
-Installing a Python dependency with a specific version :
-    $ python -m pip install DEPENDENCY_NAME==VERSION
+<h1>Installing a Python dependency with a specific version :</h1>
+<span style="border: 1px solid black; padding:2px; margin-left:10px">$ python -m pip install DEPENDENCY_NAME==VERSION</span>
 
-Showing a dependency version :
-    $ python -m pip show DEPENDENCY_NAME
+<h1>Showing a dependency version :</h1>
+<span style="border: 1px solid black; padding:2px; margin-left:10px">$ python -m pip show DEPENDENCY_NAME</span>
