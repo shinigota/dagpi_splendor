@@ -1,13 +1,41 @@
-import Tools
+from src.element.Tile import Tile
+from src.element.Card import Card
+from src.element.RessourceType import Type
+from src.element.TokenStack import TokenStack
+
+from GameRules import GameRules
 
 class GameBoard:
 
     def __init__(self):
+
+        gameRules = GameRules()
         self.types = []
+        nbPlayers = 0
+        nbGems = 2
+
+
+        if nbPlayers == 2:
+            nbGems = gameRules.nbGemFor2
+        elif nbPlayers == 3:
+            nbGems = gameRules.nbGemFor3
+        else:
+            nbGems = gameRules.nbGemFor4
+
+
+        for type in self.types:
+            self.initTokenStack(type, nbGems)
+
+        
+
+
+
         self.hiddenTiles = []
         self.displayedTiles = []
         self.deck = []
         self.displayedCards = []
+
+
 
     def addType(self, type):
         self.types.append(type)
@@ -18,6 +46,7 @@ class GameBoard:
 
     def countTypes(self):
         return len(self.types)
+
 
 
 
@@ -50,3 +79,11 @@ class GameBoard:
 
     def delDisplayedCard(self, card):
         self.displayedCards.remove(card)
+
+
+    def initTokenStack(self, type, nbGems):
+        tkStack = TokenStack()
+        tkStack.type = type
+        tkStack.nbToken = nbGems
+        return tkStack
+
