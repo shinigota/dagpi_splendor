@@ -1,5 +1,7 @@
 import xml.etree.ElementTree as ET
 
+from src.game.EventType import EventType
+
 
 class GameRules:
     game_name = ""
@@ -80,3 +82,11 @@ class GameRules:
             c_ruby = dc.find('Ruby').text
             number_prestige_points = dc.find('number_prestige_points').text
             gem_token_bonus = dc.find('gem_token_bonus').text
+
+    def event(self, eventType, object):
+        if eventType == EventType.CLICK_TOKEN:
+            # if check_click_token(object):
+            self.gameboard.click_token(object)
+        elif eventType == EventType.CLICK_CARD:
+            #if check_enough_ressources(object, player):
+            self.gameboard.purchase_card(object)

@@ -26,7 +26,7 @@ class Display:
         txt = canvas.create_text(50, 10, text="R", fill="red")
         canvas.place(x=250 + 120 * (position - 1), y=150, anchor=SE)
 
-    def display_card(self, position, niveau,card):
+    def display_card(self, position, niveau, card):
         if niveau == 1:
             color = '#0483f9'
         if niveau == 2:
@@ -37,9 +37,9 @@ class Display:
         txt = canvas.create_text(10, 10, text=0, fill="black")
         txt = canvas.create_text(50, 10, text="R", fill="white")
         txt = canvas.create_rectangle(50, 10, 60, 20, fill="red")
-        canvas.place(x=250 + 120 * (position - 1), y=300+(130*(niveau-1)), anchor=SE)
+        canvas.place(x=250 + 120 * (position - 1), y=300 + (130 * (niveau - 1)), anchor=SE)
 
-    def display_Pile(self,niveau):
+    def display_Pile(self, niveau):
         if niveau == 1:
             color = '#0483f9'
         if niveau == 2:
@@ -47,8 +47,11 @@ class Display:
         if niveau == 3:
             color = '#ffac07'
         canvas = Canvas(self.window, width=100, height=120, background=color)
-        txt = canvas.create_text(50, 50, text="PILE",fill="Black")
+        txt = canvas.create_text(50, 50, text="PILE", fill="Black")
         canvas.place(x=120, y=300 + (130 * (niveau - 1)), anchor=SE)
+
+    def update(self):
+        None
 
 
 GameRules()

@@ -4,42 +4,43 @@
 ## GameBoard
 	## Variables ##
 	types = []
-	hiddenTiles = []
-	displayedTiles = []
+	hidden_tiles = []
+	displayed_tiles = []
 	deck = []
-	displayedCards = []
+	displayed_cards = []
 
 	## Functions / Proceedings ##
-	def addType(self, type): 
-	def delTypes(self, type):
-	def countTypes(self):
-	def addHiddenTile(self, tile):
-	def delHiddenTile(self, tile):
-	def addDisplayedTile(self, tile):
-	def delDisplayedTile(self, tile):
-	def addToDeck(self, card):
-	def delToDeck(self, card):
-	def addDisplayedCard(self, card):
-	def delDisplayedCard(self, card):
+	add_type(self, type):
+	del_types(self, type)
+	count_types(self)
+	add_hidden_tile(self, tile)
+	del_hidden_tile(self, tile)
+	add_displayed_tile(self, tile)
+	del_displayed_tile(self, tile)
+	add_to_deck(self, card)
+	del_to_deck(self, card)
+	add_displayed_dard(self, card)
+	del_displayed_card(self, card)
+	click_token(self, token)
 	
 	
 ## GameRules
 	## Variables ##
-	gameName = ""
-    nbLvlCard = 0
-    nbMaxResCard = 0
-    nbPointsTile = 0
-    nbCardReveal = 0
-    nbTileMore = 0
-    nbGemFor2 = 0
-    nbGemFor3 = 0
-    nbGemFor4 = 0
-    nbGold = 0
-    nbGemDif = 0
-    nbGemSame = 0
-    nbGoldTake = 0
-    nbTokenEndTurn = 0
-    nbTilePerTurn = 0
+	game_name = ""
+    nb_lvl_card = 0
+    nb_max_res_card = 0
+    nb_points_tile = 0
+    nb_card_reveal = 0
+    nb_tile_more = 0
+    nb_gem_for2 = 0
+    nb_gem_for3 = 0
+    nb_gem_for4 = 0
+    nb_gold = 0
+    nb_gem_dif = 0
+    nb_gem_same = 0
+    nb_gold_take = 0
+    nb_token_end_turn = 0
+    nb_tile_per_turn = 0
 	
 	## Functions / Proceedings ##
 	
@@ -62,21 +63,21 @@
 	## Variables ##
 	points = None
 	type = None
-	gemsConditions = []
+	gems_conditions = []
 	
 	## Functions / Proceedings ##
-	def setPoints(self, points):
-	def getPoints(self):
-	def setType(self, type):
-	def getType(self):
-	def addGemsConditions(self, tokenStack):
-	def delGemsConditions(self, tokenStack):
-	def getGemsConditions(self):
+	set_points(self, points)
+	get_points(self)
+	set_type(self, type)
+	get_type(self)
+	add_gems_conditions(self, token_stack)
+	del_gems_conditions(self, token_stack)
+	get_gems_conditions(self)
 
 	
 ## TokenStack
 	## Variables ##
-	nbToken = None
+	nb_token = None
     type = None
 	
 	## Functions / Proceedings ##
@@ -85,35 +86,35 @@
 ## Card
 	## Variables ##
 	points = None
-	incomeGem = None
-	purchaseGems =[]
+	income_gem = None
+	purchase_gems =[]
 	
 	## Functions / Proceedings ##
-	def setIncomeGem(self, tokenStack):
-	def addPurchaseGems(self, tokenStack):
-	def delPurchaseGems(self, tokenStack):
+	set_income_gem(self, token_stack)
+	add_purchase_gems(self, token_stack)
+	del_purchase_gems(self, token_stack)
 
 	
 ## Player
     HEAD
 
 	## Variables ##
-	purchasedCards = []
-	reservedCards = []
-	ownedTiles = []
+	purchased_cards = []
+	reserved_cards = []
+	owned_tiles = []
 	bank = []
 	position = None
 	nickname = None
 	
 	
 	## Functions / Proceedings ##
-	def initBank(self, type): - Initialize the player token bank
-	def addPurchasedCard(self, card): - Add to the player, a card bought
-	def delPurchasedCard(self, card): - Delete to the player, a card owned
-	def addReservedCard(self, card): - Add to the player, a card reserved
-	def delReservedCard(self, card): - Delete to the player, a card reserved
-	def addOwnedTile(self, tile): - Add to the player, a tile
-	def delOwnedTile(self, tile): - Delete to the player, a tile
+	init_bank(self, type) - Initialize the player token bank
+	add_purchased_card(self, card) - Add to the player, a card bought
+	del_purchased_card(self, card) - Delete to the player, a card owned
+	add_reserved_card(self, card) - Add to the player, a card reserved
+	del_reserved_card(self, card) - Delete to the player, a card reserved
+	add_owned_tile(self, tile) - Add to the player, a tile
+	del_owned_tile(self, tile) - Delete to the player, a tile
 
 ## AI
 * Focusing on a specific strategy

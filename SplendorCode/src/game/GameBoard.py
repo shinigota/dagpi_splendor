@@ -87,3 +87,25 @@ class GameBoard:
         tkStack.nb_token = nbGems
         return tkStack
 
+    def purchase_card(self, card):
+        None
+        # player.purchase_card(card)
+        # add new card to gameboard, delete one from stack
+
+        # display.update()
+
+    # def click_token(self, token):
+    #
+    #     if player.is_player_token(token):
+    #         player.give_back_token(token)
+    #         self.token_stacks[token.type].add_token()
+    #         self.token_took - -
+    #     elif self.is_gameboard_token(token):
+    #         player.take_token(token)
+    #         self.token_stacks[token.type].remove_token()
+    #         self.token_took + +
+    #
+    #     if self.token_took == 3:
+    #         next_turn()
+    #
+    #     update_view()

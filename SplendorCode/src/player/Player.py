@@ -47,3 +47,6 @@ class Player:
     def del_owned_tile(self, tile):
         self.owned_tiles.remove(tile)
         del tile
+
+    def purchase_card(self, card):
+        None
