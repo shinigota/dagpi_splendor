@@ -16,7 +16,7 @@ class Display:
         self.createwindow()  # fghj
 
     def createwindow(self):
-        self.window.title(GameRules.gameName)
+        self.window.title(GameRules.game_name)
         # self.w, self.h = self.window.winfo_screenwidth(), self.window.winfo_screenheight()
         self.w, self.h = 1900, 1000
         self.window.overrideredirect(0)

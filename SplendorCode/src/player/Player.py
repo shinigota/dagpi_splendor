@@ -1,46 +1,49 @@
-import Tools
-import Game
+from src.element.TokenStack import TokenStack
+from src.game.GameBoard import GameBoard
+
 
 class Player:
+    nickname = None
+    position = None
+    reserved_cards = None
+    purchased_cards = None
+    owned_tiles = None
+    bank = None
 
     def __init__(self):
-        self.purchasedCards = []
-        self.reservedCards = []
-        self.ownedTiles = []
+        self.purchased_cards = []
+        self.reserved_cards = []
+        self.owned_tiles = []
         self.bank = []
         self.position = None
         self.nickname = None
 
-        for type in Game.GameBoard.getTypes():
-            self.bank.append(self.initBank(type))
+        for type in GameBoard.getTypes():
+            self.bank.append(self.init_bank(type))
 
-    def initBank(self, type):
-        tkStack = Tools.TokenStack()
-        tkStack.setType(type)
-        tkStack.setNbToken(0)
+    def init_bank(self, type):
+        tkStack = TokenStack(type)
+        tkStack.set_type(type)
+        tkStack.set_nb_token(0)
         return tkStack
 
-    def addPurchasedCard(self, card):
-        self.purchasedCards.append(card)
+    def add_purchased_card(self, card):
+        self.purchased_cards.append(card)
 
-    def delPurchasedCard(self, card):
-        self.purchasedCards.remove(card)
+    def del_purchased_card(self, card):
+        self.purchased_cards.remove(card)
         del card
 
+    def add_reserved_card(self, card):
+        self.reserved_cards.append(card)
 
-
-    def addReservedCard(self, card):
-        self.reservedCards.append(card)
-
-    def delReservedCard(self, card):
-        self.reservedCards.remove(card)
+    def del_reserved_card(self, card):
+        self.reserved_cards.remove(card)
         del card
 
+    def add_owned_tile(self, tile):
+        self.owned_tiles.append(tile)
 
-
-    def addOwnedTile(self, tile):
-        self.ownedTiles.append(tile)
-
-    def delOwnedTile(self, tile):
-        self.ownedTiles.remove(tile)
+    def del_owned_tile(self, tile):
+        self.owned_tiles.remove(tile)
         del tile
