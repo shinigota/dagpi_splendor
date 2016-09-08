@@ -252,24 +252,24 @@ m1= bank</panel_attributes>
     <coordinates>
       <x>1500</x>
       <y>630</y>
-      <w>110</w>
-      <h>120</h>
+      <w>130</w>
+      <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-
-m1= purchaseCard</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+m1= purchasedCards</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;90.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1410</x>
+      <x>1370</x>
       <y>630</y>
-      <w>110</w>
-      <h>120</h>
+      <w>120</w>
+      <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-
-m1= ReserveCard</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+m1= reservedCards</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;90.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
@@ -300,7 +300,7 @@ r1=*</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>620</x>
-      <y>570</y>
+      <y>560</y>
       <w>220</w>
       <h>50</h>
     </coordinates>

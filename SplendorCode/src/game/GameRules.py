@@ -2,23 +2,23 @@ import xml.etree.ElementTree as ET
 
 
 class GameRules:
-    gameName = ""
-    nbLvlCard = 0
-    nbMaxResCard = 0
-    nbPointsTile = 0
-    nbPointsEnd = 0
-    nbCardReveal = 0
-    nbTileMore = 0
-    nbGemFor2 = 0
-    nbGemFor3 = 0
-    nbGemFor4 = 0
-    nbGold = 0
-    nbGemDif = 0
-    nbGemSame = 0
-    nbGoldTake = 0
-    nbTokenEndTurn = 0
-    nbTilePerTurn = 0
-    nbMinGemStack = 0
+    game_name = ""
+    nb_lvl_card = 0
+    nb_max_res_card = 0
+    nb_points_tile = 0
+    nb_points_end = 0
+    nb_card_reveal = 0
+    nb_tile_more = 0
+    nb_gem_for_2 = 0
+    nb_gem_for_3 = 0
+    nb_gem_for_4 = 0
+    nb_gold = 0
+    nb_gem_dif = 0
+    nb_gem_same = 0
+    nb_gold_take = 0
+    nb_token_end_turn = 0
+    nb_tile_per_turn = 0
+    nb_min_gem_stack = 0
 
     def __init__(self, gameboard):
         gameboard.rien = 0
@@ -27,40 +27,40 @@ class GameRules:
         print()
         # Single parameter xml
         for sp in root.findall('single_parameters'):
-            self.gameName = sp.find('game_name').text
-            self.nbLvlCard = sp.find('number_levels_cards').text
-            self.nbMaxResCard = sp.find('number_max_reserved_cards').text
-            self.nbPointsTile = sp.find('number_prestige_points_noble_tiles').text
-            self.nbPointsEnd = sp.find('number_prestige_points_end_game').text
+            self.game_name = sp.find('game_name').text
+            self.nb_lvl_card = sp.find('number_levels_cards').text
+            self.nb_max_res_card = sp.find('number_max_reserved_cards').text
+            self.nb_points_tile = sp.find('number_prestige_points_noble_tiles').text
+            self.nb_points_end = sp.find('number_prestige_points_end_game').text
 
         # Token xml
         for token in root.findall(".//token"):
-            nameT = token.find('name').text
-            colorT = token.find('color').text
-            print(nameT, colorT)
+            name_t = token.find('name').text
+            color_t = token.find('color').text
+            print(name_t, color_t)
         print()
 
         # Game setup xml
         for gs in root.findall('game_setup'):
-            self.nbCardReveal = gs.find('number_cards_to_reveal').text
-            self.nbTilesnbP = gs.find('number_noble_tiles_more_number_players').text
+            self.nb_card_reveal = gs.find('number_cards_to_reveal').text
+            self.nb_tiles_nb_p = gs.find('number_noble_tiles_more_number_players').text
             ngtiganp = './/number_gem_tokens_in_game_according_number_players'
             for ngtigan in root.findall(ngtiganp):
-                self.nbGemFor2 = ngtigan.find('number_gem_tokens_in_game_2_players').text
-                self.nbGemFor3 = ngtigan.find('number_gem_tokens_in_game_3_players').text
-                self.nbGemFor4 = ngtigan.find('number_gem_tokens_in_game_4_players').text
-            self.nbGold = gs.find('number_gold_tokens_in_game').text
+                self.nb_gem_for_2 = ngtigan.find('number_gem_tokens_in_game_2_players').text
+                self.nb_gem_for_3 = ngtigan.find('number_gem_tokens_in_game_3_players').text
+                self.nb_gem_for_4 = ngtigan.find('number_gem_tokens_in_game_4_players').text
+            self.nb_gold = gs.find('number_gold_tokens_in_game').text
 
         # Turn parameters xml
         for tp in root.findall('turn_parameters'):
             self.nbGemDiff = tp.find('number_gem_tokens_different_colors').text
-            self.nbGemSame = tp.find('number_gem_tokens_same_color').text
+            self.nb_gem_same = tp.find('number_gem_tokens_same_color').text
             nmgtsisc = 'number_min_gem_tokens_stack_if_same_color'
-            self.nbMinGemStack = tp.find(nmgtsisc).text
+            self.nb_min_gem_stack = tp.find(nmgtsisc).text
             nmgticr = 'number_max_gold_tokens_if_card_reserved'
-            self.nbGoldTake = tp.find(nmgticr).text
-            self.nbTokenEndTurn = tp.find('number_max_tokens_end_turn').text
-            self.nbTilePerTurn = tp.find('number_max_noble_tile_turn').text
+            self.nb_gold_take = tp.find(nmgticr).text
+            self.nb_token_end_turn = tp.find('number_max_tokens_end_turn').text
+            self.nb_tile_per_turn = tp.find('number_max_noble_tile_turn').text
 
 
         # Noble tiles xml

@@ -1,9 +1,10 @@
 class Tile:
+    points = None
+    gems_conditions = None
 
     def __init__(self):
         self.points = None
-        self.type = None
-        self.gemsConditions = []
+        self.gems_conditions = []
 
     def setPoints(self, points):
         self.points = points
@@ -11,18 +12,12 @@ class Tile:
     def getPoints(self):
         return self.points
 
-    def setType(self, type):
-        self.type = type
+    def add_gems_conditions(self, token_stack):
+        self.gems_conditions.append(token_stack)
 
-    def getType(self):
-        return self.type
+    def del_gems_conditions(self, token_stack):
+        self.gems_conditions.remove(token_stack)
+        del token_stack
 
-    def addGemsConditions(self, tokenStack):
-        self.gemsConditions.append(tokenStack)
-
-    def delGemsConditions(self, tokenStack):
-        self.gemsConditions.remove(tokenStack)
-        del tokenStack
-
-    def getGemsConditions(self):
-        return self.gemsConditions
+    def get_gems_conditions(self):
+        return self.gems_conditions
