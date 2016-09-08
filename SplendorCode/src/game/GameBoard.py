@@ -2,8 +2,8 @@ from src.element.Tile import Tile
 from src.element.Card import Card
 from src.element.RessourceType import Type
 from src.element.TokenStack import TokenStack
+from src.game.GameRules import GameRules
 
-from GameRules import GameRules
 
 class GameBoard:
 
