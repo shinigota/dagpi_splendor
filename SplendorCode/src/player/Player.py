@@ -1,23 +1,25 @@
-import Tools
-import Game
+from src.element.TokenStack import TokenStack
+from src.game.GameBoard import GameBoard
+from src.element.Tile import Tile
+from src.element.Card import Card
 
 class Player:
 
-    def __init__(self):
-        self.purchasedCards = []
-        self.reservedCards = []
-        self.ownedTiles = []
-        self.bank = []
-        self.position = None
-        self.nickname = None
+    def __init__(self, nickname, position):
+        self.purchasedCards = [Card]
+        self.reservedCards = [Card]
+        self.ownedTiles = [Tile]
+        self.bank = [TokenStack]
+        self.position = position
+        self.nickname = nickname
 
-        for type in Game.GameBoard.getTypes():
+        for type in GameBoard.types:
             self.bank.append(self.initBank(type))
 
     def initBank(self, type):
-        tkStack = Tools.TokenStack()
-        tkStack.setType(type)
-        tkStack.setNbToken(0)
+        tkStack = TokenStack()
+        tkStack.type = type
+        tkStack.nbToken = 0
         return tkStack
 
     def addPurchasedCard(self, card):
@@ -44,3 +46,15 @@ class Player:
     def delOwnedTile(self, tile):
         self.ownedTiles.remove(tile)
         del tile
+
+    def addDifferentTokens(self, types):
+        for type in types:
+            for tkStack   in self.bank:
+                if tkStack.type == type:
+                    tkStack.addToken(tkStack, 1)
+
+    def addSameToken(self, type, nbToken):
+        for tkStack in self.bank:
+            if tkStack.type == type:
+                tkStack.addToken(tkStack, nbToken)
+

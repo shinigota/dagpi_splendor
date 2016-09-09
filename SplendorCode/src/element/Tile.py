@@ -1,28 +1,26 @@
+from src.element.RessourceType import Type
+from src.element.GemStack import GemStack
+
+
 class Tile:
 
-    def __init__(self):
-        self.points = None
-        self.type = None
-        self.gemsConditions = []
-
-    def setPoints(self, points):
-        self.points = points
-
-    def getPoints(self):
-        return self.points
-
-    def setType(self, type):
+    def __init__(self, pts, type, gem_stacks):
+        self.points = pts
         self.type = type
+        self.gemsConditions = [GemStack]
 
-    def getType(self):
-        return self.type
+        for gem_stack in gem_stacks:
+            self.addGemsConditions(self, gem_stack)
 
-    def addGemsConditions(self, tokenStack):
-        self.gemsConditions.append(tokenStack)
+    def addGemsConditions(self, gem):
+        self.gemsConditions.append(gem)
 
-    def delGemsConditions(self, tokenStack):
-        self.gemsConditions.remove(tokenStack)
-        del tokenStack
+    def delGemsConditions(self, gem):
+        self.gemsConditions.remove(gem)
+        del gem
 
     def getGemsConditions(self):
         return self.gemsConditions
+
+
+

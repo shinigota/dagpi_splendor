@@ -1,18 +1,16 @@
+from src.element.GemStack import GemStack
+
+
 class Card:
 
-    def __init__(self):
-        self.points = None
+    def __init__(self, pts, ):
+        self.points = pts
         self.incomeGem = None
-        self.purchaseGems =[]
+        self.purchaseGems =[GemStack]
 
+    def addPurchaseGems(self, gem):
+        self.purchaseGems.append(gem)
 
-    def setIncomeGem(self, tokenStack):
-        self.incomeGem = tokenStack
-
-
-    def addPurchaseGems(self, tokenStack):
-        self.purchaseGems.append(tokenStack)
-
-    def delPurchaseGems(self, tokenStack):
-        self.purchaseGems.remove(tokenStack)
-        del tokenStack
+    def delPurchaseGems(self, gem):
+        self.purchaseGems.remove(gem)
+        del gem

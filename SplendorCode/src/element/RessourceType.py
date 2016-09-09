@@ -1,4 +1,12 @@
-class Type:
+from enum import Enum
 
-    def __init__(self):
-        self.name = None
+
+class Type(Enum):
+    Diamond = 'White'
+    Emerald = 'Green'
+    Saphire = 'Blue'
+    Onyx = 'Grey'
+    Ruby = 'Red'
+    Gold = 'Yellow'
+
+
