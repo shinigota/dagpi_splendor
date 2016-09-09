@@ -46,11 +46,26 @@
 	
 	
 ## Display
-	 ##Variables ##
+	## Variables ##
 	
 	
 	## Functions / Proceedings ##
-	
+
+## EventType
+	## Values ##
+    START
+    EXIT
+    SAVE_GAME_PARAMETERS - Param : parameters
+    CLICK_DISPLAYED_CARD - Param : card
+    CLICK_DECK_CARD - Param : card
+    CLICK_TOKEN - Param : token
+    CLICK_TILE - Param : tile
+    POPUP_PURCHASE - Param : Card
+    POPUP_RESERVE - Param : Card
+    CANCEL_ACTION
+    VALIDATE_ACTION
+
+
 	
 ## RessourceType
 	## Variables ##
