@@ -3,7 +3,14 @@ from src.game.GameBoard import GameBoard
 from src.element.Tile import Tile
 from src.element.Card import Card
 
+
 class Player:
+    nickname = None
+    position = None
+    reserved_cards = None
+    purchased_cards = None
+    owned_tiles = None
+    bank = None
 
     def __init__(self, nickname, position):
         self.purchasedCards = [Card]
@@ -22,30 +29,27 @@ class Player:
         tkStack.nbToken = 0
         return tkStack
 
-    def addPurchasedCard(self, card):
-        self.purchasedCards.append(card)
+    def add_purchased_card(self, card):
+        self.purchased_cards.append(card)
 
-    def delPurchasedCard(self, card):
-        self.purchasedCards.remove(card)
+    def del_purchased_card(self, card):
+        self.purchased_cards.remove(card)
         del card
 
+    def add_reserved_card(self, card):
+        self.reserved_cards.append(card)
 
-
-    def addReservedCard(self, card):
-        self.reservedCards.append(card)
-
-    def delReservedCard(self, card):
-        self.reservedCards.remove(card)
+    def del_reserved_card(self, card):
+        self.reserved_cards.remove(card)
         del card
 
+    def add_owned_tile(self, tile):
+        self.owned_tiles.append(tile)
 
-
-    def addOwnedTile(self, tile):
-        self.ownedTiles.append(tile)
-
-    def delOwnedTile(self, tile):
-        self.ownedTiles.remove(tile)
+    def del_owned_tile(self, tile):
+        self.owned_tiles.remove(tile)
         del tile
+
 
     def addDifferentTokens(self, types):
         for type in types:
@@ -53,8 +57,9 @@ class Player:
                 if tkStack.type == type:
                     tkStack.addToken(1)
 
-    def addSameToken(self, type, nbToken):
+    def addSameToken(self, type):
         for tkStack in self.bank:
             if tkStack.type == type:
-                tkStack.addToken(nbToken)
+                tkStack.addToken(2)
+
 

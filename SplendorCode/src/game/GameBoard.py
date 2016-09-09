@@ -4,6 +4,7 @@ from src.element.RessourceType import Type
 from src.element.TokenStack import TokenStack
 from src.game.GameRules import GameRules
 
+
 class GameBoard:
 
     def __init__(self):
@@ -15,11 +16,11 @@ class GameBoard:
 
 
         if nbPlayers == 2:
-            nbGems = gameRules.nbGemFor2
+            nbGems = gameRules.nb_gem_for_2
         elif nbPlayers == 3:
-            nbGems = gameRules.nbGemFor3
+            nbGems = gameRules.nb_gem_for_3
         else:
-            nbGems = gameRules.nbGemFor4
+            nbGems = gameRules.nb_gem_for_4
 
 
         for type in self.types:
@@ -83,8 +84,30 @@ class GameBoard:
     def initTokenStack(self, type, nbGems):
         tkStack = TokenStack()
         tkStack.type = type
-        tkStack.nbToken = nbGems
+        tkStack.nb_token = nbGems
         return tkStack
 
-    def check_winner(self):
+
+    def purchase_card(self, card):
+        None
+        # player.purchase_card(card)
+        # add new card to gameboard, delete one from stack
+
+        # display.update()
+
+    # def click_token(self, token):
+    #
+    #     if player.is_player_token(token):
+    #         player.give_back_token(token)
+    #         self.token_stacks[token.type].add_token()
+    #         self.token_took - -
+    #     elif self.is_gameboard_token(token):
+    #         player.take_token(token)
+    #         self.token_stacks[token.type].remove_token()
+    #         self.token_took + +
+    #
+    #     if self.token_took == 3:
+    #         next_turn()
+    #
+    #     update_view()
 
