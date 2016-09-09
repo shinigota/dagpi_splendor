@@ -25,7 +25,6 @@ class GameRules:
     def __init__(self):
         tree = ET.parse("../res/splendor_res.xml")
         root = tree.getroot()
-        print()
         # Single parameter xml
         for sp in root.findall('single_parameters'):
             GameRules.game_name = sp.find('game_name').text
@@ -38,8 +37,6 @@ class GameRules:
         for token in root.findall(".//token"):
             name_t = token.find('name').text
             color_t = token.find('color').text
-            print(name_t, color_t)
-        print()
 
         # Game setup xml
         for gs in root.findall('game_setup'):
