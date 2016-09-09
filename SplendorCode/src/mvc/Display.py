@@ -1,8 +1,8 @@
 from tkinter import *
 
-from src.game.EventType import EventType
-
 from src.element.Card import Card
+from src.element.RessourceType import RessourceType
+from src.mvc.EventType import EventType
 from src.mvc.GameRules import GameRules
 
 
@@ -49,7 +49,7 @@ class Display:
         txtBuy3 = canvas.create_text(25, 60, text=0, fill="white")
         txtBuy4 = canvas.create_text(75, 60, text=0, fill="white")
         canvas.place(x=250 + 120 * (position - 1), y=300 + (130 * (card.level - 1)), anchor=SE)
-        canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_CARD, c=card: self.game_rules.event(e, c))
+        canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_DISPLAYED_CARD, c=card: self.game_rules.event(e,c))
 
     def display_pile(self, level):
         canvas = Canvas(self.window, width=100, height=120, background=self.get_color(level))
@@ -58,15 +58,16 @@ class Display:
 
     def display_gold(self, nb):
         canvas = Canvas(self.window, width=80, height=80)
-        canvas.create_oval(10, 10, 70, 70, fill="yellow")
+        canvas.create_oval(10, 10, 70, 70, fill=RessourceType.get_ressource_color("Gold"))
         canvas.create_text(40, 40, text=nb, fill="black")
         canvas.place(x=115, y=135, anchor=SE)
 
-    def display_gem(self, nb):
+    def display_gem(self, nb, gem):
         canvas = Canvas(self.window, width=80, height=80)
-        canvas.create_oval(10, 10, 70, 70, fill="yellow")
-        canvas.create_text(40, 40, text=nb, fill="black")
-        canvas.place(x=115, y=135, anchor=SE)
+        canvas.create_oval(10, 10, 70, 70, fill=RessourceType.get_ressource_color(gem))
+        canvas.create_text(40, 40, text=nb, fill="white")
+        canvas.place(x=115, y=650, anchor=SE)
+        canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_TAKE_TOKEN_GAMEBOARD, g=gem: self.game_rules.event(e, g))
 
     def get_color(self, level):
         if level == 1:
@@ -109,5 +110,7 @@ display.display_pile(2)
 display.display_pile(3)
 
 display.display_gold(5)
+
+display.display_gem(5, "Ruby")
 
 display.window.mainloop()

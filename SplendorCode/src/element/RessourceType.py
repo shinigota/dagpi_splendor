@@ -2,15 +2,17 @@ from enum import Enum
 
 
 class RessourceType:
-    ressource_type = None
+    ressource_type =  dict()
 
     def __init__(self):
-        self.ressource_type = dict()
+        RessourceType.ressource_type = dict()
 
-    def add_ressource(self, name, color):
-        self.ressource_type[name] = color
+    @staticmethod
+    def add_ressource(name, color):
+        RessourceType.ressource_type[name] = color
 
-    def get_ressource_color(self, name):
-        return self.ressource_type[name]
+    @staticmethod
+    def get_ressource_color(name):
+        return RessourceType.ressource_type[name]
 
 
