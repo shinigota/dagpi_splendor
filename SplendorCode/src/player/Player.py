@@ -51,10 +51,10 @@ class Player:
         for type in types:
             for tkStack   in self.bank:
                 if tkStack.type == type:
-                    tkStack.addToken(tkStack, 1)
+                    tkStack.addToken(1)
 
     def addSameToken(self, type, nbToken):
         for tkStack in self.bank:
             if tkStack.type == type:
-                tkStack.addToken(tkStack, nbToken)
+                tkStack.addToken(nbToken)
 

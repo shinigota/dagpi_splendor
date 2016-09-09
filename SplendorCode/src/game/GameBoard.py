@@ -2,8 +2,7 @@ from src.element.Tile import Tile
 from src.element.Card import Card
 from src.element.RessourceType import Type
 from src.element.TokenStack import TokenStack
-
-from GameRules import GameRules
+from src.game.GameRules import GameRules
 
 class GameBoard:
 
@@ -86,4 +85,6 @@ class GameBoard:
         tkStack.type = type
         tkStack.nbToken = nbGems
         return tkStack
+
+    def check_winner(self):
 
