@@ -52,8 +52,20 @@ class Display:
 
     def display_pile(self, level):
         canvas = Canvas(self.window, width=100, height=120, background=self.get_color(level))
-        canvas.create_text(50, 50, text="PILE", fill="Black")
+        canvas.create_text(50, 50, text="PILE", fill="black")
         canvas.place(x=120, y=300 + (130 * (level - 1)), anchor=SE)
+
+    def display_gold(self, nb):
+        canvas = Canvas(self.window, width=80, height=80)
+        canvas.create_oval(10, 10, 70, 70, fill="yellow")
+        canvas.create_text(40, 40, text=nb, fill="black")
+        canvas.place(x=115, y=135, anchor=SE)
+
+    def display_gem(self, nb):
+        canvas = Canvas(self.window, width=80, height=80)
+        canvas.create_oval(10, 10, 70, 70, fill="yellow")
+        canvas.create_text(40, 40, text=nb, fill="black")
+        canvas.place(x=115, y=135, anchor=SE)
 
     def get_color(self, level):
         if level == 1:
@@ -94,5 +106,7 @@ display.display_card(4, card3)
 display.display_pile(1)
 display.display_pile(2)
 display.display_pile(3)
+
+display.display_gold(5)
 
 display.window.mainloop()
