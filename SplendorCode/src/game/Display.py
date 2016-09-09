@@ -1,5 +1,6 @@
 from tkinter import *
 
+from src.element.Card import Card
 from src.game.GameRules import GameRules
 
 
@@ -22,36 +23,28 @@ class Display:
 
     def display_tile(self, position, tile):
         canvas = Canvas(self.window, width=100, height=100, background='#c18b01')
-        txt = canvas.create_text(10, 10, text=0, fill="black")
-        txt = canvas.create_text(50, 10, text="R", fill="red")
+        points = canvas.create_text(10, 10, text=0, fill="black")
         canvas.place(x=250 + 120 * (position - 1), y=150, anchor=SE)
 
-    def display_card(self, position, niveau, card):
-        if niveau == 1:
-            color = '#0483f9'
-        if niveau == 2:
-            color = '#05e002'
-        if niveau == 3:
-            color = '#ffac07'
-        canvas = Canvas(self.window, width=100, height=120, background=color)
-        txt = canvas.create_text(10, 10, text=0, fill="black")
-        txt = canvas.create_text(50, 10, text="R", fill="white")
-        txt = canvas.create_rectangle(50, 10, 60, 20, fill="red")
-        canvas.place(x=250 + 120 * (position - 1), y=300 + (130 * (niveau - 1)), anchor=SE)
+    def display_card(self, position, card):
+        canvas = Canvas(self.window, width=100, height=120, background=self.getColor(card.level))
+        points = canvas.create_text(10, 10, text=0, fill="black")
+        gem = canvas.create_oval(85, 5, 95, 15, fill=card.income_gem)
+        canvas.place(x=250 + 120 * (position - 1), y=300 + (130 * (card.level - 1)), anchor=SE)
 
-    def display_Pile(self, niveau):
-        if niveau == 1:
-            color = '#0483f9'
-        if niveau == 2:
-            color = '#05e002'
-        if niveau == 3:
-            color = '#ffac07'
-        canvas = Canvas(self.window, width=100, height=120, background=color)
-        txt = canvas.create_text(50, 50, text="PILE", fill="Black")
-        canvas.place(x=120, y=300 + (130 * (niveau - 1)), anchor=SE)
+    def display_Pile(self, level):
+        canvas = Canvas(self.window, width=100, height=120, background=self.getColor(level))
+        canvas.create_text(50, 50, text="PILE", fill="Black")
+        canvas.place(x=120, y=300 + (130 * (level - 1)), anchor=SE)
 
-    def update(self):
-        None
+    def getColor(self, level):
+        if level == 1:
+            color = '#0483f9'
+        if level == 2:
+            color = '#05e002'
+        if level == 3:
+            color = '#ffac07'
+        return color
 
 
 GameRules()
@@ -62,18 +55,22 @@ display.display_tile(3, None)
 display.display_tile(4, None)
 display.display_tile(5, None)
 
-display.display_card(1, 1, None)
-display.display_card(2, 1, None)
-display.display_card(3, 1, None)
-display.display_card(4, 1, None)
-display.display_card(1, 2, None)
-display.display_card(2, 2, None)
-display.display_card(3, 2, None)
-display.display_card(4, 2, None)
-display.display_card(1, 3, None)
-display.display_card(2, 3, None)
-display.display_card(3, 3, None)
-display.display_card(4, 3, None)
+card1 = Card(0, "red", 0, 1)
+card2 = Card(0, "black", 0, 2)
+card3 = Card(0, "blue", 0, 3)
+
+display.display_card(1, card1)
+display.display_card(2, card1)
+display.display_card(3, card1)
+display.display_card(4, card1)
+display.display_card(1, card2)
+display.display_card(2, card2)
+display.display_card(3, card2)
+display.display_card(4, card2)
+display.display_card(1, card3)
+display.display_card(2, card3)
+display.display_card(3, card3)
+display.display_card(4, card3)
 
 display.display_Pile(1)
 display.display_Pile(2)
