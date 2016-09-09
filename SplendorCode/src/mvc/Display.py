@@ -1,8 +1,9 @@
 from tkinter import *
 
-from src.element.Card import Card
-from src.game.GameRules import GameRules
 from src.game.EventType import EventType
+
+from src.element.Card import Card
+from src.mvc.GameRules import GameRules
 
 
 class Display:

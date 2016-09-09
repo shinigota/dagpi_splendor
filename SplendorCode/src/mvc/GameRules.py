@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 
-from src.game.EventType import EventType
+from src.element.RessourceType import RessourceType
+from src.mvc.EventType import EventType
 
 
 class GameRules:
@@ -37,6 +38,7 @@ class GameRules:
         for token in root.findall(".//token"):
             name_t = token.find('name').text
             color_t = token.find('color').text
+            RessourceType.add_ressource(name_t, color_t)
 
         # Game setup xml
         for gs in root.findall('game_setup'):
