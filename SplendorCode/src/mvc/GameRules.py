@@ -1,7 +1,8 @@
 import xml.etree.ElementTree as ET
 
-from src.element.RessourceType import RessourceType
-from src.mvc.EventType import EventType
+from SplendorCode.src.element.RessourceType import RessourceType
+from SplendorCode.src.mvc.EventType import EventType
+from SplendorCode.src.player import Player
 
 
 class GameRules:
@@ -89,3 +90,29 @@ class GameRules:
         elif eventType == EventType.CLICK_CARD:
             #if check_enough_ressources(object, player):
             self.gameboard.purchase_card(object)
+
+
+    def check_click_token(self):
+        return
+
+    def check_click_card(self):
+        return
+
+    def check_click_tile(self):
+        return
+
+    def check_winner(self, player):
+        for n_player in player.namr:
+            if n_player.calcul_point_in_game() >= GameRules.nb_points_end:
+                return n_player
+
+
+    def check_enough_ressources(self):
+
+        return True
+
+    def check_reserve_amount(self):
+        return True
+
+
+

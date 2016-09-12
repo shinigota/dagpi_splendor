@@ -49,3 +49,9 @@ class Player:
 
     def remove_specific_token(self, tokenType, number=1):
         self.bank[tokenType] -= number
+
+    def calcul_point_in_game(self):
+        nb_points = 0
+        for pcard in self.purchased_cards.items():
+            nb_points += pcard.points
+        return nb_points

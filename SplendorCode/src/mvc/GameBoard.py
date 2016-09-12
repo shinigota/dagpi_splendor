@@ -1,6 +1,7 @@
 from src.element.Token import Token
 from src.mvc.GameRules import GameRules
-
+from src.player import Player
+from src.element import Tile
 
 class GameBoard:
     def __init__(self):
@@ -9,6 +10,7 @@ class GameBoard:
         self.types = []
         nbPlayers = 0
         nbGems = 2
+        players = []
 
         if nbPlayers == 2:
             nbGems = gameRules.nb_gem_for_2
@@ -87,3 +89,19 @@ class GameBoard:
     #         next_turn()
     #
     #     update_view()
+
+    #tuile
+    def check_enough_cards(self, player, tile):
+        for gem_player, val_player in player.purchased_cards.items:
+            for gem_tile, val_tile in tile.gem_conditions.items:
+                if gem_player == gem_tile:
+                    if val_tile > val_player:
+                        return False
+        return True
+
+
+    def check_token_amount(self, player):
+        nb_token = sum(v for v in player.bank.values)
+        if nb_token >= GameRules.nb_token_end_turn:
+            return nb_token - GameRules.nb_token_end_turn
+            #return True
