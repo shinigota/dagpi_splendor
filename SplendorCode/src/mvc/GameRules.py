@@ -186,13 +186,12 @@ class GameRules:
         return
 
     def check_winner(self, player):
-        for n_player in player.namr:
+        for n_player in player.name:
             if n_player.calcul_point_in_game() >= GameRules.nb_points_end:
                 return n_player
 
 
     def check_enough_ressources(self):
-
         return True
 
     def check_reserve_amount(self):

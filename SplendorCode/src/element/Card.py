@@ -1,6 +1,3 @@
-
-
-
 class Card:
     points = None
     income_gem = None

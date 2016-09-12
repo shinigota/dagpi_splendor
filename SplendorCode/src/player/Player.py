@@ -84,4 +84,8 @@ class Player:
         nb_points = 0
         for pcard in self.purchased_cards.items():
             nb_points += pcard.points
+
+        for ptile in self.ownedTiles.items():
+            nb_points += ptile.points
+
         return nb_points
