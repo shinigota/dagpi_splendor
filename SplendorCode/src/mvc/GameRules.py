@@ -82,30 +82,29 @@ class GameRules:
             number_prestige_points = dc.find('number_prestige_points').text
             gem_token_bonus = dc.find('gem_token_bonus').text
 
-    def event(self, eventType, object):
-        if eventType == EventType.CLICK_TAKE_TOKEN_GAMEBOARD:
+    def event(self, event_type, object):
+        if event_type == EventType.CLICK_TAKE_TOKEN_GAMEBOARD:
             # if check_click_token(object):
             self.gameboard.click_token_gameboard(object)
-        elif eventType == EventType.CLICK_GIVE_BACK_PLAYER_TOKEN:
+        elif event_type == EventType.CLICK_GIVE_BACK_PLAYER_TOKEN:
             # if check_enough_ressources(object, player):
             self.gameboard.click_token_player(object)
-        elif eventType == EventType.CLICK_DISPLAYED_CARD:
+        elif event_type == EventType.CLICK_DISPLAYED_CARD:
             # if check_enough_ressources(object, player):
-            # self.gameboard.click_displayed_card(object)
-            None
-        elif eventType == EventType.CLICK_DECK_CARD:
+            self.gameboard.click_displayed_card(object)
+        elif event_type == EventType.CLICK_DECK_CARD:
             self.gameboard.click_card_deck(object)
-        elif eventType == EventType.CANCEL_ACTION:
+        elif event_type == EventType.CANCEL_ACTION:
             None
-        elif eventType == EventType.VALIDATE_ACTION:
+        elif event_type == EventType.VALIDATE_ACTION:
             None
-        elif eventType == EventType.CLICK_TILE:
+        elif event_type == EventType.CLICK_TILE:
+            self.gameboard.click_tile(object)
+        elif event_type == EventType.START:
             None
-        elif eventType == EventType.START:
+        elif event_type == EventType.EXIT:
             None
-        elif eventType == EventType.EXIT:
-            None
-        elif eventType == EventType.POPUP_PURCHASE:
-            None
-        elif eventType == EventType.POPUP_RESERVE:
-            None
+        elif event_type == EventType.POPUP_PURCHASE:
+            self.gameboard.click_purchase_card(object)
+        elif event_type == EventType.POPUP_RESERVE:
+            self.gameboard.click_reserve_card(object)
