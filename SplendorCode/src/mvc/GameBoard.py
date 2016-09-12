@@ -49,7 +49,8 @@ class GameBoard:
         self.hidden_tiles = []
         self.displayed_tiles = []
 
-        self.deck = dict(list)
+        self.decks = dict(list)
+        self.init_decks()
         self.displayed_cards = dict(list)
 
 
@@ -65,9 +66,8 @@ class GameBoard:
     def init_decks(self):
         self.decks = []
         development_cards = self.gamerules.get_development_cards()
-        self.decks["1"] = development_cards["1"]
-        self.decks["2"] = development_cards["2"]
-        self.decks["3"] = development_cards["3"]
+        for i in range(1,self.gamerules.nb_lvl_card):
+            self.decks[i] = development_cards[i]
 
     def add_type(self, type):
         self.types.append(type)
