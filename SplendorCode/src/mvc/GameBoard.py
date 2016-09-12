@@ -57,8 +57,7 @@ class GameBoard:
         :return:
         """
         self.init_bank()
-        self.init_decks()
-        self.init_displayed_cards()
+        self.init_cards()
         self.init_tiles()
 
     def init_bank(self):
@@ -70,39 +69,28 @@ class GameBoard:
         for token_type in RessourceType.ressource_type.keys():
             self.bank[token_type] = self.nb_gems
 
-    def init_decks(self):
-        """Initialising the 3 different level of cards"""
+    def init_cards(self):
+        """
+        Initialising the 3 different level of cards
+        :return:
+        """
         self.decks = {}
         development_cards = self.game_rules.get_development_cards()
         for i in range(1, int(self.game_rules.nb_lvl_card) + 1):
             self.decks[i] = development_cards[i]
 
-    def init_displayed_cards(self):
-        """
-        Initialising the displayed cards with the 3 different levels
-        :return:
-        """
         self.displayed_cards = {}
-        for i in range(1, self.game_rules.nb_lvl_card):
-            self.fill_displayed_cards_lvl(i)
-
-    def fill_displayed_cards_lvl(self, lvl):
-        """
-        Filling the 3 levels of cards with cards to display
-        :param lvl:
-        :return:
-        """
-        for i in range (1, 4):
-            new_card = random.choice(self.decks[lvl])
-            self.decks[lvl].remove(new_card)
-            self.displayed_cards[int(lvl)].append(new_card)
+        for i in range(1, int(self.game_rules.nb_lvl_card)):
+            self.displayed_cards[i] = []
+            for x in range(1, int(self.game_rules.nb_card_reveal)):
+                self.fill_displayed_cards(i)
 
     def init_tiles(self):
         """
         Initialising the available and hidden tiles
         :return:
         """
-        self.hidden_tiles = []
+        self.hidden_tiles = self.game_rules.get_tiles()
         self.displayed_tiles = []
         for i in range(1, self.nb_players + self.game_rules.nb_tile_more):
             tile = random.choice(self.hidden_tiles)
@@ -139,6 +127,11 @@ class GameBoard:
     def del_do_deck(self, card):
         self.deck[card.get_level()].remove(card)
 
+    def choose_card_in_deck(self, lvl):
+        new_card = random.choice(self.deck[int(lvl)])
+        self.deck[int(lvl)].remove(new_card)
+        return new_card
+
     def add_displayed_card(self, card):
         self.displayed_cards[card.get_level()].append(card)
 
@@ -150,8 +143,19 @@ class GameBoard:
         loc = self.displayed_cards[lvl].index(card)
         self.displayed_cards[lvl].remove(card)
 
-        new_card = random.choice(self.deck[int(lvl)])
-        self.displayed_cards[int(lvl)].insert(loc, new_card)
+        if len(self.decks[int(lvl)]) != 0:
+            new_card = self.choose_card_in_deck(lvl)
+            self.displayed_cards[int(lvl)].insert(loc, new_card)
+
+    def fill_displayed_cards(self, lvl):
+        new_card = random.choice(self.decks[int(lvl)])
+        self.displayed_cards[int(lvl)].append(new_card)
+
+    def is_deck_empty(self, lvl):
+        if len(self.decks[int(lvl)]) == 0:
+            return True
+        else:
+            return False
 
     # Actions triggered by events
 
@@ -200,12 +204,13 @@ class GameBoard:
         """
         self.gamestate = GameState.PLAYER_CHOOSE_PURHCASE_OR_RESERVE
 
-    def click_deck_card(self, card):
+    def click_deck_card(self, lvl):
         """
         Action click on a deck's card
         :param card: deck's card which has been clicked
         :return:
         """
+        card = self.choose_card_in_deck(lvl)
         self.get_current_player().add_reserved_card(card)
         # remove from deck
 
@@ -235,6 +240,7 @@ class GameBoard:
         :param card: Card to reserve
         :return:
         '''
+        self.replace_displayed_card(card)
         self.get_current_player().add_reserved_card(card)
         if self.get_current_player().is_action_complete():
             # self.end_action()
@@ -250,6 +256,7 @@ class GameBoard:
         :param tile: Tile clicked
         :return:
         '''
+        self.del_displayed_tile(tile)
         self.get_current_player().add_owned_tile(tile)
         if self.get_current_player().is_action_complete():
             self.end_action()

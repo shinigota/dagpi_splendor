@@ -86,13 +86,13 @@ class GameRules:
             nt_onyx = noble_tile.find('Onyx').text
             nt_ruby = noble_tile.find('Ruby').text
 
-        self.tiles.append({
-            "emerald": nt_emerald,
-            "diamond": nt_diamond,
-            "sapphire": nt_sapphire,
-            "onyx": nt_onyx,
-            "ruby": nt_ruby
-        })
+            self.tiles.append({
+                "emerald": nt_emerald,
+                "diamond": nt_diamond,
+                "sapphire": nt_sapphire,
+                "onyx": nt_onyx,
+                "ruby": nt_ruby
+            })
 
         # Development cards xml
         self.development_cards = {}
@@ -154,6 +154,9 @@ class GameRules:
 
     def get_development_cards(self):
         return self.development_cards
+
+    def get_tiles(self):
+        return self.tiles
 
     def set_game_board(self, game_board):
         self.game_board = game_board
