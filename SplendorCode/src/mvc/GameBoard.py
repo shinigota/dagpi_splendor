@@ -46,52 +46,69 @@ class GameBoard:
         else:
             self.nb_gems = self.gamerules.nb_gem_for_4
 
-        self.init_bank()
-
-        self.hidden_tiles = []
-        self.displayed_tiles = []
-
-        self.decks = dict(list)
-        self.init_decks()
-        self.displayed_cards = dict(list)
+        self.init_gameboard()
 
     # GameBoard init methods
 
     def init_gameboard(self):
+        """
+        Gameboard initialization / creation, adding the cards / tokens to
+        the board
+        :return:
+        """
         self.init_bank()
         self.init_decks()
         self.init_displayed_cards()
         self.init_tiles()
 
     def init_bank(self):
+        """
+        Initialising the bank, creating the tokens
+        :return:
+        """
         self.bank = []
         for token_type in RessourceType.ressource_type.keys():
             self.bank[token_type] = self.nb_gems
 
     def init_decks(self):
+        """Initialising the 3 different level of cards"""
         self.decks = []
         development_cards = self.gamerules.get_development_cards()
         for i in range(1, self.gamerules.nb_lvl_card):
             self.decks[i] = development_cards[i]
 
     def init_displayed_cards(self):
+        """
+        Initialising the displayed cards with the 3 different levels
+        :return:
+        """
         self.displayed_cards = {}
         for i in range(1, self.gamerules.nb_lvl_card):
             self.fill_displayed_cards_lvl(i)
 
     def fill_displayed_cards_lvl(self, lvl):
+        """
+        Filling the 3 levels of cards with cards to display
+        :param lvl:
+        :return:
+        """
         for i in range (1, 4):
             new_card = random.choice(self.decks[lvl])
             self.decks[lvl].remove(new_card)
             self.displayed_cards[int(lvl)].append(new_card)
 
     def init_tiles(self):
+        """
+        Initialising the available and hidden tiles
+        :return:
+        """
         self.hidden_tiles = []
-        for i in range(1, self.nb_players + self.gamerules.nb_tile_more)
+        self.displayed_tiles = []
+        for i in range(1, self.nb_players + self.gamerules.nb_tile_more):
             tile = random.choice(self.hidden_tiles)
             self.hidden_tiles.remove(tile)
             self.displayed_tiles.append(tile)
-            
+
     # functions
 
     def add_type(self, type):
