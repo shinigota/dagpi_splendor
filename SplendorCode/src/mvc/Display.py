@@ -7,15 +7,16 @@ from src.mvc.GameRules import GameRules
 
 
 class Display:
-    """zerghj."""
     window = None
     text = "test"
-    game_rules = None
+    gamerules = None
+    gameboard = None
     w = None
     h = None
 
     def __init__(self):
-        """dfgh."""
+        # self.gamerules = gamerules
+        # self.gameboard = gameboard
         self.window = Tk()
 
     def create_window(self):
@@ -34,7 +35,7 @@ class Display:
         txtBuy2 = canvas.create_text(25, 80, text="0", fill="white")
         txtBuy3 = canvas.create_text(75, 80, text="0", fill="white")
         canvas.place(x=170 + 120 * (position - 1), y=100)
-        canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_TILE, t=tile: self.game_rules.event(e, t))
+        canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_TILE, t=tile: self.gamerules.event(e, t))
 
     def display_card(self, position, card):
         canvas = Canvas(self.window, width=100, height=120, background=self.get_color(card.level))
@@ -52,14 +53,14 @@ class Display:
         txtBuy3 = canvas.create_text(25, 60, text=0, fill=textcolor)
         txtBuy4 = canvas.create_text(75, 60, text=0, fill=textcolor)
         canvas.place(x=50 + 120 * (position - 1), y=490 - (130 * (card.level - 1)))
-        canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_DISPLAYED_CARD, c=card: self.game_rules.event(e, c))
+        canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_DISPLAYED_CARD, c=card: self.gamerules.event(e, c))
 
     def display_pile(self, level):
         canvas = Canvas(self.window, width=100, height=120, background=self.get_color(level))
         canvas.create_text(50, 50, text="PILE DE NIVEAU", fill="black")
         canvas.create_text(50, 70, text=level, fill="black")
         canvas.place(x=50, y=490 - (130 * (level - 1)))
-        canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_DECK_CARD, l=level: self.game_rules.event(e, l))
+        canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_DECK_CARD, l=level: self.gamerules.event(e, l))
 
     def display_gold(self, nb):
         canvas = Canvas(self.window, width=80, height=80)
@@ -73,7 +74,7 @@ class Display:
         canvas.create_text(40, 40, text=nb, fill="black")
         canvas.place(x=70, y=650)
         canvas.bind("<Button-1>",
-                    lambda event, e=EventType.CLICK_TAKE_TOKEN_GAMEBOARD, g=gem: self.game_rules.event(e, g))
+                    lambda event, e=EventType.CLICK_TAKE_TOKEN_GAMEBOARD, g=gem: self.gamerules.event(e, g))
 
     def get_color(self, level):
         if level == 1:
@@ -86,7 +87,7 @@ class Display:
 
 
 display = Display()
-display.game_rules = GameRules()
+display.gamerules = GameRules(None)
 display.create_window()
 display.display_tile(1, None)
 display.display_tile(2, None)
