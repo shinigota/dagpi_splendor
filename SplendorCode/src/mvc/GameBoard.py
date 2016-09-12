@@ -49,7 +49,8 @@ class GameBoard:
         self.hidden_tiles = []
         self.displayed_tiles = []
 
-        self.deck = dict(list)
+        self.decks = dict(list)
+        self.init_decks()
         self.displayed_cards = dict(list)
 
     def init_gameboard(self):
