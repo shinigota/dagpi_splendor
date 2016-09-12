@@ -3,6 +3,7 @@ from tkinter import *
 from src.element.Card import Card
 from src.element.RessourceType import RessourceType
 from src.mvc.EventType import EventType
+from src.mvc.GameBoard import GameBoard
 from src.mvc.GameRules import GameRules
 
 
@@ -11,6 +12,7 @@ class Display:
     window = None
     text = "test"
     game_rules = None
+    game_board = None
     w = None
     h = None
 
@@ -25,7 +27,7 @@ class Display:
         self.window.geometry("%dx%d+0+0" % (self.w, self.h))
 
     def display_tile(self, position, tile):
-        canvas = Canvas(self.window, width=100, height=100, background='#c18b01')
+        canvas = Canvas(self.window, width=100, height=100, background='#725202')
         points = canvas.create_text(10, 10, text=0, fill="black")
         cardBuy1 = canvas.create_rectangle(10, 25, 40, 55, fill="red")
         cardBuy2 = canvas.create_rectangle(10, 65, 40, 95, fill="blue")
@@ -54,8 +56,11 @@ class Display:
         canvas.place(x=50 + 120 * (position - 1), y=490 - (130 * (card.level - 1)))
         canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_DISPLAYED_CARD, c=card: self.game_rules.event(e, c))
 
-    def display_pile(self, level):
-        canvas = Canvas(self.window, width=100, height=120, background=self.get_color(level))
+    def display_pile(self, level, vide):
+        color = Display.get_color(level)
+        if vide:
+            color = "grey"
+        canvas = Canvas(self.window, width=100, height=120, background=color)
         canvas.create_text(50, 50, text="PILE DE NIVEAU", fill="black")
         canvas.create_text(50, 70, text=level, fill="black")
         canvas.place(x=50, y=490 - (130 * (level - 1)))
@@ -68,14 +73,18 @@ class Display:
         canvas.place(x=70, y=115)
 
     def display_gem(self, nb, gem):
+        color = "white"
+        if RessourceType.get_ressource_color(gem) == "white":
+            color = "black"
         canvas = Canvas(self.window, width=80, height=80)
         canvas.create_oval(10, 10, 70, 70, fill=RessourceType.get_ressource_color(gem))
-        canvas.create_text(40, 40, text=nb, fill="black")
-        canvas.place(x=70, y=650)
+        canvas.create_text(40, 40, text=nb, fill=color)
+        canvas.place(x=Display.get_place(gem), y=650)
         canvas.bind("<Button-1>",
                     lambda event, e=EventType.CLICK_TAKE_TOKEN_GAMEBOARD, g=gem: self.game_rules.event(e, g))
 
-    def get_color(self, level):
+    @staticmethod
+    def get_color(level):
         if level == 1:
             color = '#0483f9'
         if level == 2:
@@ -84,39 +93,62 @@ class Display:
             color = '#ffac07'
         return color
 
+    @staticmethod
+    def get_place(gem_name):
+        if gem_name == "Diamond":
+            place = 70
+        if gem_name == "Ruby":
+            place = 150
+        if gem_name == "Onyx":
+            place = 230
+        if gem_name == "Emerald":
+            place = 310
+        if gem_name == "Sapphire":
+            place = 390
+        if gem_name == "Gold":
+            place = 470
+        return place
+
+    def refresh(self):
+        display.display_tile(1, None)
+        display.display_tile(2, None)
+        display.display_tile(3, None)
+        display.display_tile(4, None)
+        display.display_tile(5, None)
+
+        card1 = Card(0, "Ruby", 0, 1)
+        card2 = Card(0, "Onyx", 0, 2)
+        card3 = Card(0, "Diamond", 0, 3)
+
+        display.display_card(1, card1)
+        display.display_card(2, card1)
+        display.display_card(3, card1)
+        display.display_card(4, card1)
+        display.display_card(1, card2)
+        display.display_card(2, card2)
+        display.display_card(3, card2)
+        display.display_card(4, card2)
+        display.display_card(1, card3)
+        display.display_card(2, card3)
+        display.display_card(3, card3)
+        display.display_card(4, card3)
+
+        display.display_pile(1, True)
+        display.display_pile(2, False)
+        display.display_pile(3, False)
+
+        display.display_gold(5)
+
+        display.display_gem(5, "Diamond")
+        display.display_gem(5, "Ruby")
+        display.display_gem(5, "Onyx")
+        display.display_gem(5, "Emerald")
+        display.display_gem(5, "Sapphire")
+
 
 display = Display()
 display.game_rules = GameRules()
+display.game_board = GameBoard()
 display.create_window()
-display.display_tile(1, None)
-display.display_tile(2, None)
-display.display_tile(3, None)
-display.display_tile(4, None)
-display.display_tile(5, None)
-
-card1 = Card(0, "Ruby", 0, 1)
-card2 = Card(0, "Onyx", 0, 2)
-card3 = Card(0, "Diamond", 0, 3)
-
-display.display_card(1, card1)
-display.display_card(2, card1)
-display.display_card(3, card1)
-display.display_card(4, card1)
-display.display_card(1, card2)
-display.display_card(2, card2)
-display.display_card(3, card2)
-display.display_card(4, card2)
-display.display_card(1, card3)
-display.display_card(2, card3)
-display.display_card(3, card3)
-display.display_card(4, card3)
-
-display.display_pile(1)
-display.display_pile(2)
-display.display_pile(3)
-
-display.display_gold(5)
-
-display.display_gem(5, "Diamond")
-
+display.refresh()
 display.window.mainloop()
