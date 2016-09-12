@@ -98,8 +98,7 @@ class GameRules:
         GameRules.development_cards = {}
         for i in range(1, int(self.nb_lvl_card) + 1):
             GameRules.development_cards[i] = []
-            # print(i)
-            # print("sdqdqssd %d"%int(self.nb_lvl_card))
+
         for dc in root.findall('.//development_card'):
             level = dc.find('level').text
             c_emerald = dc.find('Emerald').text
@@ -126,31 +125,53 @@ class GameRules:
 
 
     def event(self, event_type, object):
+        action_possible = False
         if event_type == EventType.CLICK_TAKE_TOKEN_GAMEBOARD:
-            # if check_click_token(object):
-            self.game_board.click_token_game_board(object)
+            # action_possible = self.check_click_token(object)
+            if action_possible:
+                self.game_board.click_token_game_board(object)
         elif event_type == EventType.CLICK_GIVE_BACK_PLAYER_TOKEN:
-            # if check_enough_ressources(object, player):
-            self.game_board.click_token_player(object)
+            # action_possible =
+            if action_possible:
+                self.game_board.click_token_player(object)
         elif event_type == EventType.CLICK_DISPLAYED_CARD:
-            # if check_enough_ressources(object, player):
-            self.game_board.click_displayed_card(object)
+            # action_possible =
+            if action_possible:
+                self.game_board.click_displayed_card(object)
         elif event_type == EventType.CLICK_DECK_CARD:
-            self.game_board.click_card_deck(object)
+            # action_possible =
+            if action_possible:
+                self.game_board.click_card_deck(object)
         elif event_type == EventType.CANCEL_ACTION:
-            None
+            # action_possible =
+            if action_possible:
+                pass
         elif event_type == EventType.VALIDATE_ACTION:
-            None
+            # action_possible =
+            if action_possible:
+                pass
         elif event_type == EventType.CLICK_TILE:
-            self.game_board.click_tile(object)
+            # action_possible =
+            if action_possible:
+                self.game_board.click_tile(object)
         elif event_type == EventType.START:
-            None
+            # action_possible =
+            if action_possible:
+                pass
         elif event_type == EventType.EXIT:
-            None
+            # action_possible =
+            if action_possible:
+                pass
         elif event_type == EventType.POPUP_PURCHASE:
-            self.game_board.click_purchase_card(object)
+            # action_possible =
+            if action_possible:
+                self.game_board.click_purchase_card(object)
         elif event_type == EventType.POPUP_RESERVE:
-            self.game_board.click_reserve_card(object)
+            # action_possible =
+            if action_possible:
+                self.game_board.click_reserve_card(object)
+
+        return action_possible
 
     def get_development_cards(self):
         return self.development_cards
