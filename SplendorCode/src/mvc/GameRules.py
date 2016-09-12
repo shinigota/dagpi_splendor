@@ -78,7 +78,7 @@ class GameRules:
                 'number_max_noble_tile_turn').text
 
         # Noble tiles xml
-        self.tiles = []
+        GameRules.tiles = []
         for noble_tile in root.findall('.//noble_tile'):
             nt_emerald = noble_tile.find('Emerald').text
             nt_diamond = noble_tile.find('Diamond').text
@@ -86,7 +86,7 @@ class GameRules:
             nt_onyx = noble_tile.find('Onyx').text
             nt_ruby = noble_tile.find('Ruby').text
 
-            self.tiles.append({
+            GameRules.tiles.append({
                 "emerald": nt_emerald,
                 "diamond": nt_diamond,
                 "sapphire": nt_sapphire,
@@ -95,9 +95,9 @@ class GameRules:
             })
 
         # Development cards xml
-        self.development_cards = {}
+        GameRules.development_cards = {}
         for i in range(1, int(self.nb_lvl_card) + 1):
-            self.development_cards[i] = []
+            GameRules.development_cards[i] = []
             # print(i)
             # print("sdqdqssd %d"%int(self.nb_lvl_card))
         for dc in root.findall('.//development_card'):
@@ -110,7 +110,7 @@ class GameRules:
             number_prestige_points = dc.find('number_prestige_points').text
             gem_token_bonus = dc.find('gem_token_bonus').text
 
-            self.development_cards[int(level)].append({
+            GameRules.development_cards[int(level)].append({
                 "level": level,
                 "number_prestige_points": number_prestige_points,
                 "gem_token_bonus": gem_token_bonus,
@@ -155,6 +155,28 @@ class GameRules:
     def get_development_cards(self):
         return self.development_cards
 
+    def check_click_token(self):
+        return
+
+    def check_click_card(self):
+        return
+
+    def check_click_tile(self):
+        return
+
+    def check_winner(self, player):
+        for n_player in player.namr:
+            if n_player.calcul_point_in_game() >= GameRules.nb_points_end:
+                return n_player
+
+
+    def check_enough_ressources(self):
+
+        return True
+
+    def check_reserve_amount(self):
+        return True
+
     def get_tiles(self):
         return self.tiles
 
@@ -163,3 +185,4 @@ class GameRules:
 
     def set_display(self, display):
         self.display = display
+

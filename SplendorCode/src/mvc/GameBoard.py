@@ -4,6 +4,8 @@ from src.game.GameState import GameState
 from src.mvc.GameRules import GameRules
 import random
 
+from src.player import Player
+from src.element import Tile
 
 def purchase_card(card):
     None
@@ -287,3 +289,19 @@ class GameBoard:
 
     def get_bank(self):
         return self.bank
+
+    #tuile
+    def check_enough_cards(self, player, tile):
+        for gem_player, val_player in player.purchased_cards.items:
+            for gem_tile, val_tile in tile.gem_conditions.items:
+                if gem_player == gem_tile:
+                    if val_tile > val_player:
+                        return False
+        return True
+
+
+    def check_token_amount(self, player):
+        nb_token = sum(v for v in player.bank.values)
+        if nb_token >= GameRules.nb_token_end_turn:
+            return nb_token - GameRules.nb_token_end_turn
+            #return True

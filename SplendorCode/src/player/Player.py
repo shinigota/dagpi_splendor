@@ -79,3 +79,9 @@ class Player:
             return (2 not in self.tokens_took.values() and
                     3 not in self.tokens_took.values())
         return False
+
+    def calcul_point_in_game(self):
+        nb_points = 0
+        for pcard in self.purchased_cards.items():
+            nb_points += pcard.points
+        return nb_points

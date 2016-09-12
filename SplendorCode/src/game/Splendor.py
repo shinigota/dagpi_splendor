@@ -11,7 +11,7 @@ class Splendor:
     def __init__(self):
         self.display = Display()
         self.game_rules = GameRules()
-        self.game_board = GameBoard(self.game_rules, self.display)
+        self.game_board = GameBoard(self.display, self.game_rules)
         self.game_rules.set_game_board(self.game_board)
         self.game_rules.set_display(self.display)
         self.display.create_window()
