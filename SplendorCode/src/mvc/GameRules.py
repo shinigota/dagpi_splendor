@@ -24,6 +24,7 @@ class GameRules:
     nb_min_gem_stack = 0
     development_cards = 0
     gameboard = None
+    tiles = None
 
     def __init__(self, gameboard):
         tree = ET.parse("../res/splendor_res.xml")
@@ -77,12 +78,21 @@ class GameRules:
                 'number_max_noble_tile_turn').text
 
         # Noble tiles xml
+        self.tiles = []
         for noble_tile in root.findall('.//noble_tile'):
             nt_emerald = noble_tile.find('Emerald').text
             nt_diamond = noble_tile.find('Diamond').text
             nt_sapphire = noble_tile.find('Sapphire').text
             nt_onyx = noble_tile.find('Onyx').text
             nt_ruby = noble_tile.find('Ruby').text
+
+        self.tiles.append({
+            "emerald": nt_emerald,
+            "diamond": nt_diamond,
+            "sapphire": nt_sapphire,
+            "onyx": nt_onyx,
+            "ruby": nt_ruby
+        })
 
         # Development cards xml
         self.development_cards = {}
@@ -94,8 +104,8 @@ class GameRules:
             c_onyx = dc.find('Onyx').text
             c_ruby = dc.find('Ruby').text
             number_prestige_points = dc.find('number_prestige_points').text
-
             gem_token_bonus = dc.find('gem_token_bonus').text
+
             self.development_cards[level].append({
                 "level": level,
                 "number_prestige_points": number_prestige_points,

@@ -18,6 +18,7 @@ class GameBoard:
     current_player = None
     bank = None
     nb_gems = None
+    nb_players = 4
     ask_purchase_or_reserve_card = None
     display = None
     gamerules = None
@@ -25,6 +26,8 @@ class GameBoard:
 
     decks = None
     displayed_cards = None
+    hidden_tiles = None
+    displayed_tiles = None
 
     def __init__(self, display, gamerules):
         # Todo : init players, current_player, bank
@@ -33,27 +36,33 @@ class GameBoard:
         self.display = display
         self.types = []
         self.gamestate = GameState.PLAYER_TURN
-        nbPlayers = 0
         self.nb_gems = 2
         self.ask_purchase_or_reserve_card = False
 
-        if nbPlayers == 2:
+        if self.nb_players == 2:
             self.nb_gems = self.gamerules.nb_gem_for_2
-        elif nbPlayers == 3:
+        elif self.nb_players == 3:
             self.nb_gems = self.gamerules.nb_gem_for_3
         else:
             self.nb_gems = self.gamerules.nb_gem_for_4
 
-        self.init_bank()
-        self.init_cards()
+        self.deck = dict(list)
+        self.displayed_cards = dict(list)
+
 
         self.hidden_tiles = []
         self.displayed_tiles = []
 
-        self.deck = dict(list)
-        self.displayed_cards = dict(list)
+
         self.init_cards()
 
+    # GameBoard init methods
+
+    def init_gameboard(self):
+
+        self.init_bank()
+        self.init_cards()
+        self.init_tiles()
 
     def init_bank(self):
         self.bank = []
@@ -62,15 +71,19 @@ class GameBoard:
 
     def init_cards(self):
         development_cards = self.gamerules.get_development_cards()
-        self.decks["1"] = development_cards["1"]
-        self.decks["2"] = development_cards["2"]
-        self.decks["3"] = development_cards["3"]
+        for i in range(1, self.gamerules.nb_lvl_card):
+            self.decks[i] = development_cards[i]
 
-        for i in range(1,3):
-            for x in range(1,4):
-                card = self.choose_card_in_deck(i)
-                self.add_displayed_card(card)
+        for i in range(1, self.gamerules.nb_lvl_card):
+            for x in range(1, self.gamerules.nb_card_reveal):
+                self.fill_displayed_cards(i)
 
+    def init_tiles(self):
+        self.hidden_tiles = []
+        for i in range(1, self.nb_players + self.gamerules.nb_tile_more):
+            tile = random.choice(self.hidden_tiles)
+            self.hidden_tiles.remove(tile)
+            self.displayed_tiles.append(tile)
 
     def add_type(self, type):
         self.types.append(type)
@@ -204,8 +217,7 @@ class GameBoard:
         self.get_current_player().add_purchased_card(card)
         if self.get_current_player().is_turn_complete():
             self.next_turn()
-        # display.update_view()
-
+            # display.update_view()
 
     def click_reserve_card(self, card):
         '''

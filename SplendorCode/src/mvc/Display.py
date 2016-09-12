@@ -10,15 +10,12 @@ from src.mvc.GameRules import GameRules
 class Display:
     window = None
     text = "test"
-    gamerules = None
-    gameboard = None
+    game_rules = None
     game_board = None
     w = None
     h = None
 
     def __init__(self):
-        # self.gamerules = gamerules
-        # self.gameboard = gameboard
         self.window = Tk()
 
     def create_window(self):
@@ -171,8 +168,8 @@ class Display:
 
 
 display = Display()
-display.game_rules = GameRules()
-display.game_board = GameBoard()
+display.game_board = GameBoard(display, GameRules())
+display.game_rules = display.game_board.gamerules
 display.create_window()
 display.refresh()
 display.window.mainloop()

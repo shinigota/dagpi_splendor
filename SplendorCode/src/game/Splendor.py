@@ -9,9 +9,12 @@ class Splendor:
     display = None
 
     def __init__(self):
-        gameboard = GameBoard()
-        gamerules = GameRules(gameboard)
-        display = Display(gamerules, gameboard)
+        display = Display()
+        gamerules = GameRules()
+        gameboard = GameBoard(gamerules, display)
+        # set gamerules gameboard
+
+
 
 
 Splendor()
