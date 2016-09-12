@@ -54,8 +54,6 @@ class GameBoard:
         self.displayed_tiles = []
 
 
-        self.init_cards()
-
     # GameBoard init methods
 
     def init_gameboard(self):
@@ -152,6 +150,12 @@ class GameBoard:
     def fill_displayed_cards(self, lvl):
         new_card = random.choice(self.deck[int(lvl)])
         self.displayed_cards[int(lvl)].append(new_card)
+
+    def is_deck_empty(self, lvl):
+        if len(self.deck[int(lvl)]) == 0:
+            return True
+        else:
+            return False
 
 
 
