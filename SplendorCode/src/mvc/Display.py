@@ -8,16 +8,17 @@ from src.mvc.GameRules import GameRules
 
 
 class Display:
-    """zerghj."""
     window = None
     text = "test"
-    game_rules = None
+    gamerules = None
+    gameboard = None
     game_board = None
     w = None
     h = None
 
     def __init__(self):
-        """dfgh."""
+        # self.gamerules = gamerules
+        # self.gameboard = gameboard
         self.window = Tk()
 
     def create_window(self):
