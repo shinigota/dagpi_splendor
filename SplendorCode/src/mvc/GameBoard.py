@@ -1,6 +1,7 @@
 from src.element.RessourceType import RessourceType
 from src.element.Token import Token
 from src.mvc.GameRules import GameRules
+import random
 
 
 def purchase_card(card):
@@ -38,8 +39,9 @@ class GameBoard:
 
         self.hidden_tiles = []
         self.displayed_tiles = []
-        self.deck = []
-        self.displayed_cards = []
+        self.deck = dict(list)
+        self.displayed_cards = dict(list)
+
 
     def add_type(self, type):
         self.types.append(type)
@@ -64,20 +66,34 @@ class GameBoard:
         self.displayed_tiles.remove(tile)
 
     def add_to_deck(self, card):
-        self.deck.append(card)
+        self.deck[card.get_level()].append(card)
 
     def del_do_deck(self, card):
-        self.deck.remove(card)
+        self.deck[card.get_level()].remove(card)
 
     def add_displayed_card(self, card):
-        self.displayed_cards.append(card)
+        self.displayed_cards[card.get_level()].append(card)
 
     def del_displayed_card(self, card):
-        self.displayed_cards.remove(card)
+        self.displayed_cards[card.get_level()].remove(card)
+
+    def replace_displayed_card(self, card):
+        lvl = card.get_level()
+        loc = self.displayed_cards[lvl].index(card)
+        self.displayed_cards[lvl].remove(card)
+
+        new_card = random.choice(self.deck[int(lvl)])
+        self.displayed_cards[int(lvl)].insert(loc, new_card)
+
 
     def init_bank(self):
         for token_type, token_color in RessourceType.ressource_type:
             self.bank[token_type] = self.nb_gems
+
+    def fill_displayed_cards(self, lvl):
+        new_card = random.choice(self.deck[int(lvl)])
+        self.displayed_cards[int(lvl)].append(new_card)
+
 
     # Actions triggered by events
 
@@ -136,7 +152,7 @@ class GameBoard:
         :param card: Card to purchase
         :return:
         '''
-        self.get_current_player().add_purchased_card(card)
+        self.replace_displayed_card(card)
         if self.get_current_player().is_turn_complete():
             self.next_turn()
         # display.update_view()
