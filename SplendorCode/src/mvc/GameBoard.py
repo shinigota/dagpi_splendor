@@ -52,10 +52,10 @@ class GameBoard:
         self.deck = dict(list)
         self.displayed_cards = dict(list)
 
-
-
     def init_gameboard(self):
         self.init_bank()
+        self.init_decks()
+        self.init_displayed_cards()
 
     def init_bank(self):
         self.bank = []
@@ -65,9 +65,18 @@ class GameBoard:
     def init_decks(self):
         self.decks = []
         development_cards = self.gamerules.get_development_cards()
-        self.decks["1"] = development_cards["1"]
-        self.decks["2"] = development_cards["2"]
-        self.decks["3"] = development_cards["3"]
+        for i in range(1, self.gamerules.nb_lvl_card):
+            self.decks[i] = development_cards[i]
+
+    def init_displayed_cards(self):
+        for i in range(1, self.gamerules.nb_lvl_card):
+            self.fill_displayed_cards_lvl(i)
+
+    def fill_displayed_cards_lvl(self, lvl):
+        for i in range (1, 4):
+            new_card = random.choice(self.decks[lvl])
+            self.decks[lvl].remove(new_card)
+            self.displayed_cards[int(lvl)].append(new_card)
 
     def add_type(self, type):
         self.types.append(type)
@@ -110,16 +119,6 @@ class GameBoard:
 
         new_card = random.choice(self.deck[int(lvl)])
         self.displayed_cards[int(lvl)].insert(loc, new_card)
-
-    def init_bank(self):
-        for token_type, token_color in RessourceType.ressource_type:
-            self.bank[token_type] = self.nb_gems
-
-    def fill_displayed_cards(self, lvl):
-        new_card = random.choice(self.deck[int(lvl)])
-        self.displayed_cards[int(lvl)].append(new_card)
-
-
 
     # Actions triggered by events
 
@@ -195,8 +194,7 @@ class GameBoard:
         self.get_current_player().add_purchased_card(card)
         if self.get_current_player().is_turn_complete():
             self.next_turn()
-        # display.update_view()
-
+            # display.update_view()
 
     def click_reserve_card(self, card):
         '''
