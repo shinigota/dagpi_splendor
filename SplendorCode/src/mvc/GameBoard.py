@@ -18,6 +18,7 @@ class GameBoard:
     current_player = None
     bank = None
     nb_gems = None
+    nb_players = 4
     ask_purchase_or_reserve_card = None
     display = None
     gamerules = None
@@ -25,6 +26,8 @@ class GameBoard:
 
     decks = None
     displayed_cards = None
+    hidden_tiles = None
+    displayed_tiles = None
 
     def __init__(self, display, gamerules):
         # Todo : init players, current_player, bank
@@ -33,13 +36,12 @@ class GameBoard:
         self.display = display
         self.types = []
         self.gamestate = GameState.PLAYER_TURN
-        nbPlayers = 0
         self.nb_gems = 2
         self.ask_purchase_or_reserve_card = False
 
-        if nbPlayers == 2:
+        if self.nb_players == 2:
             self.nb_gems = self.gamerules.nb_gem_for_2
-        elif nbPlayers == 3:
+        elif self.nb_players == 3:
             self.nb_gems = self.gamerules.nb_gem_for_3
         else:
             self.nb_gems = self.gamerules.nb_gem_for_4
@@ -53,10 +55,13 @@ class GameBoard:
         self.init_decks()
         self.displayed_cards = dict(list)
 
+    # GameBoard init methods
+
     def init_gameboard(self):
         self.init_bank()
         self.init_decks()
         self.init_displayed_cards()
+        self.init_tiles()
 
     def init_bank(self):
         self.bank = []
@@ -70,6 +75,7 @@ class GameBoard:
             self.decks[i] = development_cards[i]
 
     def init_displayed_cards(self):
+        self.displayed_cards = {}
         for i in range(1, self.gamerules.nb_lvl_card):
             self.fill_displayed_cards_lvl(i)
 
@@ -78,6 +84,15 @@ class GameBoard:
             new_card = random.choice(self.decks[lvl])
             self.decks[lvl].remove(new_card)
             self.displayed_cards[int(lvl)].append(new_card)
+
+    def init_tiles(self):
+        self.hidden_tiles = []
+        for i in range(1, self.nb_players + self.gamerules.nb_tile_more)
+            tile = random.choice(self.hidden_tiles)
+            self.hidden_tiles.remove(tile)
+            self.displayed_tiles.append(tile)
+            
+    # functions
 
     def add_type(self, type):
         self.types.append(type)
