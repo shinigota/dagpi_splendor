@@ -1,11 +1,8 @@
-from src.element.GemStack import GemStack
-
-
 class Tile:
     points = None
     gem_conditions = None
 
-    def __init__(self, pts,  gem_conditions):
+    def __init__(self, pts, gem_conditions):
         self.points = pts
         self.gems_conditions = gem_conditions
 
@@ -13,7 +10,8 @@ class Tile:
         return self.points
 
     def get_gem_conditions(self):
-        return self.gem_conditionss
+        return self.gem_conditions
 
     def visit_player(self, player):
         player.add_owned_tile(self)
+

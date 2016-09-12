@@ -1,8 +1,7 @@
 import xml.etree.ElementTree as ET
 
-from SplendorCode.src.element.RessourceType import RessourceType
-from SplendorCode.src.mvc.EventType import EventType
-from SplendorCode.src.player import Player
+from src.element.RessourceType import RessourceType
+from src.mvc.EventType import EventType
 
 
 class GameRules:
@@ -83,14 +82,32 @@ class GameRules:
             number_prestige_points = dc.find('number_prestige_points').text
             gem_token_bonus = dc.find('gem_token_bonus').text
 
-    def event(self, eventType, object):
-        if eventType == EventType.CLICK_TOKEN:
+    def event(self, event_type, object):
+        if event_type == EventType.CLICK_TAKE_TOKEN_GAMEBOARD:
             # if check_click_token(object):
-            self.gameboard.click_token(object)
-        elif eventType == EventType.CLICK_CARD:
-            #if check_enough_ressources(object, player):
-            self.gameboard.purchase_card(object)
-
+            self.gameboard.click_token_gameboard(object)
+        elif event_type == EventType.CLICK_GIVE_BACK_PLAYER_TOKEN:
+            # if check_enough_ressources(object, player):
+            self.gameboard.click_token_player(object)
+        elif event_type == EventType.CLICK_DISPLAYED_CARD:
+            # if check_enough_ressources(object, player):
+            self.gameboard.click_displayed_card(object)
+        elif event_type == EventType.CLICK_DECK_CARD:
+            self.gameboard.click_card_deck(object)
+        elif event_type == EventType.CANCEL_ACTION:
+            None
+        elif event_type == EventType.VALIDATE_ACTION:
+            None
+        elif event_type == EventType.CLICK_TILE:
+            self.gameboard.click_tile(object)
+        elif event_type == EventType.START:
+            None
+        elif event_type == EventType.EXIT:
+            None
+        elif event_type == EventType.POPUP_PURCHASE:
+            self.gameboard.click_purchase_card(object)
+        elif event_type == EventType.POPUP_RESERVE:
+            self.gameboard.click_reserve_card(object)
 
     def check_click_token(self):
         return
@@ -113,6 +130,4 @@ class GameRules:
 
     def check_reserve_amount(self):
         return True
-
-
 
