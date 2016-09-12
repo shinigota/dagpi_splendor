@@ -16,6 +16,7 @@ class GameBoard:
     current_player = None
     bank = None
     nb_gems = None
+    ask_purchase_or_reserve_card = None
 
     def __init__(self):
         # Todo : init players, current_player, bank
@@ -24,6 +25,7 @@ class GameBoard:
         self.types = []
         nbPlayers = 0
         nb_gems = 2
+        ask_purchase_or_reserve_card = False
 
         if nbPlayers == 2:
             nb_gems = gameRules.nb_gem_for_2
@@ -112,7 +114,7 @@ class GameBoard:
         :param card:  Gameboard's displayed card clicked
         :return:
         """
-        None
+        self.ask_purchase_or_reserve_card = True
 
     def click_deck_card(self, card):
         """
@@ -128,11 +130,42 @@ class GameBoard:
 
         # display.update_view()
 
+    def click_purchase_card(self, card):
+        '''
+        Action purchase a previously selected card
+        :param card: Card to purchase
+        :return:
+        '''
+        self.get_current_player().add_purchased_card(card)
+        if self.get_current_player().is_turn_complete():
+            self.next_turn()
+        # display.update_view()
+
+    def click_reserve_card(self, card):
+        '''
+        Action reserve a previously selected card
+        :param card: Card to reserve
+        :return:
+        '''
+        self.get_current_player().add_reserved_card(card)
+        if self.get_current_player().is_turn_complete():
+            self.next_turn()
+        # display.update_view()
+
+    def click_tile(self, tile):
+        '''
+        Action user clicks on some available tiles
+        :param tile: Tile clicked
+        :return:
+        '''
+        self.get_current_player().add_owned_tile(tile)
+        if self.get_current_player().is_turn_complete():
+            self.next_turn()
 
     # Game engine actions
 
     def next_turn(self):
-        None  # Todo
+        self.ask_purchase_or_reserve_card = False
 
     # Getters
 
