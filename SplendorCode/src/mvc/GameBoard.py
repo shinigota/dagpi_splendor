@@ -45,29 +45,32 @@ class GameBoard:
             self.nb_gems = self.gamerules.nb_gem_for_4
 
         self.init_bank()
+        self.init_cards()
 
         self.hidden_tiles = []
         self.displayed_tiles = []
 
         self.deck = dict(list)
         self.displayed_cards = dict(list)
+        self.init_cards()
 
-
-
-    def init_gameboard(self):
-        self.init_bank()
 
     def init_bank(self):
         self.bank = []
         for token_type in RessourceType.ressource_type.keys():
             self.bank[token_type] = self.nb_gems
 
-    def init_decks(self):
-        self.decks = []
+    def init_cards(self):
         development_cards = self.gamerules.get_development_cards()
         self.decks["1"] = development_cards["1"]
         self.decks["2"] = development_cards["2"]
         self.decks["3"] = development_cards["3"]
+
+        for i in range(1,3):
+            for x in range(1,4):
+                card = self.choose_card_in_deck(i)
+                self.add_displayed_card(card)
+
 
     def add_type(self, type):
         self.types.append(type)
@@ -97,6 +100,11 @@ class GameBoard:
     def del_do_deck(self, card):
         self.deck[card.get_level()].remove(card)
 
+    def choose_card_in_deck(self, lvl):
+        new_card = random.choice(self.deck[int(lvl)])
+        self.deck[int(lvl)].remove(new_card)
+        return new_card
+
     def add_displayed_card(self, card):
         self.displayed_cards[card.get_level()].append(card)
 
@@ -108,8 +116,9 @@ class GameBoard:
         loc = self.displayed_cards[lvl].index(card)
         self.displayed_cards[lvl].remove(card)
 
-        new_card = random.choice(self.deck[int(lvl)])
-        self.displayed_cards[int(lvl)].insert(loc, new_card)
+        if len(self.deck[int(lvl)]) != 0:
+            new_card = self.choose_card_in_deck(lvl)
+            self.displayed_cards[int(lvl)].insert(loc, new_card)
 
     def init_bank(self):
         for token_type, token_color in RessourceType.ressource_type:
@@ -168,15 +177,15 @@ class GameBoard:
         """
         self.gamestate = GameState.PLAYER_CHOOSE_PURHCASE_OR_RESERVE
 
-    def click_deck_card(self, card):
+    def click_deck_card(self, lvl):
         """
         Action click on a deck's card
         :param card: deck's card which has been clicked
         :return:
         """
+        card = self.choose_card_in_deck(lvl)
         self.get_current_player().add_reserved_card(card)
         # remove from deck
-
         if self.get_current_player().is_action_complete():
             # self.end_action()
             if self.check_tokens_amount():
@@ -204,6 +213,7 @@ class GameBoard:
         :param card: Card to reserve
         :return:
         '''
+        self.replace_displayed_card(card)
         self.get_current_player().add_reserved_card(card)
         if self.get_current_player().is_action_complete():
             # self.end_action()
@@ -219,6 +229,7 @@ class GameBoard:
         :param tile: Tile clicked
         :return:
         '''
+        self.del_displayed_tile(tile)
         self.get_current_player().add_owned_tile(tile)
         if self.get_current_player().is_action_complete():
             self.end_action()
