@@ -59,12 +59,20 @@ class GameBoard:
     # GameBoard init methods
 
     def init_gameboard(self):
-
+        """
+        Gameboard initialization / creation, adding the cards / tokens to
+        the board
+        :return:
+        """
         self.init_bank()
         self.init_cards()
         self.init_tiles()
 
     def init_bank(self):
+        """
+        Initialising the bank, creating the tokens
+        :return:
+        """
         self.bank = []
         for token_type in RessourceType.ressource_type.keys():
             self.bank[token_type] = self.nb_gems
@@ -79,11 +87,18 @@ class GameBoard:
                 self.fill_displayed_cards(i)
 
     def init_tiles(self):
+        """
+        Initialising the available and hidden tiles
+        :return:
+        """
         self.hidden_tiles = []
+        self.displayed_tiles = []
         for i in range(1, self.nb_players + self.gamerules.nb_tile_more):
             tile = random.choice(self.hidden_tiles)
             self.hidden_tiles.remove(tile)
             self.displayed_tiles.append(tile)
+
+    # functions
 
     def add_type(self, type):
         self.types.append(type)
@@ -133,9 +148,6 @@ class GameBoard:
             new_card = self.choose_card_in_deck(lvl)
             self.displayed_cards[int(lvl)].insert(loc, new_card)
 
-    def init_bank(self):
-        for token_type, token_color in RessourceType.ressource_type:
-            self.bank[token_type] = self.nb_gems
 
     def fill_displayed_cards(self, lvl):
         new_card = random.choice(self.deck[int(lvl)])
@@ -199,6 +211,7 @@ class GameBoard:
         card = self.choose_card_in_deck(lvl)
         self.get_current_player().add_reserved_card(card)
         # remove from deck
+
         if self.get_current_player().is_action_complete():
             # self.end_action()
             if self.check_tokens_amount():
