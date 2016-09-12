@@ -33,41 +33,47 @@ class Display:
         txtBuy1 = canvas.create_text(25, 40, text="0", fill="white")
         txtBuy2 = canvas.create_text(25, 80, text="0", fill="white")
         txtBuy3 = canvas.create_text(75, 80, text="0", fill="white")
-        canvas.place(x=250 + 120 * (position - 1), y=150, anchor=SE)
+        canvas.place(x=170 + 120 * (position - 1), y=100)
         canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_TILE, t=tile: self.game_rules.event(e, t))
 
     def display_card(self, position, card):
         canvas = Canvas(self.window, width=100, height=120, background=self.get_color(card.level))
         points = canvas.create_text(10, 10, text=0, fill="black")
-        gem = canvas.create_oval(85, 5, 95, 15, fill=card.income_gem)
-        gemBuy1 = canvas.create_oval(10, 85, 40, 115, fill=card.income_gem)
-        gemBuy2 = canvas.create_oval(60, 85, 90, 115, fill=card.income_gem)
-        gemBuy3 = canvas.create_oval(10, 45, 40, 75, fill=card.income_gem)
-        gemBuy4 = canvas.create_oval(60, 45, 90, 75, fill=card.income_gem)
-        txtBuy1 = canvas.create_text(25, 100, text=0, fill="white")
-        txtBuy2 = canvas.create_text(75, 100, text=0, fill="white")
-        txtBuy3 = canvas.create_text(25, 60, text=0, fill="white")
-        txtBuy4 = canvas.create_text(75, 60, text=0, fill="white")
-        canvas.place(x=250 + 120 * (position - 1), y=300 + (130 * (card.level - 1)), anchor=SE)
-        canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_DISPLAYED_CARD, c=card: self.game_rules.event(e,c))
+        gem = canvas.create_oval(85, 5, 95, 15, fill=RessourceType.get_ressource_color(card.income_gem))
+        gemBuy1 = canvas.create_oval(10, 85, 40, 115, fill=RessourceType.get_ressource_color(card.income_gem))
+        gemBuy2 = canvas.create_oval(60, 85, 90, 115, fill=RessourceType.get_ressource_color(card.income_gem))
+        gemBuy3 = canvas.create_oval(10, 45, 40, 75, fill=RessourceType.get_ressource_color(card.income_gem))
+        gemBuy4 = canvas.create_oval(60, 45, 90, 75, fill=RessourceType.get_ressource_color(card.income_gem))
+        textcolor = "white"
+        if RessourceType.get_ressource_color(card.income_gem) == "white":
+            textcolor = "black"
+        txtBuy1 = canvas.create_text(25, 100, text=0, fill=textcolor)
+        txtBuy2 = canvas.create_text(75, 100, text=0, fill=textcolor)
+        txtBuy3 = canvas.create_text(25, 60, text=0, fill=textcolor)
+        txtBuy4 = canvas.create_text(75, 60, text=0, fill=textcolor)
+        canvas.place(x=50 + 120 * (position - 1), y=490 - (130 * (card.level - 1)))
+        canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_DISPLAYED_CARD, c=card: self.game_rules.event(e, c))
 
     def display_pile(self, level):
         canvas = Canvas(self.window, width=100, height=120, background=self.get_color(level))
-        canvas.create_text(50, 50, text="PILE", fill="black")
-        canvas.place(x=120, y=300 + (130 * (level - 1)), anchor=SE)
+        canvas.create_text(50, 50, text="PILE DE NIVEAU", fill="black")
+        canvas.create_text(50, 70, text=level, fill="black")
+        canvas.place(x=50, y=490 - (130 * (level - 1)))
+        canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_DECK_CARD, l=level: self.game_rules.event(e, l))
 
     def display_gold(self, nb):
         canvas = Canvas(self.window, width=80, height=80)
         canvas.create_oval(10, 10, 70, 70, fill=RessourceType.get_ressource_color("Gold"))
         canvas.create_text(40, 40, text=nb, fill="black")
-        canvas.place(x=115, y=135, anchor=SE)
+        canvas.place(x=70, y=115)
 
     def display_gem(self, nb, gem):
         canvas = Canvas(self.window, width=80, height=80)
         canvas.create_oval(10, 10, 70, 70, fill=RessourceType.get_ressource_color(gem))
-        canvas.create_text(40, 40, text=nb, fill="white")
-        canvas.place(x=115, y=650, anchor=SE)
-        canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_TAKE_TOKEN_GAMEBOARD, g=gem: self.game_rules.event(e, g))
+        canvas.create_text(40, 40, text=nb, fill="black")
+        canvas.place(x=70, y=650)
+        canvas.bind("<Button-1>",
+                    lambda event, e=EventType.CLICK_TAKE_TOKEN_GAMEBOARD, g=gem: self.game_rules.event(e, g))
 
     def get_color(self, level):
         if level == 1:
@@ -88,9 +94,9 @@ display.display_tile(3, None)
 display.display_tile(4, None)
 display.display_tile(5, None)
 
-card1 = Card(0, "red", 0, 1)
-card2 = Card(0, "black", 0, 2)
-card3 = Card(0, "blue", 0, 3)
+card1 = Card(0, "Ruby", 0, 1)
+card2 = Card(0, "Onyx", 0, 2)
+card3 = Card(0, "Diamond", 0, 3)
 
 display.display_card(1, card1)
 display.display_card(2, card1)
@@ -111,6 +117,6 @@ display.display_pile(3)
 
 display.display_gold(5)
 
-display.display_gem(5, "Ruby")
+display.display_gem(5, "Diamond")
 
 display.window.mainloop()
