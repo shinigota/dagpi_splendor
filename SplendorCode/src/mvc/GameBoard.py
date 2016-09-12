@@ -1,6 +1,9 @@
 from src.element.RessourceType import RessourceType
 from src.element.Token import Token
+from src.game.GameState import GameState
 from src.mvc.GameRules import GameRules
+import random
+
 from src.player import Player
 from src.element import Tile
 
@@ -17,30 +20,85 @@ class GameBoard:
     current_player = None
     bank = None
     nb_gems = None
+    nb_players = 4
     ask_purchase_or_reserve_card = None
+    display = None
+    gamerules = None
+    gamestate = None
 
-    def __init__(self):
+    decks = None
+    displayed_cards = None
+    hidden_tiles = None
+    displayed_tiles = None
+
+    def __init__(self, display, gamerules):
         # Todo : init players, current_player, bank
         self.players = []
-        gameRules = GameRules()
+        self.gamerules = gamerules
+        self.display = display
         self.types = []
-        nbPlayers = 0
-        nb_gems = 2
-        ask_purchase_or_reserve_card = False
+        self.gamestate = GameState.PLAYER_TURN
+        self.nb_gems = 2
+        self.ask_purchase_or_reserve_card = False
 
-        if nbPlayers == 2:
-            nb_gems = gameRules.nb_gem_for_2
-        elif nbPlayers == 3:
-            nb_gems = gameRules.nb_gem_for_3
+        if self.nb_players == 2:
+            self.nb_gems = self.gamerules.nb_gem_for_2
+        elif self.nb_players == 3:
+            self.nb_gems = self.gamerules.nb_gem_for_3
         else:
-            nb_gems = gameRules.nb_gem_for_4
+            self.nb_gems = self.gamerules.nb_gem_for_4
 
-        self.init_bank()
+        self.deck = dict(list)
+        self.displayed_cards = dict(list)
+
 
         self.hidden_tiles = []
         self.displayed_tiles = []
-        self.deck = []
-        self.displayed_cards = []
+
+
+    # GameBoard init methods
+
+    def init_gameboard(self):
+        """
+        Gameboard initialization / creation, adding the cards / tokens to
+        the board
+        :return:
+        """
+        self.init_bank()
+        self.init_cards()
+        self.init_tiles()
+
+    def init_bank(self):
+        """
+        Initialising the bank, creating the tokens
+        :return:
+        """
+        self.bank = []
+        for token_type in RessourceType.ressource_type.keys():
+            self.bank[token_type] = self.nb_gems
+
+    def init_cards(self):
+        development_cards = self.gamerules.get_development_cards()
+        for i in range(1, self.gamerules.nb_lvl_card):
+            self.decks[i] = development_cards[i]
+
+        for i in range(1, self.gamerules.nb_lvl_card):
+            for x in range(1, self.gamerules.nb_card_reveal):
+                self.fill_displayed_cards(i)
+
+    def init_tiles(self):
+        """
+        Initialising the available and hidden tiles
+        :return:
+        """
+        self.hidden_tiles = []
+        self.displayed_tiles = []
+        for i in range(1, self.nb_players + self.gamerules.nb_tile_more):
+            tile = random.choice(self.hidden_tiles)
+            self.hidden_tiles.remove(tile)
+            self.displayed_tiles.append(tile)
+
+    # functions
 
     def add_type(self, type):
         self.types.append(type)
@@ -65,20 +123,43 @@ class GameBoard:
         self.displayed_tiles.remove(tile)
 
     def add_to_deck(self, card):
-        self.deck.append(card)
+        self.deck[card.get_level()].append(card)
 
     def del_do_deck(self, card):
-        self.deck.remove(card)
+        self.deck[card.get_level()].remove(card)
+
+    def choose_card_in_deck(self, lvl):
+        new_card = random.choice(self.deck[int(lvl)])
+        self.deck[int(lvl)].remove(new_card)
+        return new_card
 
     def add_displayed_card(self, card):
-        self.displayed_cards.append(card)
+        self.displayed_cards[card.get_level()].append(card)
 
     def del_displayed_card(self, card):
-        self.displayed_cards.remove(card)
+        self.displayed_cards[card.get_level()].remove(card)
 
-    def init_bank(self):
-        for token_type, token_color in RessourceType.ressource_type:
-            self.bank[token_type] = self.nb_gems
+    def replace_displayed_card(self, card):
+        lvl = card.get_level()
+        loc = self.displayed_cards[lvl].index(card)
+        self.displayed_cards[lvl].remove(card)
+
+        if len(self.deck[int(lvl)]) != 0:
+            new_card = self.choose_card_in_deck(lvl)
+            self.displayed_cards[int(lvl)].insert(loc, new_card)
+
+
+    def fill_displayed_cards(self, lvl):
+        new_card = random.choice(self.deck[int(lvl)])
+        self.displayed_cards[int(lvl)].append(new_card)
+
+    def is_deck_empty(self, lvl):
+        if len(self.deck[int(lvl)]) == 0:
+            return True
+        else:
+            return False
+
+
 
     # Actions triggered by events
 
@@ -91,8 +172,14 @@ class GameBoard:
         self.get_current_player().add_specific_token(token)
         self.bank[token.type] -= 1
 
-        if self.get_current_player().is_turn_complete():
-            self.next_turn()
+        if self.get_current_player().is_action_complete():
+            # self.end_action()
+            if self.check_tokens_amount():
+                self.gamestate = GameState.PLAYER_GIVE_TOKENS_BACK
+            else:
+                self.check_tiles()
+                self.end_action()
+                # next turn
 
     def click_token_player(self, token):
         """
@@ -103,10 +190,14 @@ class GameBoard:
         self.get_current_player().remove_specific_token(token)
         self.bank[token.type] += 1
 
-        if self.get_current_player().is_turn_complete():
-            self.next_turn()
-
-        # display.update_view()
+        if self.get_current_player().is_action_complete():
+            # self.end_action()
+            if self.check_tokens_amount():
+                self.gamestate = GameState.PLAYER_GIVE_TOKENS_BACK
+            else:
+                self.check_tiles()
+                self.end_action()
+                # display.update_view()
 
     def click_displayed_card(self, card):
         """
@@ -115,21 +206,25 @@ class GameBoard:
         :param card:  Gameboard's displayed card clicked
         :return:
         """
-        self.ask_purchase_or_reserve_card = True
+        self.gamestate = GameState.PLAYER_CHOOSE_PURHCASE_OR_RESERVE
 
-    def click_deck_card(self, card):
+    def click_deck_card(self, lvl):
         """
         Action click on a deck's card
         :param card: deck's card which has been clicked
         :return:
         """
+        card = self.choose_card_in_deck(lvl)
         self.get_current_player().add_reserved_card(card)
         # remove from deck
 
-        if self.get_current_player().is_turn_complete():
-            self.next_turn()
-
-        # display.update_view()
+        if self.get_current_player().is_action_complete():
+            # self.end_action()
+            if self.check_tokens_amount():
+                self.gamestate = GameState.PLAYER_GIVE_TOKENS_BACK
+            else:
+                self.check_tiles()
+                # display.update_view()
 
     def click_purchase_card(self, card):
         '''
@@ -137,10 +232,11 @@ class GameBoard:
         :param card: Card to purchase
         :return:
         '''
+        self.replace_displayed_card(card)
         self.get_current_player().add_purchased_card(card)
         if self.get_current_player().is_turn_complete():
             self.next_turn()
-        # display.update_view()
+            # display.update_view()
 
     def click_reserve_card(self, card):
         '''
@@ -148,10 +244,15 @@ class GameBoard:
         :param card: Card to reserve
         :return:
         '''
+        self.replace_displayed_card(card)
         self.get_current_player().add_reserved_card(card)
-        if self.get_current_player().is_turn_complete():
-            self.next_turn()
-        # display.update_view()
+        if self.get_current_player().is_action_complete():
+            # self.end_action()
+            if self.check_tokens_amount():
+                self.gamestate = GameState.PLAYER_GIVE_TOKENS_BACK
+            else:
+                self.check_tiles()
+                # display.update_view()
 
     def click_tile(self, tile):
         '''
@@ -159,14 +260,29 @@ class GameBoard:
         :param tile: Tile clicked
         :return:
         '''
+        self.del_displayed_tile(tile)
         self.get_current_player().add_owned_tile(tile)
-        if self.get_current_player().is_turn_complete():
-            self.next_turn()
+        if self.get_current_player().is_action_complete():
+            self.end_action()
 
     # Game engine actions
 
-    def next_turn(self):
-        self.ask_purchase_or_reserve_card = False
+    def end_action(self):
+        self.get_current_player().init_turn()
+        self.gamestate = GameState.PLAYER_TURN
+        self.current_player += 1
+
+    def check_tiles(self):
+        tiles = []
+        for tile in self.tiles:
+            if self.check_enough_ressources(tile):
+                tiles.append(tile)
+        if len(tiles) > 1:
+            self.gamestate = GameState.PLAYER_CHOOSE_TILE
+            return True
+        if len(tiles) == 1:
+            tile.visit_player(self.get_current_player())
+        return False
 
     # Getters
 

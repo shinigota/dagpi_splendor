@@ -22,17 +22,24 @@ class GameRules:
     nb_token_end_turn = 0
     nb_tile_per_turn = 0
     nb_min_gem_stack = 0
+    development_cards = 0
+    gameboard = None
+    tiles = None
 
-    def __init__(self):
+    def __init__(self, gameboard):
         tree = ET.parse("../res/splendor_res.xml")
         root = tree.getroot()
-        # Single parameter xml
+        self.gamerules = gameboard
+        # Single gameboard xml
         for sp in root.findall('single_parameters'):
             GameRules.game_name = sp.find('game_name').text
             GameRules.nb_lvl_card = sp.find('number_levels_cards').text
-            GameRules.nb_max_res_card = sp.find('number_max_reserved_cards').text
-            GameRules.nb_points_tile = sp.find('number_prestige_points_noble_tiles').text
-            GameRules.nb_points_end = sp.find('number_prestige_points_end_game').text
+            GameRules.nb_max_res_card = sp.find(
+                'number_max_reserved_cards').text
+            GameRules.nb_points_tile = sp.find(
+                'number_prestige_points_noble_tiles').text
+            GameRules.nb_points_end = sp.find(
+                'number_prestige_points_end_game').text
 
         # Token xml
         for token in root.findall(".//token"):
@@ -43,27 +50,35 @@ class GameRules:
         # Game setup xml
         for gs in root.findall('game_setup'):
             GameRules.nb_card_reveal = gs.find('number_cards_to_reveal').text
-            GameRules.nb_tiles_nb_p = gs.find('number_noble_tiles_more_number_players').text
+            GameRules.nb_tiles_nb_p = gs.find(
+                'number_noble_tiles_more_number_players').text
             ngtiganp = './/number_gem_tokens_in_game_according_number_players'
             for ngtigan in root.findall(ngtiganp):
-                GameRules.nb_gem_for_2 = ngtigan.find('number_gem_tokens_in_game_2_players').text
-                GameRules.nb_gem_for_3 = ngtigan.find('number_gem_tokens_in_game_3_players').text
-                GameRules.nb_gem_for_4 = ngtigan.find('number_gem_tokens_in_game_4_players').text
+                GameRules.nb_gem_for_2 = ngtigan.find(
+                    'number_gem_tokens_in_game_2_players').text
+                GameRules.nb_gem_for_3 = ngtigan.find(
+                    'number_gem_tokens_in_game_3_players').text
+                GameRules.nb_gem_for_4 = ngtigan.find(
+                    'number_gem_tokens_in_game_4_players').text
                 GameRules.nb_gold = gs.find('number_gold_tokens_in_game').text
 
         # Turn parameters xml
         for tp in root.findall('turn_parameters'):
-            GameRules.nbGemDiff = tp.find('number_gem_tokens_different_colors').text
-            GameRules.nb_gem_same = tp.find('number_gem_tokens_same_color').text
+            GameRules.nbGemDiff = tp.find(
+                'number_gem_tokens_different_colors').text
+            GameRules.nb_gem_same = tp.find(
+                'number_gem_tokens_same_color').text
             nmgtsisc = 'number_min_gem_tokens_stack_if_same_color'
             GameRules.nb_min_gem_stack = tp.find(nmgtsisc).text
             nmgticr = 'number_max_gold_tokens_if_card_reserved'
             GameRules.nb_gold_take = tp.find(nmgticr).text
-            GameRules.nb_token_end_turn = tp.find('number_max_tokens_end_turn').text
-            GameRules.nb_tile_per_turn = tp.find('number_max_noble_tile_turn').text
-
+            GameRules.nb_token_end_turn = tp.find(
+                'number_max_tokens_end_turn').text
+            GameRules.nb_tile_per_turn = tp.find(
+                'number_max_noble_tile_turn').text
 
         # Noble tiles xml
+        self.tiles = []
         for noble_tile in root.findall('.//noble_tile'):
             nt_emerald = noble_tile.find('Emerald').text
             nt_diamond = noble_tile.find('Diamond').text
@@ -71,7 +86,16 @@ class GameRules:
             nt_onyx = noble_tile.find('Onyx').text
             nt_ruby = noble_tile.find('Ruby').text
 
+        self.tiles.append({
+            "emerald": nt_emerald,
+            "diamond": nt_diamond,
+            "sapphire": nt_sapphire,
+            "onyx": nt_onyx,
+            "ruby": nt_ruby
+        })
+
         # Development cards xml
+        self.development_cards = {}
         for dc in root.findall('.//development_card'):
             level = dc.find('level').text
             c_emerald = dc.find('Emerald').text
@@ -81,6 +105,19 @@ class GameRules:
             c_ruby = dc.find('Ruby').text
             number_prestige_points = dc.find('number_prestige_points').text
             gem_token_bonus = dc.find('gem_token_bonus').text
+
+            self.development_cards[level].append({
+                "level": level,
+                "number_prestige_points": number_prestige_points,
+                "gem_token_bonus": gem_token_bonus,
+                "cost": {
+                    "emerald": c_emerald,
+                    "diamond": c_diamond,
+                    "sapphire": c_sapphire,
+                    "onyx": c_onyx,
+                    "ruby": c_ruby
+                }
+            })
 
     def event(self, event_type, object):
         if event_type == EventType.CLICK_TAKE_TOKEN_GAMEBOARD:
@@ -108,6 +145,9 @@ class GameRules:
             self.gameboard.click_purchase_card(object)
         elif event_type == EventType.POPUP_RESERVE:
             self.gameboard.click_reserve_card(object)
+
+    def get_development_cards(self):
+        return self.development_cards
 
     def check_click_token(self):
         return

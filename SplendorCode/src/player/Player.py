@@ -66,7 +66,7 @@ class Player:
         self.purchased_card_amount = 0
         self.reserved_card_amount = 0
 
-    def is_turn_complete(self):
+    def is_action_complete(self):
         return (self.token_choice_valid() or
                 self.purchased_card_amount == 1 or
                 self.reserved_card_amount == 1)
