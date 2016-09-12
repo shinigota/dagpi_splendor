@@ -8,7 +8,7 @@ import random
 def purchase_card(card):
     None
     # player.purchase_card(card)
-    # add new card to gameboard, delete one from stack
+    # add new card to game_board, delete one from stack
 
     # display.update()
 
@@ -21,7 +21,7 @@ class GameBoard:
     nb_players = 4
     ask_purchase_or_reserve_card = None
     display = None
-    gamerules = None
+    game_rules = None
     gamestate = None
 
     decks = None
@@ -29,10 +29,10 @@ class GameBoard:
     hidden_tiles = None
     displayed_tiles = None
 
-    def __init__(self, display, gamerules):
+    def __init__(self, display, game_rules):
         # Todo : init players, current_player, bank
         self.players = []
-        self.gamerules = gamerules
+        self.game_rules = game_rules
         self.display = display
         self.types = []
         self.gamestate = GameState.PLAYER_TURN
@@ -40,19 +40,19 @@ class GameBoard:
         self.ask_purchase_or_reserve_card = False
 
         if self.nb_players == 2:
-            self.nb_gems = self.gamerules.nb_gem_for_2
+            self.nb_gems = self.game_rules.nb_gem_for_2
         elif self.nb_players == 3:
-            self.nb_gems = self.gamerules.nb_gem_for_3
+            self.nb_gems = self.game_rules.nb_gem_for_3
         else:
-            self.nb_gems = self.gamerules.nb_gem_for_4
+            self.nb_gems = self.game_rules.nb_gem_for_4
 
-        self.init_gameboard()
+        self.init_game_board()
 
-    # GameBoard init methods
+    # game_board init methods
 
-    def init_gameboard(self):
+    def init_game_board(self):
         """
-        Gameboard initialization / creation, adding the cards / tokens to
+        game_board initialization / creation, adding the cards / tokens to
         the board
         :return:
         """
@@ -66,15 +66,15 @@ class GameBoard:
         Initialising the bank, creating the tokens
         :return:
         """
-        self.bank = []
+        self.bank = {}
         for token_type in RessourceType.ressource_type.keys():
             self.bank[token_type] = self.nb_gems
 
     def init_decks(self):
         """Initialising the 3 different level of cards"""
-        self.decks = []
-        development_cards = self.gamerules.get_development_cards()
-        for i in range(1, self.gamerules.nb_lvl_card):
+        self.decks = {}
+        development_cards = self.game_rules.get_development_cards()
+        for i in range(1, int(self.game_rules.nb_lvl_card) + 1):
             self.decks[i] = development_cards[i]
 
     def init_displayed_cards(self):
@@ -83,7 +83,7 @@ class GameBoard:
         :return:
         """
         self.displayed_cards = {}
-        for i in range(1, self.gamerules.nb_lvl_card):
+        for i in range(1, self.game_rules.nb_lvl_card):
             self.fill_displayed_cards_lvl(i)
 
     def fill_displayed_cards_lvl(self, lvl):
@@ -104,7 +104,7 @@ class GameBoard:
         """
         self.hidden_tiles = []
         self.displayed_tiles = []
-        for i in range(1, self.nb_players + self.gamerules.nb_tile_more):
+        for i in range(1, self.nb_players + self.game_rules.nb_tile_more):
             tile = random.choice(self.hidden_tiles)
             self.hidden_tiles.remove(tile)
             self.displayed_tiles.append(tile)
@@ -155,10 +155,10 @@ class GameBoard:
 
     # Actions triggered by events
 
-    def click_token_gameboard(self, token):
+    def click_token_game_board(self, token):
         """
-        Action click on a gameboard's token
-        :param token: gameboard's token which has been clicked
+        Action click on a game_board's token
+        :param token: game_board's token which has been clicked
         :return: None
         """
         self.get_current_player().add_specific_token(token)
@@ -193,7 +193,7 @@ class GameBoard:
 
     def click_displayed_card(self, card):
         """
-        Action click on a displayed card on the gameboard (ask purchase or
+        Action click on a displayed card on the game_board (ask purchase or
         reserve card)
         :param card:  Gameboard's displayed card clicked
         :return:

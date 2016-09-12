@@ -23,14 +23,14 @@ class GameRules:
     nb_tile_per_turn = 0
     nb_min_gem_stack = 0
     development_cards = 0
-    gameboard = None
+    game_board = None
+    display = None
     tiles = None
 
-    def __init__(self, gameboard):
+    def __init__(self):
         tree = ET.parse("../res/splendor_res.xml")
         root = tree.getroot()
-        self.gamerules = gameboard
-        # Single gameboard xml
+        # Single game_board xml
         for sp in root.findall('single_parameters'):
             GameRules.game_name = sp.find('game_name').text
             GameRules.nb_lvl_card = sp.find('number_levels_cards').text
@@ -96,6 +96,10 @@ class GameRules:
 
         # Development cards xml
         self.development_cards = {}
+        for i in range(1, int(self.nb_lvl_card) + 1):
+            self.development_cards[i] = []
+            # print(i)
+            # print("sdqdqssd %d"%int(self.nb_lvl_card))
         for dc in root.findall('.//development_card'):
             level = dc.find('level').text
             c_emerald = dc.find('Emerald').text
@@ -106,7 +110,7 @@ class GameRules:
             number_prestige_points = dc.find('number_prestige_points').text
             gem_token_bonus = dc.find('gem_token_bonus').text
 
-            self.development_cards[level].append({
+            self.development_cards[int(level)].append({
                 "level": level,
                 "number_prestige_points": number_prestige_points,
                 "gem_token_bonus": gem_token_bonus,
@@ -118,33 +122,41 @@ class GameRules:
                     "ruby": c_ruby
                 }
             })
+            print(int(level))
+
 
     def event(self, event_type, object):
         if event_type == EventType.CLICK_TAKE_TOKEN_GAMEBOARD:
             # if check_click_token(object):
-            self.gameboard.click_token_gameboard(object)
+            self.game_board.click_token_game_board(object)
         elif event_type == EventType.CLICK_GIVE_BACK_PLAYER_TOKEN:
             # if check_enough_ressources(object, player):
-            self.gameboard.click_token_player(object)
+            self.game_board.click_token_player(object)
         elif event_type == EventType.CLICK_DISPLAYED_CARD:
             # if check_enough_ressources(object, player):
-            self.gameboard.click_displayed_card(object)
+            self.game_board.click_displayed_card(object)
         elif event_type == EventType.CLICK_DECK_CARD:
-            self.gameboard.click_card_deck(object)
+            self.game_board.click_card_deck(object)
         elif event_type == EventType.CANCEL_ACTION:
             None
         elif event_type == EventType.VALIDATE_ACTION:
             None
         elif event_type == EventType.CLICK_TILE:
-            self.gameboard.click_tile(object)
+            self.game_board.click_tile(object)
         elif event_type == EventType.START:
             None
         elif event_type == EventType.EXIT:
             None
         elif event_type == EventType.POPUP_PURCHASE:
-            self.gameboard.click_purchase_card(object)
+            self.game_board.click_purchase_card(object)
         elif event_type == EventType.POPUP_RESERVE:
-            self.gameboard.click_reserve_card(object)
+            self.game_board.click_reserve_card(object)
 
     def get_development_cards(self):
         return self.development_cards
+
+    def set_game_board(self, game_board):
+        self.game_board = game_board
+
+    def set_display(self, display):
+        self.display = display

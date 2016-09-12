@@ -169,7 +169,7 @@ class Display:
 
 display = Display()
 display.game_board = GameBoard(display, GameRules())
-display.game_rules = display.game_board.gamerules
+display.game_rules = display.game_board.game_rules
 display.create_window()
 display.refresh()
 display.window.mainloop()
