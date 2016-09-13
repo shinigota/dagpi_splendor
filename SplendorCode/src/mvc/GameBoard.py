@@ -7,6 +7,7 @@ import random
 from src.player import Player
 from src.element import Tile
 
+
 def purchase_card(card):
     None
     # player.purchase_card(card)
@@ -61,6 +62,7 @@ class GameBoard:
         self.init_bank()
         self.init_cards()
         self.init_tiles()
+        self.init_players()
 
     def init_bank(self):
         """
@@ -98,6 +100,11 @@ class GameBoard:
             tile = random.choice(self.hidden_tiles)
             self.hidden_tiles.remove(tile)
             self.displayed_tiles.append(tile)
+
+    def init_players(self):
+        for i in range(0, self.nb_players):
+            self.players[i] = Player("Joueur %d" % i, i + 1)
+        self.current_player = 0
 
     # functions
 
@@ -268,7 +275,7 @@ class GameBoard:
     def end_action(self):
         self.get_current_player().init_turn()
         self.gamestate = GameState.PLAYER_TURN
-        self.current_player += 1
+        self.current_player = (self.current_player + 1) % self.nb_players
 
     def check_tiles(self):
         tiles = []
@@ -290,7 +297,7 @@ class GameBoard:
     def get_bank(self):
         return self.bank
 
-    #tuile
+    # tuile
     def check_enough_cards(self, player, tile):
         for gem_player, val_player in player.purchased_cards.items:
             for gem_tile, val_tile in tile.gem_conditions.items:
@@ -299,9 +306,8 @@ class GameBoard:
                         return False
         return True
 
-
     def check_token_amount(self, player):
         nb_token = sum(v for v in player.bank.values)
         if nb_token >= GameRules.nb_token_end_turn:
             return nb_token - GameRules.nb_token_end_turn
-            #return True
+            # return True

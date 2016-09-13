@@ -123,7 +123,6 @@ class GameRules:
             })
             print(int(level))
 
-
     def event(self, event_type, object):
         action_possible = False
         if event_type == EventType.CLICK_TAKE_TOKEN_GAMEBOARD:
@@ -190,9 +189,7 @@ class GameRules:
             if n_player.calcul_point_in_game() >= GameRules.nb_points_end:
                 return n_player
 
-
     def check_enough_ressources(self):
-
         return True
 
     def check_reserve_amount(self):
@@ -206,4 +203,3 @@ class GameRules:
 
     def set_display(self, display):
         self.display = display
-
