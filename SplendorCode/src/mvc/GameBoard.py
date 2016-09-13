@@ -171,7 +171,9 @@ class GameBoard:
         '''
         self.replace_displayed_card(card)
         self.get_current_player().add_purchased_card(card)
-        if self.get_current_player().is_turn_complete():
+        self.get_current_player().remove_different_tokens(
+            card.get_purchase_gems())
+        if self.get_current_player().is_action_complete():
             self.check_tiles()
             self.display.refresh()
 

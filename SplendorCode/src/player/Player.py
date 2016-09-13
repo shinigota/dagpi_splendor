@@ -56,7 +56,7 @@ class Player:
         self.tokens_took[token_type] += number
 
     def remove_different_tokens(self, tokens):
-        for tokenType, token_amount in tokens:
+        for tokenType, token_amount in tokens.items():
             self.bank[tokenType] -= token_amount
             self.tokens_took[tokenType] -= token_amount
 
@@ -106,5 +106,12 @@ class Player:
 
         for card in self.purchased_cards:
             income[card.income_gem] += 1
+
+        return income
+
+    def get_income(self):
+        income = self.bank.copy()
+        for resource_type, amount in self.get_card_income().items():
+            income[resource_type] += amount
 
         return income

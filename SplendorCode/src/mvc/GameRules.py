@@ -138,15 +138,17 @@ class GameRules:
             if action_possible:
                 self.game_board.click_token_player(object)
         elif event_type == EventType.CLICK_DISPLAYED_CARD:
-            action_possible = self.check_enough_resources(
-                object) and self.check_reserve_amount()
-            if self.check_enough_resources(object):
-                pass
-            if self.check_reserve_amount():
-                pass
+            enough_resources = self.check_enough_resources(
+                object)
+            can_reserve = self.check_reserve_amount()
+            action_possible = enough_resources and can_reserve
+            if enough_resources or can_reserve:
+                self.display.popup_select_card_action(
+                    can_reserve,
+                    enough_resources, object)
 
             # if action_possible:
-            self.game_board.click_displayed_card(object)
+            # self.game_board.click_displayed_card(object)
         elif event_type == EventType.CLICK_DECK_CARD:
             action_possible = self.check_reserve_amount()
             if action_possible:
@@ -172,11 +174,11 @@ class GameRules:
             if action_possible:
                 pass
         elif event_type == EventType.POPUP_PURCHASE:
-            # action_possible =
+            action_possible = self.check_enough_resources(object)
             if action_possible:
                 self.game_board.click_purchase_card(object)
         elif event_type == EventType.POPUP_RESERVE:
-            # action_possible =
+            action_possible = self.check_reserve_amount()
             if action_possible:
                 self.game_board.click_reserve_card(object)
 
@@ -215,7 +217,8 @@ class GameRules:
                 return n_player
 
     def check_enough_resources(self, card):
-        return card.is_purchasable(self.game_board.get_current_player())
+        return card.is_purchasable(self.game_board.get_current_player()
+                                   .get_income())
 
     def check_reserve_amount(self):
         return self.game_board.get_current_player().can_reserve_card()

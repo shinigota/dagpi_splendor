@@ -4,6 +4,7 @@ from src.mvc import GameBoard
 from src.mvc import GameRules
 import random
 
+
 class AI(Player):
     difficulty = None
     game_board = None
@@ -11,7 +12,8 @@ class AI(Player):
     game_state = None
     ressource = None
 
-    def __init__(self, name, position, difficulty, gb, gr, rt, gs):
+    def __init__(self, name, position, difficulty, gb=None, gr=None,
+                 rt=None, gs=None):
         Player.__init__(self, name, position)
         self.game_board = gb
         self.game_rules = gr
@@ -19,7 +21,6 @@ class AI(Player):
         self.game_state = gs
         self.dificulty = difficulty
         self.position = position
-
 
     def action_AI_basic(self):
 
@@ -81,7 +82,7 @@ class AI(Player):
                         self.game_rules.event(EventType.POPUP_RESERVE, card)
                         bool_action = True
 
-            #Acheter
+            # Acheter
             if action_ia == "purchase":
                 l_where_p = ["reserved", "visible"]
                 where_p = random.choice(list(l_where_p))
@@ -91,7 +92,7 @@ class AI(Player):
                     for card_r in self.reserved_cards:
                         self.game_board.event(EventType.POPUP_PURCHASE, card_r)
                         break
-                else :
+                else:
 
                     count_card = 0
                     count_card_t = 0
@@ -114,7 +115,7 @@ class AI(Player):
                             l_action.remove(action_ia)
                             break
 
-                #Rendre Token
+                # Rendre Token
                 if self.game_board.game_state == \
                         self.game_state.PLAYER_GIVE_TOKENS_BACK:
                     while sum(self.bank.values()) > 10:
@@ -122,12 +123,11 @@ class AI(Player):
                         self.game_rules.event(
                             EventType.CLICK_GIVE_BACK_PLAYER_TOKEN, token_gb)
 
-                #Choisir Tile
+                # Choisir Tile
                 if self.game_board.game_state == \
                         self.game_state.PLAYER_CHOOSE_TILE:
                     for tiles_c in self.displayed_tiles:
                         self.game_rules.event(EventType.CLICK_TILE)
-
 
         # Pas sur
         if bool_action == False:
@@ -137,16 +137,12 @@ class AI(Player):
         print("Hello IA")
         nb_turn = 0
 
-
-
-#Card Niveau 1 : Cout de gem = 3-5
-#Card Niveau 2 : Cout de gem = 5-8
-#Card Niveau 3 : Cout de gem =  7-14
+    # Card Niveau 1 : Cout de gem = 3-5
+    # Card Niveau 2 : Cout de gem = 5-8
+    # Card Niveau 3 : Cout de gem =  7-14
 
 
 
 
 
-        # def action_reserved_card(self):
-
-
+    # def action_reserved_card(self):

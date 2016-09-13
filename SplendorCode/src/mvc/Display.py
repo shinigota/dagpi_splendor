@@ -193,7 +193,7 @@ class Display:
         canvas.create_text(50, 45, text=player.nickname, fill="black")
         canvas.create_text(50, 65, text=str(player.calcul_point_in_game()) +
                                         " / "
-                                        "%d"%
+                                        "%d" %
                                         self.game_rules.nb_points_end,
                            fill="black")
         y = 130
@@ -216,7 +216,7 @@ class Display:
         canvas.create_text(50, 45, text=player.nickname, fill="black")
         canvas.create_text(50, 65, text=str(player.calcul_point_in_game()) +
                                         " / "
-                                        "%d"%
+                                        "%d" %
                                         self.game_rules.nb_points_end,
                            fill="black")
         y = 130
@@ -305,13 +305,13 @@ class Display:
     def popup_select_card_action(self, isreserved, ispurchase, card):
         popup = Toplevel(height=250, width=280)
         # popup.protocol("WM_DELETE_WINDOW", self.on_exit)
-        Label(popup, text="Selectionner votre action :", height=1,
+        Label(popup, text="Sélectionnez votre action :", height=1,
               width=30).place(x=40, y=10)
         self.display_card(popup, 90, 50, card, None)
         if isreserved:
             canvas = Canvas(popup, height=20,
                             width=60, background="grey")
-            canvas.create_text(30, 10, text="Reserver", fill="black")
+            canvas.create_text(30, 10, text="Réserver", fill="black")
             canvas.bind("<Button-1>", lambda event,
                                              p=popup,
                                              e=EventType.POPUP_RESERVE,
@@ -353,6 +353,7 @@ class Display:
         self.display_cards()
         self.display_tiles()
         self.display_players()
+
 
 display = Display()
 display.game_board = GameBoard(display, GameRules())

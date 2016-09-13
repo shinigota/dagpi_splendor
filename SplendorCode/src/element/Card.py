@@ -27,8 +27,9 @@ class Card:
         for res_type in self.purchase_gems:
             if tokens[res_type] + available_gold >= \
                     self.purchase_gems[res_type]:
-                available_gold -= self.purchase_gems[res_type] - \
-                                 tokens[res_type]
+                if self.purchase_gems[res_type] > tokens[res_type] :
+                    available_gold -= (
+                        self.purchase_gems[res_type] - tokens[res_type])
             else:
                 return False
         return True
