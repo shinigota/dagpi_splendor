@@ -171,17 +171,27 @@ class Display:
                            g=gem: self.game_rules.event(e, g))
 
     def display_player_bank(self, canvas, x, y, player):
-        canvas = Canvas(canvas, width=100, height=100)
+        canvas = Canvas(canvas, width=450, height=150, background="Red")
+        canvas.place(x=x, y=y)
         x = 10
-        y = 10
+        y = 80
         for token in player.bank.keys():
             if token == "Gold":
-                self.display_player_gold(canvas, 50, 50, player.bank[token])
+                self.display_player_gold(canvas, 350, 50, player.bank[token])
             else:
                 self.display_player_gem(canvas, x, y, player.bank[token],
                                         token)
                 x += 60
+
+    def display_player_gold(self, canvas, x, y, nb):
+        canvas = Canvas(canvas, width=60, height=60)
+        canvas.create_oval(10, 10, 50, 50,
+                           fill=RessourceType.get_color("Gold"))
+        canvas.create_text(30, 30, text=nb, fill="black")
         canvas.place(x=x, y=y)
+        canvas.bind("<Button-1>",
+                    lambda event, e=EventType.CLICK_GIVE_BACK_PLAYER_TOKEN,
+                           g="Gold": self.game_rules.event(e, g))
 
     def display_player_gem(self, canvas, x, y, nb, gem):
         color = "white"
@@ -190,18 +200,20 @@ class Display:
         canvas = Canvas(canvas, width=60, height=60)
         canvas.create_oval(10, 10, 50, 50,
                            fill=RessourceType.get_color(gem))
-        canvas.create_text(20, 20, text=nb, fill=color)
+        canvas.create_text(30, 30, text=nb, fill=color)
         canvas.place(x=x, y=y)
         canvas.bind("<Button-1>",
                     lambda event, e=EventType.CLICK_GIVE_BACK_PLAYER_TOKEN,
                            g=gem: self.game_rules.event(e, g))
 
-    def display_player_gold(self, canvas, x, y, player):
+    def display_player_income_card(self, canvas, x, y, nb, gem):
+        color = "white"
+        if RessourceType.get_color(gem) == "white":
+            color = "black"
         canvas = Canvas(canvas, width=60, height=60)
-        canvas.place(x=x, y=y)
-
-    def display_player_income_card(self, canvas, x, y, player):
-        canvas = Canvas(canvas, width=80, height=80)
+        canvas.create_rectangle(10, 10, 50, 50,
+                                fill=RessourceType.get_color(gem))
+        canvas.create_text(30, 30, text=nb, fill=color)
         canvas.place(x=x, y=y)
 
     @staticmethod
@@ -220,7 +232,8 @@ class Display:
         self.display_piles()
         self.display_cards()
         self.display_tiles()
-        self.display_player_bank(self.window, 100, 100, self.game_board.get_current_player())
+        self.display_player_bank(self.window, 200, 100,
+                                 self.game_board.get_current_player())
 
 
 display = Display()
