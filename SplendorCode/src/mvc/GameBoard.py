@@ -58,7 +58,10 @@ class GameBoard:
         """
         self.bank = {}
         for token_type in RessourceType.ressource_type.keys():
-            self.bank[token_type] = self.nb_gems
+            nb = self.nb_gems
+            if token_type == "Gold":
+                nb = GameRules.nb_gold
+            self.bank[token_type] = nb
 
     def init_cards(self):
         """
@@ -174,6 +177,8 @@ class GameBoard:
         '''
         self.replace_displayed_card(card)
         self.get_current_player().add_reserved_card(card)
+        self.get_current_player().add_specific_token("Gold",
+                                                     GameRules.nb_gold_take)
         if self.get_current_player().is_action_complete():
             if self.check_tokens_amount():
                 self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK

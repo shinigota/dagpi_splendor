@@ -2,6 +2,7 @@ from src.element.Card import Card
 from src.element.RessourceType import RessourceType
 from src.element.Tile import Tile
 from src.element.Token import Token
+from src.mvc.GameRules import GameRules
 
 
 class Player:
@@ -17,12 +18,12 @@ class Player:
     reserved_card_amount = None
 
     def __init__(self, nickname, position):
-        self.purchasedCards = [Card]
-        self.reservedCards = [Card]
-        self.ownedTiles = [Tile]
-        self.bank = [Token]
         self.position = position
         self.nickname = nickname
+        self.purchased_cards = []
+        self.reserved_cards = []
+        self.owned_tiles = []
+        self.bank = {}
         self.init_turn()
 
     def init_bank(self):
@@ -85,11 +86,11 @@ class Player:
         for pcard in self.purchased_cards.items():
             nb_points += pcard.points
 
-        for ptile in self.ownedTiles.items():
+        for ptile in self.owned_tiles.items():
             nb_points += ptile.points
 
         return nb_points
 
     def can_reserve_card(self):
         # Todo : replace with xml value
-        return self.reserved_card_amount < 2
+        return self.reserved_card_amount < GameRules.nb_max_res_card
