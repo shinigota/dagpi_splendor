@@ -182,6 +182,12 @@ class Display:
                 self.display_player_gem(canvas, x, y, player.bank[token],
                                         token)
                 x += 60
+        x = 10
+        y = 10
+        for token in player.get_card_income():
+            self.display_player_income_card(canvas, x, y, player.bank[token],
+                                            token)
+            x += 60
 
     def display_player_gold(self, canvas, x, y, nb):
         canvas = Canvas(canvas, width=60, height=60)

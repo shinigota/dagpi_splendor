@@ -98,7 +98,8 @@ class Player:
     def get_card_income(self):
         income = {}
         for ressource_type in RessourceType.ressource_type.keys():
-            income[ressource_type] = 0
+            if ressource_type != "Gold":
+                income[ressource_type] = 0
 
         for card in self.purchased_cards:
                 income[card.income_gem] += 1
