@@ -38,7 +38,16 @@ class Display:
         canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_TILE,
                                          t=tile: self.game_rules.event(e, t))
 
-    def display_card(self, position, card):
+    def display_cards(self):
+        for lvl in range(1, int(self.game_rules.nb_lvl_card) + 1):
+            i = 1
+            for card in self.game_board.displayed_cards[lvl]:
+                x = 170 + 120 * (i - 1)
+                y = 490 - (130 * (lvl - 1))
+                self.display_card(x, y, card)
+                i += 1
+
+    def display_card(self, x, y, card):
         canvas = Canvas(self.window, width=100, height=120,
                         background=self.get_color(card.level))
         points = canvas.create_text(10, 10, text=0, fill="black")
@@ -64,15 +73,21 @@ class Display:
         txtBuy2 = canvas.create_text(75, 100, text=0, fill=textcolor)
         txtBuy3 = canvas.create_text(25, 60, text=0, fill=textcolor)
         txtBuy4 = canvas.create_text(75, 60, text=0, fill=textcolor)
-        canvas.place(x=50 + 120 * (position - 1),
-                     y=490 - (130 * (card.level - 1)))
+        canvas.place(x=x,
+                     y=y)
         canvas.bind("<Button-1>",
                     lambda event, e=EventType.CLICK_DISPLAYED_CARD,
                            c=card: self.game_rules.event(e, c))
 
-    def display_pile(self, level, vide):
+    def display_piles(self):
+        self.display_pile(1, False)
+        for i in range(1, int(self.game_rules.nb_lvl_card) + 1):
+            print(i)
+            self.display_pile(i, self.game_board.is_deck_empty(i))
+
+    def display_pile(self, level, empty):
         color = Display.get_color(level)
-        if vide:
+        if empty:
             color = "grey"
         canvas = Canvas(self.window, width=100, height=120, background=color)
         canvas.create_text(50, 50, text="PILE DE NIVEAU", fill="black")
@@ -137,33 +152,14 @@ class Display:
     def refresh(self):
 
         self.display_bank(self.game_board.bank)
+        self.display_piles()
+        self.display_cards()
 
         self.display_tile(1, None)
         self.display_tile(2, None)
         self.display_tile(3, None)
         self.display_tile(4, None)
         self.display_tile(5, None)
-
-        card1 = Card(0, "Ruby", 0, 1)
-        card2 = Card(0, "Onyx", 0, 2)
-        card3 = Card(0, "Diamond", 0, 3)
-
-        self.display_card(1, card1)
-        self.display_card(2, card1)
-        self.display_card(3, card1)
-        self.display_card(4, card1)
-        self.display_card(1, card2)
-        self.display_card(2, card2)
-        self.display_card(3, card2)
-        self.display_card(4, card2)
-        self.display_card(1, card3)
-        self.display_card(2, card3)
-        self.display_card(3, card3)
-        self.display_card(4, card3)
-
-        self.display_pile(1, True)
-        self.display_pile(2, False)
-        self.display_pile(3, False)
 
 
 display = Display()
