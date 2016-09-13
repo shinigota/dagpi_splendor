@@ -5,6 +5,7 @@ from src.element.ResourceType import ResourceType
 from src.mvc.EventType import EventType
 from src.mvc.GameBoard import GameBoard
 from src.mvc.GameRules import GameRules
+from src.player.AI import AI
 
 
 class Display:
@@ -124,12 +125,11 @@ class Display:
                     lambda event, e=EventType.CLICK_DISPLAYED_CARD,
                            c=card: self.game_rules.event(e, c))
 
-    def display_piles(self):
-        self.display_pile(1, False)
+    def display_stacks(self):
         for i in range(1, int(self.game_rules.nb_lvl_card) + 1):
-            self.display_pile(i, self.game_board.is_deck_empty(i))
+            self.display_stack(i, self.game_board.is_deck_empty(i))
 
-    def display_pile(self, level, empty):
+    def display_stack(self, level, empty):
         color = Display.get_color(level)
         if empty:
             color = "grey"
@@ -170,13 +170,25 @@ class Display:
                     lambda event, e=EventType.CLICK_TAKE_TOKEN_GAMEBOARD,
                            g=gem: self.game_rules.event(e, g))
 
-    ###################### Display hand of player #################################
+###################### Display hand of player #################################
 
+    def display_players(self):
+        x = 1300
+        y = 40
+        for player in self.game_board.players:
+            if type(player) == AI:
+                self.display_player_ia(x, y, player)
+                y += 280
+            else:
+                self.display_player_human(player)
 
-    def display_player_human(self):
-        player = self.game_board.get_current_player()
-        canvas = Canvas(self.window, width=500, height=250)
-        self.display_player_bank(canvas, 110, 0, player)
+    def display_player_human(self,player):
+        color = "grey"
+        if self.game_board.get_current_player() == player:
+            color = "orange"
+        canvas = Canvas(self.window, width=500, height=270,
+                        highlightbackground=color)
+        self.display_player_bank(canvas, 100, 10, player)
         canvas.create_text(50, 45, text=player.nickname, fill="black")
         canvas.create_text(50, 65, text=str(player.calcul_point_in_game()) +
                                         " / "
@@ -190,13 +202,16 @@ class Display:
             self.display_card(canvas, x, y, card)
             i += 1
         self.display_player_tile(canvas, 370, 140, player)
-        canvas.place(x=750, y=310)
+        canvas.place(x=750, y=320)
 
-    def display_player_ia(self, x, y):
-        player = self.game_board.get_current_player()
-        canvas = Canvas(self.window, width=500, height=250)
+    def display_player_ia(self, x, y,player):
+        color = "grey"
+        if self.game_board.get_current_player() == player:
+            color = "orange"
+        canvas = Canvas(self.window, width=500, height=270,
+                        highlightbackground=color)
         canvas.place(x=x, y=y)
-        self.display_player_bank(canvas, 110, 0, player)
+        self.display_player_bank(canvas, 100, 10, player)
         canvas.create_text(50, 45, text=player.nickname, fill="black")
         canvas.create_text(50, 65, text=str(player.calcul_point_in_game()) +
                                         " / "
@@ -241,7 +256,8 @@ class Display:
                 pass
             else:
                 self.display_player_income_card(canvas, x, y,
-                                                player.bank[token],
+                                                player.get_card_income()[
+                                                    token],
                                                 token)
                 x += 60
 
@@ -290,13 +306,10 @@ class Display:
 
     def refresh(self):
         self.display_bank(self.game_board.bank)
-        self.display_piles()
+        self.display_stacks()
         self.display_cards()
         self.display_tiles()
-        self.display_player_human()
-        self.display_player_ia(1300, 50)
-        self.display_player_ia(1300, 310)
-        self.display_player_ia(1300, 570)
+        self.display_players()
 
 
 display = Display()

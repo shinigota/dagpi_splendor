@@ -93,8 +93,10 @@ class GameBoard:
 
     def init_players(self):
         self.players = []
-        for i in range(0, self.nb_players):
-            self.players.append(Player("Joueur %d" % i, i + 1))
+        self.players.append(Player("Joueur %d" % 0, 1))
+        for i in range(1, self.nb_players):
+            from src.player.AI import AI
+            self.players.append(AI("Joueur %d" % i, i + 1, 1))
         self.current_player = 0
         self.human_player = self.players[0]
 

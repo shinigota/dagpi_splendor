@@ -7,10 +7,9 @@ import random
 class AI(Player):
     difficulty = None
 
-    def __init__(self, position, difficulty):
-        Player.__init__()
+    def __init__(self, name, position, difficulty):
+        Player.__init__(self, name, position)
         self.dificulty = difficulty
-        self.position = position
 
     def basic_mod(self, ):
         dict = {}
