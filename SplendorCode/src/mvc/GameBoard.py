@@ -1,3 +1,5 @@
+import time
+
 from src.element.ResourceType import ResourceType
 from src.game.GameState import GameState
 from src.mvc.GameRules import GameRules
@@ -111,7 +113,8 @@ class GameBoard:
         self.get_current_player().add_specific_token(token)
         self.bank[token] -= 1
 
-        if self.get_current_player().is_action_complete():
+        if self.get_current_player().is_action_complete() or \
+                not self.can_take_token():
             if self.check_tokens_amount():
                 self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK
             else:
@@ -249,9 +252,6 @@ class GameBoard:
         self.types.remove(type)
         del type
 
-    def count_types(self):
-        return len(self.types)
-
     def add_hidden_tile(self, tile):
         self.hidden_tiles.append(tile)
 
@@ -299,6 +299,16 @@ class GameBoard:
             return True
         else:
             return False
+
+    def can_take_token(self):
+        for token, amount in self.bank.items():
+            if amount > 0 and token != "Gold":
+                if self.get_current_player().tokens_took[token] == 0:
+                    return True
+                elif self.get_current_player().tokens_took[token] < 2 and \
+                                amount >= 3:
+                    return True
+        return False
 
     # Getters
 

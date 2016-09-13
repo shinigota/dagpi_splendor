@@ -41,6 +41,7 @@ class Player:
 
     def del_reserved_card(self, card):
         self.reserved_cards.remove(card)
+        self.reserved_card_amount -= 1
 
     def add_owned_tile(self, tile):
         self.owned_tiles.append(tile)
@@ -95,7 +96,7 @@ class Player:
         return nb_points
 
     def can_reserve_card(self):
-        return self.reserved_card_amount < GameRules.nb_max_res_card
+        return len(self.reserved_cards) < GameRules.nb_max_res_card
 
     def get_card_income(self):
         income = {}
