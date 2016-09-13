@@ -96,6 +96,9 @@ class GameBoard:
         for i in range(0, self.nb_players):
             self.players.append(Player("Joueur %d" % i, i + 1))
         self.current_player = 0
+        self.get_current_player().add_reserved_card(self.displayed_cards[1][1])
+        self.get_current_player().add_reserved_card(self.displayed_cards[2][1])
+        self.get_current_player().add_reserved_card(self.displayed_cards[3][1])
 
     # Actions triggered by events
 

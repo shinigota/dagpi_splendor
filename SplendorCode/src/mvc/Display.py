@@ -76,7 +76,7 @@ class Display:
                 i += 1
 
     def display_card(self, canvas, x, y, card):
-        canvas = Canvas(self.window, width=100, height=120,
+        canvas = Canvas(canvas, width=100, height=120,
                         background=self.get_color(int(card.level)))
         points = canvas.create_text(10, 10, text=card.points, fill="black")
 
@@ -143,7 +143,7 @@ class Display:
     def display_bank(self, bank):
         x = 70
         y = 650
-        for token in bank.keys():
+        for token in ResourceType.get_sorted_resources():
             if token == "Gold":
                 self.display_gold(self.window, 70, 115, bank[token])
             else:
@@ -170,29 +170,80 @@ class Display:
                     lambda event, e=EventType.CLICK_TAKE_TOKEN_GAMEBOARD,
                            g=gem: self.game_rules.event(e, g))
 
-    def display_player_bank(self, canvas, x, y, player):
-        canvas = Canvas(canvas, width=450, height=150, background="Red")
+    ###################### Display hand of player #################################
+
+
+    def display_player_human(self):
+        player = self.game_board.get_current_player()
+        canvas = Canvas(self.window, width=500, height=250)
+        self.display_player_bank(canvas, 110, 0, player)
+        canvas.create_text(50, 45, text=player.nickname, fill="black")
+        canvas.create_text(50, 65, text=str(player.calcul_point_in_game()) +
+                                        " / "
+                                        "" +
+                                        self.game_rules.nb_points_end,
+                           fill="black")
+        y = 130
+        i = 1
+        for card in player.reserved_cards:
+            x = 10 + 120 * (i - 1)
+            self.display_card(canvas, x, y, card)
+            i += 1
+        self.display_player_tile(canvas, 370, 140, player)
+        canvas.place(x=800, y=0)
+
+    def display_player_ia(self, x, y):
+        player = self.game_board.get_current_player()
+        canvas = Canvas(self.window, width=500, height=250)
         canvas.place(x=x, y=y)
-        x = 10
-        y = 80
-        for token in player.bank.keys():
+        self.display_player_bank(canvas, 110, 0, player)
+        canvas.create_text(50, 45, text=player.nickname, fill="black")
+        canvas.create_text(50, 65, text=str(player.calcul_point_in_game()) +
+                                        " / "
+                                        "" +
+                                        self.game_rules.nb_points_end,
+                           fill="black")
+        y = 130
+        i = 1
+        for card in player.reserved_cards:
+            x = 10 + 120 * (i - 1)
+            self.display_card(canvas, x, y, card)
+            i += 1
+        self.display_player_tile(canvas, 370, 140, player)
+
+    def display_player_tile(self, canvas, x, y, player):
+        canvas = Canvas(canvas, width=100, height=100,
+                        background='#725202')
+        canvas.create_text(50, 50, text=len(player.owned_tiles), fill="black")
+        canvas.place(x=x, y=y)
+
+    def display_player_bank(self, canvas, x, y, player):
+        canvas = Canvas(canvas, width=390, height=120)
+        canvas.place(x=x, y=y)
+        x = 0
+        y = 60
+        for token in ResourceType.get_sorted_resources():
             if token == "Gold":
-                self.display_player_gold(canvas, 350, 50, player.bank[token])
+                self.display_player_gold(canvas, 320, 30, player.bank[token])
             else:
                 self.display_player_gem(canvas, x, y, player.bank[token],
                                         token)
                 x += 60
-        x = 10
-        y = 10
-        for token in player.get_card_income():
-            self.display_player_income_card(canvas, x, y, player.bank[token],
-                                            token)
-            x += 60
+        x = 0
+        y = 0
+        for token in ResourceType.get_sorted_resources():
+            if token == "Gold":
+                pass
+            else:
+                self.display_player_income_card(canvas, x, y,
+                                                player.bank[token],
+                                                token)
+                x += 60
 
     def display_player_gold(self, canvas, x, y, nb):
         canvas = Canvas(canvas, width=60, height=60)
         canvas.create_oval(10, 10, 50, 50,
-                           fill=RessourceType.get_color("Gold"))
+                           fill=ResourceType.get_color("Gold"))
         canvas.create_text(30, 30, text=nb, fill="black")
         canvas.place(x=x, y=y)
         canvas.bind("<Button-1>",
@@ -214,11 +265,11 @@ class Display:
 
     def display_player_income_card(self, canvas, x, y, nb, gem):
         color = "white"
-        if RessourceType.get_color(gem) == "white":
+        if ResourceType.get_color(gem) == "white":
             color = "black"
         canvas = Canvas(canvas, width=60, height=60)
         canvas.create_rectangle(10, 10, 50, 50,
-                                fill=RessourceType.get_color(gem))
+                                fill=ResourceType.get_color(gem))
         canvas.create_text(30, 30, text=nb, fill=color)
         canvas.place(x=x, y=y)
 
@@ -238,8 +289,9 @@ class Display:
         self.display_piles()
         self.display_cards()
         self.display_tiles()
-        self.display_player_bank(self.window, 200, 100,
-                                 self.game_board.get_current_player())
+        self.display_player_human()
+        self.display_player_ia(1100, 260)
+        self.display_player_ia(1100, 520)
 
 
 display = Display()
