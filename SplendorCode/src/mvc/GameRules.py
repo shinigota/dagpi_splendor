@@ -126,10 +126,10 @@ class GameRules:
 
     def event(self, event_type, object):
         action_possible = False
-        if self.game_board.get_current_player().position != \
-                self.game_board.get_human_player().position:
-            return action_possible
-        elif event_type == EventType.CLICK_TAKE_TOKEN_GAMEBOARD:
+        # if self.game_board.get_current_player().position != \
+        #         self.game_board.get_human_player().position:
+        #     return action_possible
+        if event_type == EventType.CLICK_TAKE_TOKEN_GAMEBOARD:
             action_possible = self.check_click_game_board_token(object)
             if action_possible:
                 self.game_board.click_token_game_board(object)
@@ -150,7 +150,7 @@ class GameRules:
         elif event_type == EventType.CLICK_DECK_CARD:
             action_possible = self.check_reserve_amount()
             if action_possible:
-                self.game_board.click_card_deck(object)
+                self.game_board.click_deck_card(object)
         elif event_type == EventType.CANCEL_ACTION:
             # action_possible =
             if action_possible:
@@ -218,7 +218,7 @@ class GameRules:
         return card.is_purchasable(self.game_board.get_current_player())
 
     def check_reserve_amount(self):
-        return self.game_board.get_current_player.can_reserve_card()
+        return self.game_board.get_current_player().can_reserve_card()
 
     def get_tiles(self):
         return self.tiles
