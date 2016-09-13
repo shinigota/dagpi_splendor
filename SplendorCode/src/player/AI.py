@@ -15,10 +15,6 @@ class AI(Player):
     def __init__(self, name, position, difficulty, gb=None, gr=None,
                  rt=None, gs=None):
         Player.__init__(self, name, position)
-        self.game_board = gb
-        self.game_rules = gr
-        self.ressource = rt
-        self.game_state = gs
         self.dificulty = difficulty
         self.position = position
 
@@ -32,7 +28,7 @@ class AI(Player):
 
             if action_ia == "two":
                 dict_t2 = {}
-                for k, v in self.game_board.bank.items():
+                for k, v in GameBoard.bank.items():
                     if v >= self.game_board.nb_min_gem_stack:
                         dict_t2[k] = v
                 if len(dict_t2) == 0:
