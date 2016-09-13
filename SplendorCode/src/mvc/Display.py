@@ -256,7 +256,8 @@ class Display:
                 pass
             else:
                 self.display_player_income_card(canvas, x, y,
-                                                player.bank[token],
+                                                player.get_card_income()[
+                                                    token],
                                                 token)
                 x += 60
 
