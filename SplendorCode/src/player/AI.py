@@ -4,7 +4,6 @@ from src.mvc import GameBoard
 from src.mvc import GameRules
 import random
 
-
 class AI(Player):
     difficulty = None
     game_board = None
@@ -12,8 +11,8 @@ class AI(Player):
     game_state = None
     ressource = None
 
-    def __init__(self, position, difficulty, gb, gr, rt, gs):
-        Player.__init__()
+    def __init__(self, name, position, difficulty, gb, gr, rt, gs):
+        Player.__init__(self, name, position)
         self.game_board = gb
         self.game_rules = gr
         self.ressource = rt
@@ -151,4 +150,3 @@ class AI(Player):
         # def action_reserved_card(self):
 
 
-    def buy
