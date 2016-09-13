@@ -190,7 +190,7 @@ class Display:
             self.display_card(canvas, x, y, card)
             i += 1
         self.display_player_tile(canvas, 370, 140, player)
-        canvas.place(x=800, y=0)
+        canvas.place(x=750, y=310)
 
     def display_player_ia(self, x, y):
         player = self.game_board.get_current_player()
@@ -207,9 +207,14 @@ class Display:
         i = 1
         for card in player.reserved_cards:
             x = 10 + 120 * (i - 1)
-            self.display_card(canvas, x, y, card)
+            self.display_card_ia(canvas, x, y, card.level)
             i += 1
         self.display_player_tile(canvas, 370, 140, player)
+
+    def display_card_ia(self, canvas, x, y, level):
+        color = Display.get_color(level)
+        canvas = Canvas(canvas, width=100, height=120, background=color)
+        canvas.place(x=x, y=y)
 
     def display_player_tile(self, canvas, x, y, player):
         canvas = Canvas(canvas, width=100, height=100,
@@ -290,8 +295,9 @@ class Display:
         self.display_cards()
         self.display_tiles()
         self.display_player_human()
-        self.display_player_ia(1100, 260)
-        self.display_player_ia(1100, 520)
+        self.display_player_ia(1300, 50)
+        self.display_player_ia(1300, 310)
+        self.display_player_ia(1300, 570)
 
 
 display = Display()
