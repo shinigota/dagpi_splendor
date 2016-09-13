@@ -22,7 +22,6 @@ class Display:
     def create_window(self):
         self.window.title(GameRules.game_name)
         self.w, self.h = 1900, 1000
-        self.window.overrideredirect(0)
         self.window.geometry("%dx%d+0+0" % (self.w, self.h))
 
     def display_tiles(self):
@@ -73,10 +72,11 @@ class Display:
             for card in self.game_board.displayed_cards[lvl]:
                 x = 170 + 120 * (i - 1)
                 y = 490 - (130 * (lvl - 1))
-                self.display_card(self.window, x, y, card)
+                self.display_card(self.window, x, y, card,
+                                  EventType.CLICK_DISPLAYED_CARD)
                 i += 1
 
-    def display_card(self, canvas, x, y, card):
+    def display_card(self, canvas, x, y, card, event):
         canvas = Canvas(canvas, width=100, height=120,
                         background=self.get_color(int(card.level)))
         points = canvas.create_text(10, 10, text=card.points, fill="black")
@@ -121,9 +121,10 @@ class Display:
                     i = 0
         canvas.place(x=x,
                      y=y)
-        canvas.bind("<Button-1>",
-                    lambda event, e=EventType.CLICK_DISPLAYED_CARD,
-                           c=card: self.game_rules.event(e, c))
+        if event is not None:
+            canvas.bind("<Button-1>",
+                        lambda event, e=event,
+                               c=card: self.game_rules.event(e, c))
 
     def display_stacks(self):
         for i in range(1, int(self.game_rules.nb_lvl_card) + 1):
@@ -170,7 +171,7 @@ class Display:
                     lambda event, e=EventType.CLICK_TAKE_TOKEN_GAMEBOARD,
                            g=gem: self.game_rules.event(e, g))
 
-###################### Display hand of player #################################
+    ###################### Display hand of player #################################
 
     def display_players(self):
         x = 1300
@@ -182,7 +183,7 @@ class Display:
             else:
                 self.display_player_human(player)
 
-    def display_player_human(self,player):
+    def display_player_human(self, player):
         color = "grey"
         if self.game_board.get_current_player() == player:
             color = "orange"
@@ -199,12 +200,12 @@ class Display:
         i = 1
         for card in player.reserved_cards:
             x = 10 + 120 * (i - 1)
-            self.display_card(canvas, x, y, card)
+            self.display_card(canvas, x, y, card, EventType.POPUP_RESERVE)
             i += 1
         self.display_player_tile(canvas, 370, 140, player)
         canvas.place(x=750, y=320)
 
-    def display_player_ia(self, x, y,player):
+    def display_player_ia(self, x, y, player):
         color = "grey"
         if self.game_board.get_current_player() == player:
             color = "orange"
@@ -294,6 +295,48 @@ class Display:
         canvas.create_text(30, 30, text=nb, fill=color)
         canvas.place(x=x, y=y)
 
+    def refresh(self):
+        self.display_bank(self.game_board.bank)
+        self.display_stacks()
+        self.display_cards()
+        self.display_tiles()
+        self.display_players()
+
+    def popup_select_card_action(self, isreserved, ispurchase, card):
+        popup = Toplevel(height=250, width=280)
+        # popup.protocol("WM_DELETE_WINDOW", self.on_exit)
+        Label(popup, text="Selectionner votre action :", height=1,
+              width=30).place(x=40, y=10)
+        self.display_card(popup, 90, 50, card, None)
+        if isreserved:
+            canvas = Canvas(popup, height=20,
+                            width=60, background="grey")
+            canvas.create_text(30, 10, text="Reserver", fill="black")
+            canvas.bind("<Button-1>", lambda event,
+                                             p=popup,
+                                             e=EventType.POPUP_RESERVE,
+                                             c=card:
+            self.click_on_popup(p, e, c))
+            canvas.place(x=60, y=200)
+        if ispurchase:
+            canvas = Canvas(popup, height=20,
+                            width=60, background="grey")
+            canvas.create_text(30, 10, text="Acheter", fill="black")
+            canvas.bind("<Button-1>", lambda event,
+                                             p=popup,
+                                             e=EventType.POPUP_PURCHASE,
+                                             c=card:
+            self.click_on_popup(p, e, c))
+            canvas.place(x=160, y=200)
+
+    def click_on_popup(self, popup, event, objet):
+        self.game_rules.event(event, objet)
+        popup.destroy()
+
+    def on_exit(self):
+        """When you click to exit, this function is called"""
+        pass
+
     @staticmethod
     def get_color(level):
         if level == 1:
@@ -311,11 +354,11 @@ class Display:
         self.display_tiles()
         self.display_players()
 
-
 display = Display()
 display.game_board = GameBoard(display, GameRules())
 display.game_rules = display.game_board.game_rules
 display.game_rules.game_board = display.game_board
+display.game_rules.display = display
 display.create_window()
 display.refresh()
 display.window.mainloop()
