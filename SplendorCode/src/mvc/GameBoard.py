@@ -1,4 +1,4 @@
-from src.element.RessourceType import RessourceType
+from src.element.ResourceType import ResourceType
 from src.game.GameState import GameState
 from src.mvc.GameRules import GameRules
 import random
@@ -57,7 +57,7 @@ class GameBoard:
         :return:
         """
         self.bank = {}
-        for token_type in RessourceType.ressource_type.keys():
+        for token_type in ResourceType.resource_type.keys():
             nb = self.nb_gems
             if token_type == "Gold":
                 nb = GameRules.nb_gold

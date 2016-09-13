@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 
 from src.element.Card import Card
-from src.element.RessourceType import RessourceType
+from src.element.ResourceType import ResourceType
 from src.element.Tile import Tile
 from src.game.GameState import GameState
 from src.mvc.EventType import EventType
@@ -48,7 +48,7 @@ class GameRules:
         for token in root.findall(".//token"):
             name_t = token.find('name').text
             color_t = token.find('color').text
-            RessourceType.add_ressource(name_t, color_t)
+            ResourceType.add_resource(name_t, color_t)
 
         # Game setup xml
         for gs in root.findall('game_setup'):
@@ -132,7 +132,7 @@ class GameRules:
             if action_possible:
                 self.game_board.click_token_player(object)
         elif event_type == EventType.CLICK_DISPLAYED_CARD:
-            # action_possible =
+            action_possible = self.check_enough_resources(object)
             if action_possible:
                 self.game_board.click_displayed_card(object)
         elif event_type == EventType.CLICK_DECK_CARD:
@@ -148,7 +148,7 @@ class GameRules:
             if action_possible:
                 pass
         elif event_type == EventType.CLICK_TILE:
-            # action_possible =
+            action_possible = self.check_click_tile()
             if action_possible:
                 self.game_board.click_tile(object)
         elif event_type == EventType.START:
@@ -189,19 +189,7 @@ class GameRules:
         return True
 
     def check_click_player_token(self, token):
-        res_type = token.get_type()
-        bank_stack = self.game_board.get_bank()[res_type]
-        if bank_stack <= 0:
-            return False
-
-        current_player = self.game_board.get_current_player()
-        if res_type in current_player.tokens_took:
-            if sum(current_player.tokens_took) > 1:
-                return False
-            elif bank_stack < 3:
-                return False
-
-        return True
+        return self.game_board.get_current_player().bank[token.type] > 1
 
 
     def check_click_card(self):
@@ -230,3 +218,5 @@ class GameRules:
 
     def set_display(self, display):
         self.display = display
+
+

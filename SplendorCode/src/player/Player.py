@@ -1,5 +1,5 @@
 from src.element.Card import Card
-from src.element.RessourceType import RessourceType
+from src.element.ResourceType import ResourceType
 from src.element.Tile import Tile
 from src.element.Token import Token
 from src.mvc.GameRules import GameRules
@@ -28,7 +28,7 @@ class Player:
 
     def init_bank(self):
         self.bank = {}
-        for ressource_type, ressource in RessourceType.ressource_type.items():
+        for ressource_type, ressource in ResourceType.resource_type.items():
             self.bank[ressource_type] = 0
 
     def add_purchased_card(self, card):
@@ -97,8 +97,9 @@ class Player:
 
     def get_card_income(self):
         income = {}
-        for ressource_type in RessourceType.ressource_type.keys():
-            income[ressource_type] = 0
+        for ressource_type in ResourceType.resource_type.keys():
+            if ressource_type != "Gold":
+                income[ressource_type] = 0
 
         for card in self.purchased_cards:
                 income[card.income_gem] += 1

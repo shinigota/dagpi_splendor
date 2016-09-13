@@ -1,7 +1,7 @@
 from tkinter import *
 
 from src.element.Card import Card
-from src.element.RessourceType import RessourceType
+from src.element.ResourceType import ResourceType
 from src.mvc.EventType import EventType
 from src.mvc.GameBoard import GameBoard
 from src.mvc.GameRules import GameRules
@@ -39,25 +39,25 @@ class Display:
             number = tile.gems_conditions[key]
             if number > 0:
                 textcolor = "white"
-                if RessourceType.get_color(key) == "white":
+                if ResourceType.get_color(key) == "white":
                     textcolor = "black"
                 if i == 1:
                     cardBuy1 = canvas.create_rectangle(10, 25, 40, 55,
-                                                       fill=RessourceType.get_color(
+                                                       fill=ResourceType.get_color(
                                                            key))
                     txtBuy1 = canvas.create_text(25, 40, text=number,
                                                  fill=textcolor)
                     i = 2
                 elif i == 2:
                     cardBuy2 = canvas.create_rectangle(10, 65, 40, 95,
-                                                       fill=RessourceType.get_color(
+                                                       fill=ResourceType.get_color(
                                                            key))
                     txtBuy2 = canvas.create_text(25, 80, text=number,
                                                  fill=textcolor)
                     i = 3
                 elif i == 3:
                     cardBuy3 = canvas.create_rectangle(60, 65, 90, 95,
-                                                       fill=RessourceType.get_color(
+                                                       fill=ResourceType.get_color(
                                                            key))
                     txtBuy3 = canvas.create_text(75, 80, text=number,
                                                  fill=textcolor)
@@ -81,39 +81,39 @@ class Display:
         points = canvas.create_text(10, 10, text=card.points, fill="black")
 
         gem = canvas.create_oval(85, 5, 95, 15,
-                                 fill=RessourceType.get_color(
+                                 fill=ResourceType.get_color(
                                      card.income_gem))
         i = 1
         for key in card.purchase_gems:
             number = card.purchase_gems[key]
             if number > 0:
                 textcolor = "white"
-                if RessourceType.get_color(key) == "white":
+                if ResourceType.get_color(key) == "white":
                     textcolor = "black"
                 if i == 1:
                     gemBuy1 = canvas.create_oval(10, 85, 40, 115,
-                                                 fill=RessourceType.get_color(
+                                                 fill=ResourceType.get_color(
                                                      key))
                     txtBuy1 = canvas.create_text(25, 100, text=number,
                                                  fill=textcolor)
                     i = 2
                 elif i == 2:
                     gemBuy2 = canvas.create_oval(60, 85, 90, 115,
-                                                 fill=RessourceType.get_color(
+                                                 fill=ResourceType.get_color(
                                                      key))
                     txtBuy2 = canvas.create_text(75, 100, text=number,
                                                  fill=textcolor)
                     i = 3
                 elif i == 3:
                     gemBuy3 = canvas.create_oval(10, 45, 40, 75,
-                                                 fill=RessourceType.get_color(
+                                                 fill=ResourceType.get_color(
                                                      key))
                     txtBuy3 = canvas.create_text(25, 60, text=number,
                                                  fill=textcolor)
                     i = 4
                 elif i == 4:
                     gemBuy4 = canvas.create_oval(60, 45, 90, 75,
-                                                 fill=RessourceType.get_color(
+                                                 fill=ResourceType.get_color(
                                                      key))
                     txtBuy4 = canvas.create_text(75, 60, text=number,
                                                  fill=textcolor)
@@ -153,17 +153,17 @@ class Display:
     def display_gold(self, canvas, x, y, nb):
         canvas = Canvas(canvas, width=80, height=80)
         canvas.create_oval(10, 10, 70, 70,
-                           fill=RessourceType.get_color("Gold"))
+                           fill=ResourceType.get_color("Gold"))
         canvas.create_text(40, 40, text=nb, fill="black")
         canvas.place(x=x, y=y)
 
     def display_gem(self, canvas, x, y, nb, gem):
         color = "white"
-        if RessourceType.get_color(gem) == "white":
+        if ResourceType.get_color(gem) == "white":
             color = "black"
         canvas = Canvas(canvas, width=80, height=80)
         canvas.create_oval(10, 10, 70, 70,
-                           fill=RessourceType.get_color(gem))
+                           fill=ResourceType.get_color(gem))
         canvas.create_text(40, 40, text=nb, fill=color)
         canvas.place(x=x, y=y)
         canvas.bind("<Button-1>",
@@ -185,11 +185,11 @@ class Display:
 
     def display_player_gem(self, canvas, x, y, nb, gem):
         color = "white"
-        if RessourceType.get_color(gem) == "white":
+        if ResourceType.get_color(gem) == "white":
             color = "black"
         canvas = Canvas(canvas, width=60, height=60)
         canvas.create_oval(10, 10, 50, 50,
-                           fill=RessourceType.get_color(gem))
+                           fill=ResourceType.get_color(gem))
         canvas.create_text(20, 20, text=nb, fill=color)
         canvas.place(x=x, y=y)
         canvas.bind("<Button-1>",
