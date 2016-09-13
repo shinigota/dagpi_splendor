@@ -39,7 +39,7 @@ class Display:
                                          t=tile: self.game_rules.event(e, t))
 
     def display_cards(self):
-        for lvl in range(1, int(self.game_rules.nb_lvl_card) + 1):
+        for lvl in range(1, int(self.game_rules.nb_lvl_card)):
             i = 1
             for card in self.game_board.displayed_cards[lvl]:
                 x = 170 + 120 * (i - 1)
@@ -49,30 +49,41 @@ class Display:
 
     def display_card(self, x, y, card):
         canvas = Canvas(self.window, width=100, height=120,
-                        background=self.get_color(card.level))
-        points = canvas.create_text(10, 10, text=0, fill="black")
+                        background=self.get_color(int(card.level)))
+        points = canvas.create_text(10, 10, text=card.points, fill="black")
+
         gem = canvas.create_oval(85, 5, 95, 15,
                                  fill=RessourceType.get_ressource_color(
                                      card.income_gem))
-        gemBuy1 = canvas.create_oval(10, 85, 40, 115,
-                                     fill=RessourceType.get_ressource_color(
-                                         card.income_gem))
-        gemBuy2 = canvas.create_oval(60, 85, 90, 115,
-                                     fill=RessourceType.get_ressource_color(
-                                         card.income_gem))
-        gemBuy3 = canvas.create_oval(10, 45, 40, 75,
-                                     fill=RessourceType.get_ressource_color(
-                                         card.income_gem))
-        gemBuy4 = canvas.create_oval(60, 45, 90, 75,
-                                     fill=RessourceType.get_ressource_color(
-                                         card.income_gem))
-        textcolor = "white"
-        if RessourceType.get_ressource_color(card.income_gem) == "white":
-            textcolor = "black"
-        txtBuy1 = canvas.create_text(25, 100, text=0, fill=textcolor)
-        txtBuy2 = canvas.create_text(75, 100, text=0, fill=textcolor)
-        txtBuy3 = canvas.create_text(25, 60, text=0, fill=textcolor)
-        txtBuy4 = canvas.create_text(75, 60, text=0, fill=textcolor)
+        i = 1
+        for key, number in card.purchase_gems:
+            textcolor = "white"
+            if RessourceType.get_ressource_color(key) == "white":
+                textcolor = "black"
+            if i == 1:
+                gemBuy1 = canvas.create_oval(10, 85, 40, 115,
+                                             fill=RessourceType.get_ressource_color(
+                                                 key))
+                txtBuy1 = canvas.create_text(25, 100, text=number,
+                                             fill=textcolor)
+            elif i == 2:
+                gemBuy2 = canvas.create_oval(60, 85, 90, 115,
+                                             fill=RessourceType.get_ressource_color(
+                                                 key))
+                txtBuy2 = canvas.create_text(75, 100, text=number,
+                                             fill=textcolor)
+            elif i == 3:
+                gemBuy3 = canvas.create_oval(10, 45, 40, 75,
+                                             fill=RessourceType.get_ressource_color(
+                                                 key))
+                txtBuy3 = canvas.create_text(25, 60, text=number,
+                                             fill=textcolor)
+            elif i == 4:
+                gemBuy4 = canvas.create_oval(60, 45, 90, 75,
+                                             fill=RessourceType.get_ressource_color(
+                                                 key))
+                txtBuy4 = canvas.create_text(75, 60, text=number,
+                                             fill=textcolor)
         canvas.place(x=x,
                      y=y)
         canvas.bind("<Button-1>",
@@ -165,6 +176,7 @@ class Display:
 display = Display()
 display.game_board = GameBoard(display, GameRules())
 display.game_rules = display.game_board.game_rules
+display.game_rules.game_board = display.game_board
 display.create_window()
 display.refresh()
 display.window.mainloop()
