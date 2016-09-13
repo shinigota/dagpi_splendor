@@ -89,3 +89,7 @@ class Player:
             nb_points += ptile.points
 
         return nb_points
+
+    def can_reserve_card(self):
+        # Todo : replace with xml value
+        return self.reserved_card_amount < 2

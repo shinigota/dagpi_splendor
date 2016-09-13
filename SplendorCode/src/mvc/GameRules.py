@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 from src.element.Card import Card
 from src.element.RessourceType import RessourceType
 from src.element.Tile import Tile
+from src.game.GameState import GameState
 from src.mvc.EventType import EventType
 
 
@@ -111,7 +112,6 @@ class GameRules:
             c_ruby = dc.find('Ruby').text
             number_prestige_points = dc.find('number_prestige_points').text
             gem_token_bonus = dc.find('gem_token_bonus').text
-
             card = Card(int(number_prestige_points), gem_token_bonus, {
                 "Emerald": int(c_emerald),
                 "Diamond": int(c_diamond),
@@ -173,25 +173,38 @@ class GameRules:
     def get_development_cards(self):
         return self.development_cards
 
-    def check_click_token(self):
-        return
+    def check_click_token(self, token):
+        res_type = token.get_type()
+        bank_stack = self.game_board.get_bank()[res_type]
+        if bank_stack <= 0:
+            return False
+
+        current_player = self.game_board.get_current_player()
+        if res_type in current_player.tokens_took:
+            if sum(current_player.tokens_took) > 1:
+                return False
+            elif bank_stack < 3:
+                return False
+
+        return True
 
     def check_click_card(self):
-        return
+        # ?
+        return True
 
     def check_click_tile(self):
-        return
+        return self.game_board.gamestate == GameState.PLAYER_CHOOSE_TILE
 
     def check_winner(self, player):
         for n_player in player.name:
             if n_player.calcul_point_in_game() >= GameRules.nb_points_end:
                 return n_player
 
-    def check_enough_ressources(self):
-        return True
+    def check_enough_resources(self, card):
+        return card.is_purchasable(self.game_board.get_current_player())
 
     def check_reserve_amount(self):
-        return True
+        return self.game_board.get_current_player.can_reserve_card()
 
     def get_tiles(self):
         return self.tiles
