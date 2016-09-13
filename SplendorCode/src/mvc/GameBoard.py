@@ -25,7 +25,7 @@ class GameBoard:
     ask_purchase_or_reserve_card = None
     display = None
     game_rules = None
-    gamestate = None
+    game_state = None
 
     decks = None
     displayed_cards = None
@@ -33,14 +33,12 @@ class GameBoard:
     displayed_tiles = None
 
     def __init__(self, display, game_rules):
-        # Todo : init players, current_player, bank
         self.players = []
         self.game_rules = game_rules
         self.display = display
         self.types = []
-        self.gamestate = GameState.PLAYER_TURN
+        self.game_state = GameState.PLAYER_TURN
         self.nb_gems = 2
-        self.ask_purchase_or_reserve_card = False
 
         if self.nb_players == 2:
             self.nb_gems = self.game_rules.nb_gem_for_2
@@ -178,13 +176,11 @@ class GameBoard:
         self.bank[token.type] -= 1
 
         if self.get_current_player().is_action_complete():
-            # self.end_action()
             if self.check_tokens_amount():
-                self.gamestate = GameState.PLAYER_GIVE_TOKENS_BACK
+                self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK
             else:
                 self.check_tiles()
-                self.end_action()
-                # next turn
+                self.display.refresh()
 
     def click_token_player(self, token):
         """
@@ -196,13 +192,11 @@ class GameBoard:
         self.bank[token.type] += 1
 
         if self.get_current_player().is_action_complete():
-            # self.end_action()
             if self.check_tokens_amount():
-                self.gamestate = GameState.PLAYER_GIVE_TOKENS_BACK
+                self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK
             else:
                 self.check_tiles()
-                self.end_action()
-                # display.update_view()
+                self.display.refresh()
 
     def click_displayed_card(self, card):
         """
@@ -211,12 +205,12 @@ class GameBoard:
         :param card:  Gameboard's displayed card clicked
         :return:
         """
-        self.gamestate = GameState.PLAYER_CHOOSE_PURHCASE_OR_RESERVE
+        self.game_state = GameState.PLAYER_CHOOSE_PURHCASE_OR_RESERVE
 
     def click_deck_card(self, lvl):
         """
         Action click on a deck's card
-        :param card: deck's card which has been clicked
+        :param lvl: lvl of the clicked deck
         :return:
         """
         card = self.choose_card_in_deck(lvl)
@@ -224,12 +218,11 @@ class GameBoard:
         # remove from deck
 
         if self.get_current_player().is_action_complete():
-            # self.end_action()
             if self.check_tokens_amount():
-                self.gamestate = GameState.PLAYER_GIVE_TOKENS_BACK
+                self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK
             else:
                 self.check_tiles()
-                # display.update_view()
+                self.display.refresh()
 
     def click_purchase_card(self, card):
         '''
@@ -240,8 +233,8 @@ class GameBoard:
         self.replace_displayed_card(card)
         self.get_current_player().add_purchased_card(card)
         if self.get_current_player().is_turn_complete():
-            self.next_turn()
-            # display.update_view()
+            self.check_tiles()
+            self.display.refresh()
 
     def click_reserve_card(self, card):
         '''
@@ -252,12 +245,11 @@ class GameBoard:
         self.replace_displayed_card(card)
         self.get_current_player().add_reserved_card(card)
         if self.get_current_player().is_action_complete():
-            # self.end_action()
             if self.check_tokens_amount():
-                self.gamestate = GameState.PLAYER_GIVE_TOKENS_BACK
+                self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK
             else:
                 self.check_tiles()
-                # display.update_view()
+                self.display.refresh()
 
     def click_tile(self, tile):
         '''
@@ -274,19 +266,20 @@ class GameBoard:
 
     def end_action(self):
         self.get_current_player().init_turn()
-        self.gamestate = GameState.PLAYER_TURN
+        self.game_state = GameState.PLAYER_TURN
         self.current_player = (self.current_player + 1) % self.nb_players
 
     def check_tiles(self):
         tiles = []
-        for tile in self.tiles:
-            if self.check_enough_ressources(tile):
+        for tile in self.displayed_tiles:
+            if self.check_enough_cards(tile):
                 tiles.append(tile)
         if len(tiles) > 1:
-            self.gamestate = GameState.PLAYER_CHOOSE_TILE
+            self.game_state = GameState.PLAYER_CHOOSE_TILE
             return True
         if len(tiles) == 1:
-            tile.visit_player(self.get_current_player())
+            tiles[0].visit_player(self.get_current_player())
+        self.end_action()
         return False
 
     # Getters
@@ -298,16 +291,16 @@ class GameBoard:
         return self.bank
 
     # tuile
-    def check_enough_cards(self, player, tile):
-        for gem_player, val_player in player.purchased_cards.items:
+    def check_enough_cards(self, tile):
+        for gem_player, val_player in self.get_current_player().purchased_cards.items:
             for gem_tile, val_tile in tile.gem_conditions.items:
                 if gem_player == gem_tile:
                     if val_tile > val_player:
                         return False
         return True
 
-    def check_token_amount(self, player):
-        nb_token = sum(v for v in player.bank.values)
+    def check_tokens_amount(self):
+        nb_token = sum(v for v in self.get_current_player().bank.values)
         if nb_token >= GameRules.nb_token_end_turn:
             return nb_token - GameRules.nb_token_end_turn
             # return True
