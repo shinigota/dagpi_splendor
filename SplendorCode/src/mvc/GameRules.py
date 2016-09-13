@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 
 from src.element.Card import Card
 from src.element.RessourceType import RessourceType
+from src.element.Tile import Tile
 from src.mvc.EventType import EventType
 
 
@@ -87,13 +88,14 @@ class GameRules:
             nt_onyx = noble_tile.find('Onyx').text
             nt_ruby = noble_tile.find('Ruby').text
 
-            GameRules.tiles.append({
-                "emerald": nt_emerald,
-                "diamond": nt_diamond,
-                "sapphire": nt_sapphire,
-                "onyx": nt_onyx,
-                "ruby": nt_ruby
+            tile = Tile(int(GameRules.nb_points_tile), {
+                "Emerald": int(nt_emerald),
+                "Diamond": int(nt_diamond),
+                "Sapphire": int(nt_sapphire),
+                "Onyx": int(nt_onyx),
+                "Ruby": int(nt_ruby)
             })
+            GameRules.tiles.append(tile)
 
         # Development cards xml
         GameRules.development_cards = {}
@@ -110,13 +112,13 @@ class GameRules:
             number_prestige_points = dc.find('number_prestige_points').text
             gem_token_bonus = dc.find('gem_token_bonus').text
 
-            card = Card(number_prestige_points, gem_token_bonus, {
-                    "Emerald": c_emerald,
-                    "Diamond": c_diamond,
-                    "Sapphire": c_sapphire,
-                    "Onyx": c_onyx,
-                    "Ruby": c_ruby
-                }, level)
+            card = Card(int(number_prestige_points), gem_token_bonus, {
+                "Emerald": int(c_emerald),
+                "Diamond": int(c_diamond),
+                "Sapphire": int(c_sapphire),
+                "Onyx": int(c_onyx),
+                "Ruby": int(c_ruby)
+            }, int(level))
             GameRules.development_cards[int(level)].append(card)
 
     def event(self, event_type, object):

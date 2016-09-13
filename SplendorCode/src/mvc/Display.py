@@ -129,7 +129,6 @@ class Display:
 
     def display_bank(self, bank):
         for token in bank.keys():
-            print(bank[token])
             if token == "Gold":
                 self.display_gold(bank[token])
             else:

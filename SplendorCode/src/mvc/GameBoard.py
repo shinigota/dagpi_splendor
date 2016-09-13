@@ -71,9 +71,9 @@ class GameBoard:
             self.decks[i] = development_cards[i]
 
         self.displayed_cards = {}
-        for i in range(1, int(self.game_rules.nb_lvl_card)):
+        for i in range(1, int(self.game_rules.nb_lvl_card) + 1):
             self.displayed_cards[i] = []
-            for x in range(1, int(self.game_rules.nb_card_reveal)):
+            for x in range(1, int(self.game_rules.nb_card_reveal) + 1):
                 self.fill_displayed_cards(i)
 
     def init_tiles(self):
