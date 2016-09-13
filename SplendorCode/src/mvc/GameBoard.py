@@ -16,7 +16,7 @@ class GameBoard:
     display = None
     game_rules = None
     game_state = None
-
+    human_player = None
     decks = None
     displayed_cards = None
     hidden_tiles = None
@@ -96,6 +96,7 @@ class GameBoard:
         for i in range(0, self.nb_players):
             self.players.append(Player("Joueur %d" % i, i + 1))
         self.current_player = 0
+        self.human_player = self.players[0]
 
     # Actions triggered by events
 
@@ -299,3 +300,6 @@ class GameBoard:
 
     def get_bank(self):
         return self.bank
+
+    def get_human_player(self):
+        return self.human_player
