@@ -12,5 +12,5 @@ class RessourceType:
         RessourceType.ressource_type[name] = color
 
     @staticmethod
-    def get_ressource_color(name):
+    def get_color(name):
         return RessourceType.ressource_type[name]
