@@ -80,7 +80,6 @@ class Display:
         canvas = Canvas(canvas, width=100, height=120,
                         background=self.get_color(int(card.level)))
         points = canvas.create_text(10, 10, text=card.points, fill="black")
-
         gem = canvas.create_oval(85, 5, 95, 15,
                                  fill=ResourceType.get_color(
                                      card.income_gem))
@@ -137,6 +136,8 @@ class Display:
         canvas = Canvas(self.window, width=100, height=120, background=color)
         canvas.create_text(50, 50, text="PILE DE NIVEAU", fill="black")
         canvas.create_text(50, 70, text=level, fill="black")
+        image = PhotoImage(file='two.gif')
+        canvas.create_image(100, 100, image=image)
         canvas.place(x=50, y=490 - (130 * (level - 1)))
         canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_DECK_CARD,
                                          l=level: self.game_rules.event(e, l))
