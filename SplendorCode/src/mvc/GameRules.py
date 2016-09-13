@@ -53,7 +53,7 @@ class GameRules:
         # Game setup xml
         for gs in root.findall('game_setup'):
             GameRules.nb_card_reveal = gs.find('number_cards_to_reveal').text
-            GameRules.nb_tiles_nb_p = gs.find(
+            GameRules.nb_tile_more = gs.find(
                 'number_noble_tiles_more_number_players').text
             ngtiganp = './/number_gem_tokens_in_game_according_number_players'
             for ngtigan in root.findall(ngtiganp):
@@ -124,11 +124,11 @@ class GameRules:
     def event(self, event_type, object):
         action_possible = False
         if event_type == EventType.CLICK_TAKE_TOKEN_GAMEBOARD:
-            # action_possible = self.check_click_token(object)
+            action_possible = self.check_click_game_board_token(object)
             if action_possible:
                 self.game_board.click_token_game_board(object)
         elif event_type == EventType.CLICK_GIVE_BACK_PLAYER_TOKEN:
-            # action_possible =
+            action_possible = self.check_click_player_token(object)
             if action_possible:
                 self.game_board.click_token_player(object)
         elif event_type == EventType.CLICK_DISPLAYED_CARD:
@@ -173,7 +173,7 @@ class GameRules:
     def get_development_cards(self):
         return self.development_cards
 
-    def check_click_token(self, token):
+    def check_click_game_board_token(self, token):
         res_type = token.get_type()
         bank_stack = self.game_board.get_bank()[res_type]
         if bank_stack <= 0:
@@ -187,6 +187,22 @@ class GameRules:
                 return False
 
         return True
+
+    def check_click_player_token(self, token):
+        res_type = token.get_type()
+        bank_stack = self.game_board.get_bank()[res_type]
+        if bank_stack <= 0:
+            return False
+
+        current_player = self.game_board.get_current_player()
+        if res_type in current_player.tokens_took:
+            if sum(current_player.tokens_took) > 1:
+                return False
+            elif bank_stack < 3:
+                return False
+
+        return True
+
 
     def check_click_card(self):
         # ?

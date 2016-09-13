@@ -23,10 +23,11 @@ class Player:
         self.purchased_cards = []
         self.reserved_cards = []
         self.owned_tiles = []
-        self.bank = {}
+        self.init_bank()
         self.init_turn()
 
     def init_bank(self):
+        self.bank = {}
         for ressource_type, ressource in RessourceType.ressource_type.items():
             self.bank[ressource_type] = 0
 
@@ -83,14 +84,23 @@ class Player:
 
     def calcul_point_in_game(self):
         nb_points = 0
-        for pcard in self.purchased_cards.items():
+        for pcard in self.purchased_cards:
             nb_points += pcard.points
 
-        for ptile in self.owned_tiles.items():
+        for ptile in self.owned_tiles:
             nb_points += ptile.points
 
         return nb_points
 
     def can_reserve_card(self):
-        # Todo : replace with xml value
         return self.reserved_card_amount < GameRules.nb_max_res_card
+
+    def get_card_income(self):
+        income = {}
+        for ressource_type in RessourceType.ressource_type.keys():
+            income[ressource_type] = 0
+
+        for card in self.purchased_cards:
+                income[card.income_gem] += 1
+
+        return income

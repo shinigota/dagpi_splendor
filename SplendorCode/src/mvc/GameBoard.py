@@ -86,7 +86,7 @@ class GameBoard:
         """
         self.hidden_tiles = self.game_rules.get_tiles()
         self.displayed_tiles = []
-        for i in range(1, self.nb_players + self.game_rules.nb_tile_more):
+        for i in range(1, self.nb_players + int(GameRules.nb_tile_more) + 1):
             tile = random.choice(self.hidden_tiles)
             self.hidden_tiles.remove(tile)
             self.displayed_tiles.append(tile)
