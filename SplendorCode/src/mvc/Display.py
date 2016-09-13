@@ -56,7 +56,7 @@ class Display:
                                  fill=RessourceType.get_ressource_color(
                                      card.income_gem))
         i = 1
-        for key, number in card.purchase_gems:
+        for key, number in card.purchase_gems.items():
             textcolor = "white"
             if RessourceType.get_ressource_color(key) == "white":
                 textcolor = "black"
@@ -93,7 +93,6 @@ class Display:
     def display_piles(self):
         self.display_pile(1, False)
         for i in range(1, int(self.game_rules.nb_lvl_card) + 1):
-            print(i)
             self.display_pile(i, self.game_board.is_deck_empty(i))
 
     def display_pile(self, level, empty):

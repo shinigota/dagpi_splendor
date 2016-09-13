@@ -9,3 +9,6 @@ class Token:
 
     def get_color(self):
         return RessourceType.get_ressource_color(self.type)
+
+    def get_type(self):
+        return self.type
