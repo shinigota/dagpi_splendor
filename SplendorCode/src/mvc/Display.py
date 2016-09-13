@@ -180,7 +180,7 @@ class Display:
         canvas.create_text(50, 45, text=player.nickname, fill="black")
         canvas.create_text(50, 65, text=str(player.calcul_point_in_game()) +
                                         " / "
-                                        "" +
+                                        "%d"%
                                         self.game_rules.nb_points_end,
                            fill="black")
         y = 130
@@ -200,7 +200,7 @@ class Display:
         canvas.create_text(50, 45, text=player.nickname, fill="black")
         canvas.create_text(50, 65, text=str(player.calcul_point_in_game()) +
                                         " / "
-                                        "" +
+                                        "%d"%
                                         self.game_rules.nb_points_end,
                            fill="black")
         y = 130
@@ -289,7 +289,6 @@ class Display:
         return color
 
     def refresh(self):
-
         self.display_bank(self.game_board.bank)
         self.display_piles()
         self.display_cards()

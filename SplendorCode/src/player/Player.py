@@ -65,6 +65,8 @@ class Player:
 
     def init_turn(self):
         self.tokens_took = {}
+        for resource_type in ResourceType.resource_type:
+            self.tokens_took[resource_type] = 0
         self.purchased_card_amount = 0
         self.reserved_card_amount = 0
 
@@ -76,7 +78,7 @@ class Player:
     def token_choice_valid(self):
         tokens_amount = sum(self.tokens_took.values())
         if tokens_amount == 2:
-            return 2 not in self.tokens_took.values()
+            return 2 in self.tokens_took.values()
         elif tokens_amount == 3:
             return (2 not in self.tokens_took.values() and
                     3 not in self.tokens_took.values())
@@ -102,6 +104,6 @@ class Player:
                 income[ressource_type] = 0
 
         for card in self.purchased_cards:
-                income[card.income_gem] += 1
+            income[card.income_gem] += 1
 
         return income

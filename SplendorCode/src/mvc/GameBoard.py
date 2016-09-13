@@ -58,7 +58,7 @@ class GameBoard:
         """
         self.bank = {}
         for token_type in ResourceType.resource_type.keys():
-            nb = self.nb_gems
+            nb = int(self.nb_gems)
             if token_type == "Gold":
                 nb = GameRules.nb_gold
             self.bank[token_type] = nb
@@ -107,14 +107,14 @@ class GameBoard:
         :return: None
         """
         self.get_current_player().add_specific_token(token)
-        self.bank[token.type] -= 1
+        self.bank[token] -= 1
 
         if self.get_current_player().is_action_complete():
             if self.check_tokens_amount():
                 self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK
             else:
                 self.check_tiles()
-                self.display.refresh()
+        self.display.refresh()
 
     def click_token_player(self, token):
         """
@@ -220,15 +220,20 @@ class GameBoard:
 
     # tuile
     def check_enough_cards(self, tile):
-        for gem_player, val_player in self.get_current_player().purchased_cards.items:
-            for gem_tile, val_tile in tile.gem_conditions.items:
-                if gem_player == gem_tile:
-                    if val_tile > val_player:
-                        return False
+        for required_gem, \
+            required_amount \
+                in tile.gems_conditions.items():
+            player_gem_amount = 0
+            for tmp_card in self.get_current_player().purchased_cards:
+                if tmp_card.get_income_gem() == required_gem:
+                    player_gem_amount += 1
+            if required_amount > player_gem_amount:
+                return False
+
         return True
 
     def check_tokens_amount(self):
-        nb_token = sum(v for v in self.get_current_player().bank.values)
+        nb_token = sum(v for v in self.get_current_player().bank.values())
         if nb_token >= GameRules.nb_token_end_turn:
             return nb_token - GameRules.nb_token_end_turn
             # return True

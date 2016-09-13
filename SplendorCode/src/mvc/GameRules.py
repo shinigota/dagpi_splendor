@@ -36,13 +36,13 @@ class GameRules:
         # Single game_board xml
         for sp in root.findall('single_parameters'):
             GameRules.game_name = sp.find('game_name').text
-            GameRules.nb_lvl_card = sp.find('number_levels_cards').text
-            GameRules.nb_max_res_card = sp.find(
-                'number_max_reserved_cards').text
-            GameRules.nb_points_tile = sp.find(
-                'number_prestige_points_noble_tiles').text
-            GameRules.nb_points_end = sp.find(
-                'number_prestige_points_end_game').text
+            GameRules.nb_lvl_card = int(sp.find('number_levels_cards').text)
+            GameRules.nb_max_res_card = int(sp.find(
+                'number_max_reserved_cards').text)
+            GameRules.nb_points_tile = int(sp.find(
+                'number_prestige_points_noble_tiles').text)
+            GameRules.nb_points_end = int(sp.find(
+                'number_prestige_points_end_game').text)
 
         # Token xml
         for token in root.findall(".//token"):
@@ -52,33 +52,35 @@ class GameRules:
 
         # Game setup xml
         for gs in root.findall('game_setup'):
-            GameRules.nb_card_reveal = gs.find('number_cards_to_reveal').text
-            GameRules.nb_tile_more = gs.find(
-                'number_noble_tiles_more_number_players').text
+            GameRules.nb_card_reveal = int(
+                gs.find('number_cards_to_reveal').text)
+            GameRules.nb_tile_more = int(gs.find(
+                'number_noble_tiles_more_number_players').text)
             ngtiganp = './/number_gem_tokens_in_game_according_number_players'
             for ngtigan in root.findall(ngtiganp):
-                GameRules.nb_gem_for_2 = ngtigan.find(
-                    'number_gem_tokens_in_game_2_players').text
-                GameRules.nb_gem_for_3 = ngtigan.find(
-                    'number_gem_tokens_in_game_3_players').text
-                GameRules.nb_gem_for_4 = ngtigan.find(
-                    'number_gem_tokens_in_game_4_players').text
-                GameRules.nb_gold = gs.find('number_gold_tokens_in_game').text
+                GameRules.nb_gem_for_2 = int(ngtigan.find(
+                    'number_gem_tokens_in_game_2_players').text)
+                GameRules.nb_gem_for_3 = int(ngtigan.find(
+                    'number_gem_tokens_in_game_3_players').text)
+                GameRules.nb_gem_for_4 = int(ngtigan.find(
+                    'number_gem_tokens_in_game_4_players').text)
+                GameRules.nb_gold = int(gs.find(
+                    'number_gold_tokens_in_game').text)
 
         # Turn parameters xml
         for tp in root.findall('turn_parameters'):
-            GameRules.nbGemDiff = tp.find(
-                'number_gem_tokens_different_colors').text
-            GameRules.nb_gem_same = tp.find(
-                'number_gem_tokens_same_color').text
+            GameRules.nb_gem_diff = int(tp.find(
+                'number_gem_tokens_different_colors').text)
+            GameRules.nb_gem_same = int(tp.find(
+                'number_gem_tokens_same_color').text)
             nmgtsisc = 'number_min_gem_tokens_stack_if_same_color'
-            GameRules.nb_min_gem_stack = tp.find(nmgtsisc).text
+            GameRules.nb_min_gem_stack = int(tp.find(nmgtsisc).text)
             nmgticr = 'number_max_gold_tokens_if_card_reserved'
-            GameRules.nb_gold_take = tp.find(nmgticr).text
-            GameRules.nb_token_end_turn = tp.find(
-                'number_max_tokens_end_turn').text
-            GameRules.nb_tile_per_turn = tp.find(
-                'number_max_noble_tile_turn').text
+            GameRules.nb_gold_take = int(tp.find(nmgticr).text)
+            GameRules.nb_token_end_turn = int(tp.find(
+                'number_max_tokens_end_turn').text)
+            GameRules.nb_tile_per_turn = int(tp.find(
+                'number_max_noble_tile_turn').text)
 
         # Noble tiles xml
         GameRules.tiles = []
@@ -104,13 +106,14 @@ class GameRules:
             GameRules.development_cards[i] = []
 
         for dc in root.findall('.//development_card'):
-            level = dc.find('level').text
-            c_emerald = dc.find('Emerald').text
-            c_diamond = dc.find('Diamond').text
-            c_sapphire = dc.find('Sapphire').text
-            c_onyx = dc.find('Onyx').text
-            c_ruby = dc.find('Ruby').text
-            number_prestige_points = dc.find('number_prestige_points').text
+            level = int(dc.find('level').text)
+            c_emerald = int(dc.find('Emerald').text)
+            c_diamond = int(dc.find('Diamond').text)
+            c_sapphire = int(dc.find('Sapphire').text)
+            c_onyx = int(dc.find('Onyx').text)
+            c_ruby = int(dc.find('Ruby').text)
+            number_prestige_points = int(
+                dc.find('number_prestige_points').text)
             gem_token_bonus = dc.find('gem_token_bonus').text
             card = Card(int(number_prestige_points), gem_token_bonus, {
                 "Emerald": int(c_emerald),
@@ -118,12 +121,15 @@ class GameRules:
                 "Sapphire": int(c_sapphire),
                 "Onyx": int(c_onyx),
                 "Ruby": int(c_ruby)
-            }, int(level))
+            }, level)
             GameRules.development_cards[int(level)].append(card)
 
     def event(self, event_type, object):
         action_possible = False
-        if event_type == EventType.CLICK_TAKE_TOKEN_GAMEBOARD:
+        if self.game_board.get_current_player().position != \
+                self.game_board.get_human_player().position:
+            return action_possible
+        elif event_type == EventType.CLICK_TAKE_TOKEN_GAMEBOARD:
             action_possible = self.check_click_game_board_token(object)
             if action_possible:
                 self.game_board.click_token_game_board(object)
@@ -180,18 +186,17 @@ class GameRules:
         return self.development_cards
 
     def check_click_game_board_token(self, token):
-        res_type = token.get_type()
-        bank_stack = self.game_board.get_bank()[res_type]
-        if bank_stack <= 0:
+        current_player = self.game_board.get_current_player()
+        bank_stack = int(self.game_board.get_bank()[token])
+        if int(bank_stack) <= 0 or sum(current_player.tokens_took.values()) \
+                >= GameRules.nb_gem_diff:
             return False
 
-        current_player = self.game_board.get_current_player()
-        if res_type in current_player.tokens_took:
-            if sum(current_player.tokens_took) > 1:
+        if current_player.tokens_took[token] > 0:
+            if sum(current_player.tokens_took.values()) > 1:
                 return False
-            elif bank_stack < 3:
+            elif bank_stack < GameRules.nb_min_gem_stack - 1:
                 return False
-
         return True
 
     def check_click_player_token(self, token):
