@@ -1,19 +1,9 @@
 from src.element.RessourceType import RessourceType
-from src.element.Token import Token
 from src.game.GameState import GameState
 from src.mvc.GameRules import GameRules
 import random
 
-from src.player import Player
-from src.element import Tile
-
-
-def purchase_card(card):
-    None
-    # player.purchase_card(card)
-    # add new card to game_board, delete one from stack
-
-    # display.update()
+from src.player.Player import Player
 
 
 class GameBoard:
@@ -33,7 +23,6 @@ class GameBoard:
     displayed_tiles = None
 
     def __init__(self, display, game_rules):
-        self.players = []
         self.game_rules = game_rules
         self.display = display
         self.types = []
@@ -100,69 +89,10 @@ class GameBoard:
             self.displayed_tiles.append(tile)
 
     def init_players(self):
+        self.players = []
         for i in range(0, self.nb_players):
-            self.players[i] = Player("Joueur %d" % i, i + 1)
+            self.players.append(Player("Joueur %d" % i, i + 1))
         self.current_player = 0
-
-    # functions
-
-    def add_type(self, type):
-        self.types.append(type)
-
-    def del_types(self, type):
-        self.types.remove(type)
-        del type
-
-    def count_types(self):
-        return len(self.types)
-
-    def add_hidden_tile(self, tile):
-        self.hidden_tiles.append(tile)
-
-    def del_hidden_tile(self, tile):
-        self.hidden_tiles.remove(tile)
-
-    def add_displayed_tile(self, tile):
-        self.displayed_tiles.append(tile)
-
-    def del_displayed_tile(self, tile):
-        self.displayed_tiles.remove(tile)
-
-    def add_to_deck(self, card):
-        self.deck[card.get_level()].append(card)
-
-    def del_do_deck(self, card):
-        self.deck[card.get_level()].remove(card)
-
-    def choose_card_in_deck(self, lvl):
-        new_card = random.choice(self.deck[int(lvl)])
-        self.deck[int(lvl)].remove(new_card)
-        return new_card
-
-    def add_displayed_card(self, card):
-        self.displayed_cards[card.get_level()].append(card)
-
-    def del_displayed_card(self, card):
-        self.displayed_cards[card.get_level()].remove(card)
-
-    def replace_displayed_card(self, card):
-        lvl = card.get_level()
-        loc = self.displayed_cards[lvl].index(card)
-        self.displayed_cards[lvl].remove(card)
-
-        if len(self.decks[int(lvl)]) != 0:
-            new_card = self.choose_card_in_deck(lvl)
-            self.displayed_cards[int(lvl)].insert(loc, new_card)
-
-    def fill_displayed_cards(self, lvl):
-        new_card = random.choice(self.decks[int(lvl)])
-        self.displayed_cards[int(lvl)].append(new_card)
-
-    def is_deck_empty(self, lvl):
-        if len(self.decks[int(lvl)]) == 0:
-            return True
-        else:
-            return False
 
     # Actions triggered by events
 
@@ -282,14 +212,6 @@ class GameBoard:
         self.end_action()
         return False
 
-    # Getters
-
-    def get_current_player(self):
-        return self.players[self.current_player]
-
-    def get_bank(self):
-        return self.bank
-
     # tuile
     def check_enough_cards(self, tile):
         for gem_player, val_player in self.get_current_player().purchased_cards.items:
@@ -304,3 +226,71 @@ class GameBoard:
         if nb_token >= GameRules.nb_token_end_turn:
             return nb_token - GameRules.nb_token_end_turn
             # return True
+
+    # functions
+
+    def add_type(self, type):
+        self.types.append(type)
+
+    def del_types(self, type):
+        self.types.remove(type)
+        del type
+
+    def count_types(self):
+        return len(self.types)
+
+    def add_hidden_tile(self, tile):
+        self.hidden_tiles.append(tile)
+
+    def del_hidden_tile(self, tile):
+        self.hidden_tiles.remove(tile)
+
+    def add_displayed_tile(self, tile):
+        self.displayed_tiles.append(tile)
+
+    def del_displayed_tile(self, tile):
+        self.displayed_tiles.remove(tile)
+
+    def add_to_deck(self, card):
+        self.decks[card.get_level()].append(card)
+
+    def del_do_deck(self, card):
+        self.decks[card.get_level()].remove(card)
+
+    def choose_card_in_deck(self, lvl):
+        new_card = random.choice(self.decks[int(lvl)])
+        self.decks[int(lvl)].remove(new_card)
+        return new_card
+
+    def add_displayed_card(self, card):
+        self.displayed_cards[card.get_level()].append(card)
+
+    def del_displayed_card(self, card):
+        self.displayed_cards[card.get_level()].remove(card)
+
+    def replace_displayed_card(self, card):
+        lvl = card.get_level()
+        loc = self.displayed_cards[lvl].index(card)
+        self.displayed_cards[lvl].remove(card)
+
+        if len(self.decks[int(lvl)]) != 0:
+            new_card = self.choose_card_in_deck(lvl)
+            self.displayed_cards[int(lvl)].insert(loc, new_card)
+
+    def fill_displayed_cards(self, lvl):
+        new_card = random.choice(self.decks[int(lvl)])
+        self.displayed_cards[int(lvl)].append(new_card)
+
+    def is_deck_empty(self, lvl):
+        if len(self.decks[int(lvl)]) == 0:
+            return True
+        else:
+            return False
+
+    # Getters
+
+    def get_current_player(self):
+        return self.players[self.current_player]
+
+    def get_bank(self):
+        return self.bank

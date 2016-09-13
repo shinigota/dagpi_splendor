@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 
+from src.element.Card import Card
 from src.element.RessourceType import RessourceType
 from src.mvc.EventType import EventType
 
@@ -109,19 +110,14 @@ class GameRules:
             number_prestige_points = dc.find('number_prestige_points').text
             gem_token_bonus = dc.find('gem_token_bonus').text
 
-            GameRules.development_cards[int(level)].append({
-                "level": level,
-                "number_prestige_points": number_prestige_points,
-                "gem_token_bonus": gem_token_bonus,
-                "cost": {
-                    "emerald": c_emerald,
-                    "diamond": c_diamond,
-                    "sapphire": c_sapphire,
-                    "onyx": c_onyx,
-                    "ruby": c_ruby
-                }
-            })
-            print(int(level))
+            card = Card(number_prestige_points, gem_token_bonus, {
+                    "Emerald": c_emerald,
+                    "Diamond": c_diamond,
+                    "Sapphire": c_sapphire,
+                    "Onyx": c_onyx,
+                    "Ruby": c_ruby
+                }, level)
+            GameRules.development_cards[int(level)].append(card)
 
     def event(self, event_type, object):
         action_possible = False
