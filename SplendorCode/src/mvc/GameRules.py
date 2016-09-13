@@ -132,11 +132,17 @@ class GameRules:
             if action_possible:
                 self.game_board.click_token_player(object)
         elif event_type == EventType.CLICK_DISPLAYED_CARD:
-            action_possible = self.check_enough_resources(object)
-            if action_possible:
-                self.game_board.click_displayed_card(object)
+            action_possible = self.check_enough_resources(
+                object) and self.check_reserve_amount()
+            if self.check_enough_resources(object):
+                pass
+            if self.check_reserve_amount():
+                pass
+
+            # if action_possible:
+            self.game_board.click_displayed_card(object)
         elif event_type == EventType.CLICK_DECK_CARD:
-            # action_possible =
+            action_possible = self.check_reserve_amount()
             if action_possible:
                 self.game_board.click_card_deck(object)
         elif event_type == EventType.CANCEL_ACTION:
@@ -191,7 +197,6 @@ class GameRules:
     def check_click_player_token(self, token):
         return self.game_board.get_current_player().bank[token.type] > 1
 
-
     def check_click_card(self):
         # ?
         return True
@@ -218,5 +223,3 @@ class GameRules:
 
     def set_display(self, display):
         self.display = display
-
-
