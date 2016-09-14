@@ -14,3 +14,4 @@ class EventType(Enum):
     POPUP_RESERVE = 10
     CANCEL_ACTION = 11
     VALIDATE_ACTION = 12
+    RESERVE_PURCHASE = 13

@@ -12,10 +12,12 @@ class AI(Player):
     game_state = None
     ressource = None
 
-    def __init__(self, name, position, difficulty, gb=None, gr=None,
-                 rt=None, gs=None):
+    def __init__(self, name, position, difficulty, game_board=None,
+                 game_rules=None):
         Player.__init__(self, name, position)
-        self.dificulty = difficulty
+        self.game_board = game_board
+        self.game_rules = game_rules
+        self.difficulty = difficulty
         self.position = position
 
     def action_AI_basic(self):
@@ -23,25 +25,30 @@ class AI(Player):
         l_action = ["two", "three", "reserved", "purchase"]
         bool_action = False
 
-        while len(l_action) > 1 or not bool_action:
+        while len(l_action) > 1 and not bool_action:
+            print('boucle 5')
+            print('bool_action')
+            print(len(l_action) > 1)
             action_ia = random.choice(list(l_action))
 
             if action_ia == "two":
                 dict_t2 = {}
-                for k, v in GameBoard.bank.items():
-                    if v >= self.game_board.nb_min_gem_stack:
+                for k, v in self.game_board.bank.items():
+                    if v >= self.game_rules.nb_min_gem_stack:
                         dict_t2[k] = v
                 if len(dict_t2) == 0:
                     l_action.remove(action_ia)
                 else:
                     token_t2 = random.choice(list(dict_t2.items()))
-                    self.game_rules.event(EventType.CLICK_TAKE_TOKEN_GAMEBOARD,
-                                          token_t2)
                     token_type_t2 = token_t2[1]
-                    token_nb_t2 = token_t2[0]
-                    token_t2 = (token_type_t2, token_nb_t2)
                     self.game_rules.event(EventType.CLICK_TAKE_TOKEN_GAMEBOARD,
-                                          token_t2)
+                                          token_t2[0])
+                    self.game_rules.event(EventType.CLICK_TAKE_TOKEN_GAMEBOARD,
+                                          token_t2[0])
+                    # token_nb_t2 = token_t2[0]
+                    # token_t2 = (token_type_t2, token_nb_t2)
+                    # self.game_rules.event(EventType.CLICK_TAKE_TOKEN_GAMEBOARD,
+                    #                       token_type_t2)
                     bool_action = True
 
             if action_ia == "three":
@@ -56,7 +63,7 @@ class AI(Player):
                         token_t3 = random.choice(list(dict_t3.items()))
                         token_type_t3 = token_t3[0]
                         self.game_rules.event(
-                            EventType.CLICK_TAKE_TOKEN_GAMEBOARD, token_t3)
+                            EventType.CLICK_TAKE_TOKEN_GAMEBOARD, token_type_t3)
                         del dict_t3[token_type_t3]
                     bool_action = True
 
@@ -69,12 +76,17 @@ class AI(Player):
                     where_r = random.choice(list(l_where_r))
                     l_lvl = [1, 2, 3]
                     if where_r == "deck":
+                        print('LEVEL')
+                        print(l_lvl)
                         self.game_rules.event(EventType.CLICK_DECK_CARD,
                                               random.choice(list(l_lvl)))
                         bool_action = True
                     if where_r == "card":
                         card = random.choice(
-                            list(self.game_rules.displayed_cards.values()))
+                            list(self.game_board.displayed_cards.values()))
+                        card = random.choice(card)
+                        print('CARD')
+                        print(card)
                         self.game_rules.event(EventType.POPUP_RESERVE, card)
                         bool_action = True
 
@@ -94,26 +106,40 @@ class AI(Player):
                     count_card_t = 0
                     l_lvl = [1, 2, 3]
                     while len(l_lvl) > 0:
+                        print('boucle 4')
+                        if bool_action == True:
+                            break
                         l_lvl_r = random.choice(list(l_lvl))
                         for lvl in self.game_board.displayed_cards.keys():
+                            print('boucle 3')
+                            if bool_action == True:
+                                break
                             if lvl == l_lvl_r:
-                                for c in self.game_board.displayed_cards.values():
-                                    if self.game_board.event(
-                                            EventType.POPUP_PURCHASE, c):
+                                for c_lvl in \
+                                        self.game_board.displayed_cards.values():
+                                    print('boucle 1')
+                                    if bool_action == True:
                                         break
-                                    else:
-                                        count_card += 1
+                                    for c in c_lvl:
+                                        print('CARD 2')
+                                        print(c)
+                                        if self.game_rules.event(
+                                                EventType.POPUP_PURCHASE, c):
+                                            bool_action = True
+                                            break
+                                        else:
+                                            count_card += 1
                                 if count_card == 4:
                                     l_lvl.remove(l_lvl_r)
                                     count_card_t += 4
                                     count_card = 0
-                        if count_card_t == self.game_board.nb_card_reveal:
+                        if count_card_t == self.game_rules.nb_card_reveal:
                             l_action.remove(action_ia)
                             break
 
                 # Rendre Token
                 if self.game_board.game_state == \
-                        self.game_state.PLAYER_GIVE_TOKENS_BACK:
+                        EventType.CLICK_GIVE_BACK_PLAYER_TOKEN:
                     while sum(self.bank.values()) > 10:
                         token_gb = random.choice(list(self.bank.items()))
                         self.game_rules.event(
@@ -121,7 +147,7 @@ class AI(Player):
 
                 # Choisir Tile
                 if self.game_board.game_state == \
-                        self.game_state.PLAYER_CHOOSE_TILE:
+                        EventType.CLICK_TILE:
                     for tiles_c in self.displayed_tiles:
                         self.game_rules.event(EventType.CLICK_TILE)
 
