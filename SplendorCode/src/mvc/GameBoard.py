@@ -309,7 +309,7 @@ class GameBoard:
             self.displayed_cards[int(lvl)].insert(loc, new_card)
 
     def fill_displayed_cards(self, lvl):
-        new_card = random.choice(self.decks[int(lvl)])
+        new_card = self.choose_card_in_deck(lvl)
         self.displayed_cards[int(lvl)].append(new_card)
 
     def is_deck_empty(self, lvl):
