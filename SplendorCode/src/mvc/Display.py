@@ -80,11 +80,9 @@ class Display:
     def display_card(self, canvas, x, y, card, event):
         canvas = Canvas(canvas, width=100, height=120,
                         background=self.get_color(int(card.level)))
-        #points = canvas.create_text(10, 10, text=card.points, fill="black")
-        canvas.create_image(15, 15, image=self.get_image_points(card.points))
-        gem = canvas.create_oval(85, 5, 95, 15,
-                                 fill=ResourceType.get_color(
-                                     card.income_gem))
+        canvas.create_image(50, 75, image=self.get_image_card_gem(
+            card.income_gem))
+        canvas.create_image(15, 20, image=self.get_image_points(card.points))
         i = 1
         for key in card.purchase_gems:
             number = card.purchase_gems[key]
@@ -154,19 +152,14 @@ class Display:
 
     def display_gold(self, canvas, x, y, nb):
         canvas = Canvas(canvas, width=80, height=80)
-        canvas.create_oval(10, 10, 70, 70,
-                           fill=ResourceType.get_color("Gold"))
-        canvas.create_text(40, 40, text=nb, fill="black")
+        canvas.create_image(40, 40, image=self.get_image_token_gem("Gold"))
+        canvas.create_image(40, 40, image=self.get_image_points(nb))
         canvas.place(x=x, y=y)
 
     def display_gem(self, canvas, x, y, nb, gem):
-        color = "white"
-        if ResourceType.get_color(gem) == "white":
-            color = "black"
         canvas = Canvas(canvas, width=80, height=80)
-        canvas.create_oval(10, 10, 70, 70,
-                           fill=ResourceType.get_color(gem))
-        canvas.create_text(40, 40, text=nb, fill=color)
+        canvas.create_image(40, 40, image=self.get_image_token_gem(gem))
+        canvas.create_image(40, 40, image=self.get_image_points(nb))
         canvas.place(x=x, y=y)
         canvas.bind("<Button-1>",
                     lambda event, e=EventType.CLICK_TAKE_TOKEN_GAMEBOARD,
@@ -349,6 +342,30 @@ class Display:
         self.img7 = PhotoImage(file='../res/7.gif')
         self.img7 = self.img7.subsample(3, 3)
 
+        self.img_card_D = PhotoImage(file='../res/card_diamant.gif')
+        self.img_card_D = self.img_card_D.subsample(5, 5)
+        self.img_card_E = PhotoImage(file='../res/card_emeraude.gif')
+        self.img_card_E = self.img_card_E.subsample(5, 5)
+        self.img_card_O = PhotoImage(file='../res/card_onyx.gif')
+        self.img_card_O = self.img_card_O.subsample(5, 5)
+        self.img_card_R = PhotoImage(file='../res/card_rubis.gif')
+        self.img_card_R = self.img_card_R.subsample(5, 5)
+        self.img_card_S = PhotoImage(file='../res/card_saphir.gif')
+        self.img_card_S = self.img_card_S.subsample(5, 5)
+
+        self.img_token_D = PhotoImage(file='../res/token_diamant.gif')
+        self.img_token_D = self.img_token_D.subsample(3, 3)
+        self.img_token_E = PhotoImage(file='../res/token_emeraude.gif')
+        self.img_token_E = self.img_token_E.subsample(3, 3)
+        self.img_token_R = PhotoImage(file='../res/token_rubis.gif')
+        self.img_token_R = self.img_token_R.subsample(3, 3)
+        self.img_token_S = PhotoImage(file='../res/token_saphir.gif')
+        self.img_token_S = self.img_token_S.subsample(3, 3)
+        self.img_token_O = PhotoImage(file='../res/token_onyx.gif')
+        self.img_token_O = self.img_token_O.subsample(3, 3)
+        self.img_token_G = PhotoImage(file='../res/token_gold.gif')
+        self.img_token_G = self.img_token_G.subsample(3, 3)
+
     def get_image_points(self, points):
         if points == 0:
             return self.img0
@@ -366,6 +383,32 @@ class Display:
             return self.img6
         elif points == 7:
             return self.img7
+
+    def get_image_card_gem(self, gem):
+        if gem == "Diamond":
+            return self.img_card_D
+        elif gem == "Emerald":
+            return self.img_card_E
+        elif gem == "Sapphire":
+            return self.img_card_S
+        elif gem == "Onyx":
+            return self.img_card_O
+        elif gem == "Ruby":
+            return self.img_card_R
+
+    def get_image_token_gem(self, gem):
+        if gem == "Diamond":
+            return self.img_token_D
+        elif gem == "Emerald":
+            return self.img_token_E
+        elif gem == "Sapphire":
+            return self.img_token_S
+        elif gem == "Onyx":
+            return self.img_token_O
+        elif gem == "Ruby":
+            return self.img_token_R
+        elif gem == "Gold":
+            return self.img_token_G
 
     @staticmethod
     def get_color(level):
