@@ -1,4 +1,4 @@
-from src.element.RessourceType import RessourceType
+from src.element.ResourceType import ResourceType
 
 
 class Token:
@@ -8,4 +8,7 @@ class Token:
         self.type = type
 
     def get_color(self):
-        return RessourceType.get_ressource_color(self.type)
+        return ResourceType.get_ressource_color(self.type)
+
+    def get_type(self):
+        return self.type

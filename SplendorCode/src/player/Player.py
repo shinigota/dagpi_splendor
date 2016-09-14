@@ -1,7 +1,8 @@
 from src.element.Card import Card
-from src.element.RessourceType import RessourceType
+from src.element.ResourceType import ResourceType
 from src.element.Tile import Tile
 from src.element.Token import Token
+from src.mvc.GameRules import GameRules
 
 
 class Player:
@@ -17,16 +18,17 @@ class Player:
     reserved_card_amount = None
 
     def __init__(self, nickname, position):
-        self.purchasedCards = [Card]
-        self.reservedCards = [Card]
-        self.ownedTiles = [Tile]
-        self.bank = [Token]
         self.position = position
         self.nickname = nickname
+        self.purchased_cards = []
+        self.reserved_cards = []
+        self.owned_tiles = []
+        self.init_bank()
         self.init_turn()
 
     def init_bank(self):
-        for ressource_type, ressource in RessourceType.ressource_type.items():
+        self.bank = {}
+        for ressource_type, ressource in ResourceType.resource_type.items():
             self.bank[ressource_type] = 0
 
     def add_purchased_card(self, card):
@@ -39,6 +41,7 @@ class Player:
 
     def del_reserved_card(self, card):
         self.reserved_cards.remove(card)
+        self.reserved_card_amount -= 1
 
     def add_owned_tile(self, tile):
         self.owned_tiles.append(tile)
@@ -53,7 +56,7 @@ class Player:
         self.tokens_took[token_type] += number
 
     def remove_different_tokens(self, tokens):
-        for tokenType, token_amount in tokens:
+        for tokenType, token_amount in tokens.items():
             self.bank[tokenType] -= token_amount
             self.tokens_took[tokenType] -= token_amount
 
@@ -63,6 +66,8 @@ class Player:
 
     def init_turn(self):
         self.tokens_took = {}
+        for resource_type in ResourceType.resource_type:
+            self.tokens_took[resource_type] = 0
         self.purchased_card_amount = 0
         self.reserved_card_amount = 0
 
@@ -74,7 +79,7 @@ class Player:
     def token_choice_valid(self):
         tokens_amount = sum(self.tokens_took.values())
         if tokens_amount == 2:
-            return 2 not in self.tokens_took.values()
+            return 2 in self.tokens_took.values()
         elif tokens_amount == 3:
             return (2 not in self.tokens_took.values() and
                     3 not in self.tokens_took.values())
@@ -82,10 +87,31 @@ class Player:
 
     def calcul_point_in_game(self):
         nb_points = 0
-        for pcard in self.purchased_cards.items():
+        for pcard in self.purchased_cards:
             nb_points += pcard.points
 
-        for ptile in self.ownedTiles.items():
+        for ptile in self.owned_tiles:
             nb_points += ptile.points
 
         return nb_points
+
+    def can_reserve_card(self):
+        return len(self.reserved_cards) < GameRules.nb_max_res_card
+
+    def get_card_income(self):
+        income = {}
+        for ressource_type in ResourceType.resource_type.keys():
+            if ressource_type != "Gold":
+                income[ressource_type] = 0
+
+        for card in self.purchased_cards:
+            income[card.income_gem] += 1
+
+        return income
+
+    def get_income(self):
+        income = self.bank.copy()
+        for resource_type, amount in self.get_card_income().items():
+            income[resource_type] += amount
+
+        return income

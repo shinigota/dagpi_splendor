@@ -1,4 +1,6 @@
-from src.element.RessourceType import RessourceType
+import time
+
+from src.element.ResourceType import ResourceType
 from src.game.GameState import GameState
 from src.mvc.GameRules import GameRules
 import random
@@ -16,7 +18,7 @@ class GameBoard:
     display = None
     game_rules = None
     game_state = None
-
+    human_player = None
     decks = None
     displayed_cards = None
     hidden_tiles = None
@@ -57,8 +59,11 @@ class GameBoard:
         :return:
         """
         self.bank = {}
-        for token_type in RessourceType.ressource_type.keys():
-            self.bank[token_type] = self.nb_gems
+        for token_type in ResourceType.resource_type.keys():
+            nb = int(self.nb_gems)
+            if token_type == "Gold":
+                nb = GameRules.nb_gold
+            self.bank[token_type] = nb
 
     def init_cards(self):
         """
@@ -83,16 +88,19 @@ class GameBoard:
         """
         self.hidden_tiles = self.game_rules.get_tiles()
         self.displayed_tiles = []
-        for i in range(1, self.nb_players + self.game_rules.nb_tile_more):
+        for i in range(1, self.nb_players + int(GameRules.nb_tile_more) + 1):
             tile = random.choice(self.hidden_tiles)
             self.hidden_tiles.remove(tile)
             self.displayed_tiles.append(tile)
 
     def init_players(self):
         self.players = []
-        for i in range(0, self.nb_players):
-            self.players.append(Player("Joueur %d" % i, i + 1))
+        self.players.append(Player("Joueur %d" % 0, 1))
+        for i in range(1, self.nb_players):
+            from src.player.AI import AI
+            self.players.append(AI("Joueur %d" % i, i + 1, 1))
         self.current_player = 0
+        self.human_player = self.players[0]
 
     # Actions triggered by events
 
@@ -103,14 +111,15 @@ class GameBoard:
         :return: None
         """
         self.get_current_player().add_specific_token(token)
-        self.bank[token.type] -= 1
+        self.bank[token] -= 1
 
-        if self.get_current_player().is_action_complete():
+        if self.get_current_player().is_action_complete() or \
+                not self.can_take_token():
             if self.check_tokens_amount():
                 self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK
             else:
                 self.check_tiles()
-                self.display.refresh()
+        self.display.refresh()
 
     def click_token_player(self, token):
         """
@@ -162,7 +171,9 @@ class GameBoard:
         '''
         self.replace_displayed_card(card)
         self.get_current_player().add_purchased_card(card)
-        if self.get_current_player().is_turn_complete():
+        self.get_current_player().remove_different_tokens(
+            card.get_purchase_gems())
+        if self.get_current_player().is_action_complete():
             self.check_tiles()
             self.display.refresh()
 
@@ -174,6 +185,8 @@ class GameBoard:
         '''
         self.replace_displayed_card(card)
         self.get_current_player().add_reserved_card(card)
+        self.get_current_player().add_specific_token("Gold",
+                                                     GameRules.nb_gold_take)
         if self.get_current_player().is_action_complete():
             if self.check_tokens_amount():
                 self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK
@@ -214,15 +227,20 @@ class GameBoard:
 
     # tuile
     def check_enough_cards(self, tile):
-        for gem_player, val_player in self.get_current_player().purchased_cards.items:
-            for gem_tile, val_tile in tile.gem_conditions.items:
-                if gem_player == gem_tile:
-                    if val_tile > val_player:
-                        return False
+        for required_gem, \
+            required_amount \
+                in tile.gems_conditions.items():
+            player_gem_amount = 0
+            for tmp_card in self.get_current_player().purchased_cards:
+                if tmp_card.get_income_gem() == required_gem:
+                    player_gem_amount += 1
+            if required_amount > player_gem_amount:
+                return False
+
         return True
 
     def check_tokens_amount(self):
-        nb_token = sum(v for v in self.get_current_player().bank.values)
+        nb_token = sum(v for v in self.get_current_player().bank.values())
         if nb_token >= GameRules.nb_token_end_turn:
             return nb_token - GameRules.nb_token_end_turn
             # return True
@@ -235,9 +253,6 @@ class GameBoard:
     def del_types(self, type):
         self.types.remove(type)
         del type
-
-    def count_types(self):
-        return len(self.types)
 
     def add_hidden_tile(self, tile):
         self.hidden_tiles.append(tile)
@@ -287,6 +302,16 @@ class GameBoard:
         else:
             return False
 
+    def can_take_token(self):
+        for token, amount in self.bank.items():
+            if amount > 0 and token != "Gold":
+                if self.get_current_player().tokens_took[token] == 0:
+                    return True
+                elif self.get_current_player().tokens_took[token] < 2 and \
+                                amount >= 3:
+                    return True
+        return False
+
     # Getters
 
     def get_current_player(self):
@@ -294,3 +319,6 @@ class GameBoard:
 
     def get_bank(self):
         return self.bank
+
+    def get_human_player(self):
+        return self.human_player

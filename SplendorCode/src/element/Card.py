@@ -21,3 +21,15 @@ class Card:
 
     def get_points(self):
         return self.points
+
+    def is_purchasable(self, tokens):
+        available_gold = tokens["Gold"]
+        for res_type in self.purchase_gems:
+            if tokens[res_type] + available_gold >= \
+                    self.purchase_gems[res_type]:
+                if self.purchase_gems[res_type] > tokens[res_type] :
+                    available_gold -= (
+                        self.purchase_gems[res_type] - tokens[res_type])
+            else:
+                return False
+        return True

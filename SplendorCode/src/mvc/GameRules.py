@@ -1,8 +1,9 @@
 import xml.etree.ElementTree as ET
 
 from src.element.Card import Card
-from src.element.RessourceType import RessourceType
+from src.element.ResourceType import ResourceType
 from src.element.Tile import Tile
+from src.game.GameState import GameState
 from src.mvc.EventType import EventType
 
 
@@ -35,49 +36,51 @@ class GameRules:
         # Single game_board xml
         for sp in root.findall('single_parameters'):
             GameRules.game_name = sp.find('game_name').text
-            GameRules.nb_lvl_card = sp.find('number_levels_cards').text
-            GameRules.nb_max_res_card = sp.find(
-                'number_max_reserved_cards').text
-            GameRules.nb_points_tile = sp.find(
-                'number_prestige_points_noble_tiles').text
-            GameRules.nb_points_end = sp.find(
-                'number_prestige_points_end_game').text
+            GameRules.nb_lvl_card = int(sp.find('number_levels_cards').text)
+            GameRules.nb_max_res_card = int(sp.find(
+                'number_max_reserved_cards').text)
+            GameRules.nb_points_tile = int(sp.find(
+                'number_prestige_points_noble_tiles').text)
+            GameRules.nb_points_end = int(sp.find(
+                'number_prestige_points_end_game').text)
 
         # Token xml
         for token in root.findall(".//token"):
             name_t = token.find('name').text
             color_t = token.find('color').text
-            RessourceType.add_ressource(name_t, color_t)
+            ResourceType.add_resource(name_t, color_t)
 
         # Game setup xml
         for gs in root.findall('game_setup'):
-            GameRules.nb_card_reveal = gs.find('number_cards_to_reveal').text
-            GameRules.nb_tiles_nb_p = gs.find(
-                'number_noble_tiles_more_number_players').text
+            GameRules.nb_card_reveal = int(
+                gs.find('number_cards_to_reveal').text)
+            GameRules.nb_tile_more = int(gs.find(
+                'number_noble_tiles_more_number_players').text)
             ngtiganp = './/number_gem_tokens_in_game_according_number_players'
             for ngtigan in root.findall(ngtiganp):
-                GameRules.nb_gem_for_2 = ngtigan.find(
-                    'number_gem_tokens_in_game_2_players').text
-                GameRules.nb_gem_for_3 = ngtigan.find(
-                    'number_gem_tokens_in_game_3_players').text
-                GameRules.nb_gem_for_4 = ngtigan.find(
-                    'number_gem_tokens_in_game_4_players').text
-                GameRules.nb_gold = gs.find('number_gold_tokens_in_game').text
+                GameRules.nb_gem_for_2 = int(ngtigan.find(
+                    'number_gem_tokens_in_game_2_players').text)
+                GameRules.nb_gem_for_3 = int(ngtigan.find(
+                    'number_gem_tokens_in_game_3_players').text)
+                GameRules.nb_gem_for_4 = int(ngtigan.find(
+                    'number_gem_tokens_in_game_4_players').text)
+                GameRules.nb_gold = int(gs.find(
+                    'number_gold_tokens_in_game').text)
 
         # Turn parameters xml
         for tp in root.findall('turn_parameters'):
-            GameRules.nbGemDiff = tp.find(
-                'number_gem_tokens_different_colors').text
-            GameRules.nb_gem_same = tp.find(
-                'number_gem_tokens_same_color').text
+            GameRules.nb_gem_diff = int(tp.find(
+                'number_gem_tokens_different_colors').text)
+            GameRules.nb_gem_same = int(tp.find(
+                'number_gem_tokens_same_color').text)
             nmgtsisc = 'number_min_gem_tokens_stack_if_same_color'
-            GameRules.nb_min_gem_stack = tp.find(nmgtsisc).text
+            GameRules.nb_min_gem_stack = int(tp.find(nmgtsisc).text)
             nmgticr = 'number_max_gold_tokens_if_card_reserved'
-            GameRules.nb_gold_take = tp.find(nmgticr).text
-            GameRules.nb_token_end_turn = tp.find(
-                'number_max_tokens_end_turn').text
-            GameRules.nb_tile_per_turn = tp.find(
-                'number_max_noble_tile_turn').text
+            GameRules.nb_gold_take = int(tp.find(nmgticr).text)
+            GameRules.nb_token_end_turn = int(tp.find(
+                'number_max_tokens_end_turn').text)
+            GameRules.nb_tile_per_turn = int(tp.find(
+                'number_max_noble_tile_turn').text)
 
         # Noble tiles xml
         GameRules.tiles = []
@@ -103,42 +106,53 @@ class GameRules:
             GameRules.development_cards[i] = []
 
         for dc in root.findall('.//development_card'):
-            level = dc.find('level').text
-            c_emerald = dc.find('Emerald').text
-            c_diamond = dc.find('Diamond').text
-            c_sapphire = dc.find('Sapphire').text
-            c_onyx = dc.find('Onyx').text
-            c_ruby = dc.find('Ruby').text
-            number_prestige_points = dc.find('number_prestige_points').text
+            level = int(dc.find('level').text)
+            c_emerald = int(dc.find('Emerald').text)
+            c_diamond = int(dc.find('Diamond').text)
+            c_sapphire = int(dc.find('Sapphire').text)
+            c_onyx = int(dc.find('Onyx').text)
+            c_ruby = int(dc.find('Ruby').text)
+            number_prestige_points = int(
+                dc.find('number_prestige_points').text)
             gem_token_bonus = dc.find('gem_token_bonus').text
-
             card = Card(int(number_prestige_points), gem_token_bonus, {
                 "Emerald": int(c_emerald),
                 "Diamond": int(c_diamond),
                 "Sapphire": int(c_sapphire),
                 "Onyx": int(c_onyx),
                 "Ruby": int(c_ruby)
-            }, int(level))
+            }, level)
             GameRules.development_cards[int(level)].append(card)
 
     def event(self, event_type, object):
         action_possible = False
+        # if self.game_board.get_current_player().position != \
+        #         self.game_board.get_human_player().position:
+        #     return action_possible
         if event_type == EventType.CLICK_TAKE_TOKEN_GAMEBOARD:
-            # action_possible = self.check_click_token(object)
+            action_possible = self.check_click_game_board_token(object)
             if action_possible:
                 self.game_board.click_token_game_board(object)
         elif event_type == EventType.CLICK_GIVE_BACK_PLAYER_TOKEN:
-            # action_possible =
+            action_possible = self.check_click_player_token(object)
             if action_possible:
                 self.game_board.click_token_player(object)
         elif event_type == EventType.CLICK_DISPLAYED_CARD:
-            # action_possible =
-            if action_possible:
-                self.game_board.click_displayed_card(object)
+            enough_resources = self.check_enough_resources(
+                object)
+            can_reserve = self.check_reserve_amount()
+            action_possible = enough_resources and can_reserve
+            if enough_resources or can_reserve:
+                self.display.popup_select_card_action(
+                    can_reserve,
+                    enough_resources, object)
+
+            # if action_possible:
+            # self.game_board.click_displayed_card(object)
         elif event_type == EventType.CLICK_DECK_CARD:
-            # action_possible =
+            action_possible = self.check_reserve_amount()
             if action_possible:
-                self.game_board.click_card_deck(object)
+                self.game_board.click_deck_card(object)
         elif event_type == EventType.CANCEL_ACTION:
             # action_possible =
             if action_possible:
@@ -148,7 +162,7 @@ class GameRules:
             if action_possible:
                 pass
         elif event_type == EventType.CLICK_TILE:
-            # action_possible =
+            action_possible = self.check_click_tile()
             if action_possible:
                 self.game_board.click_tile(object)
         elif event_type == EventType.START:
@@ -160,11 +174,11 @@ class GameRules:
             if action_possible:
                 pass
         elif event_type == EventType.POPUP_PURCHASE:
-            # action_possible =
+            action_possible = self.check_enough_resources(object)
             if action_possible:
                 self.game_board.click_purchase_card(object)
         elif event_type == EventType.POPUP_RESERVE:
-            # action_possible =
+            action_possible = self.check_reserve_amount()
             if action_possible:
                 self.game_board.click_reserve_card(object)
 
@@ -173,25 +187,41 @@ class GameRules:
     def get_development_cards(self):
         return self.development_cards
 
-    def check_click_token(self):
-        return
+    def check_click_game_board_token(self, token):
+        current_player = self.game_board.get_current_player()
+        bank_stack = int(self.game_board.get_bank()[token])
+        if int(bank_stack) <= 0 or sum(current_player.tokens_took.values()) \
+                >= GameRules.nb_gem_diff:
+            return False
+
+        if current_player.tokens_took[token] > 0:
+            if sum(current_player.tokens_took.values()) > 1:
+                return False
+            elif bank_stack < GameRules.nb_min_gem_stack - 1:
+                return False
+        return True
+
+    def check_click_player_token(self, token):
+        return self.game_board.get_current_player().bank[token.type] > 1
 
     def check_click_card(self):
-        return
+        # ?
+        return True
 
     def check_click_tile(self):
-        return
+        return self.game_board.gamestate == GameState.PLAYER_CHOOSE_TILE
 
     def check_winner(self, player):
         for n_player in player.name:
             if n_player.calcul_point_in_game() >= GameRules.nb_points_end:
                 return n_player
 
-    def check_enough_ressources(self):
-        return True
+    def check_enough_resources(self, card):
+        return card.is_purchasable(self.game_board.get_current_player()
+                                   .get_income())
 
     def check_reserve_amount(self):
-        return True
+        return self.game_board.get_current_player().can_reserve_card()
 
     def get_tiles(self):
         return self.tiles
