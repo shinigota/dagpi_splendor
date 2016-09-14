@@ -12,10 +12,12 @@ class AI(Player):
     game_state = None
     ressource = None
 
-    def __init__(self, name, position, difficulty, gb=None, gr=None,
-                 rt=None, gs=None):
+    def __init__(self, name, position, difficulty, game_board=None,
+                 game_rules=None):
         Player.__init__(self, name, position)
-        self.dificulty = difficulty
+        self.game_board = game_board
+        self.game_rules = game_rules
+        self.difficulty = difficulty
         self.position = position
 
     def action_AI_basic(self):
@@ -28,7 +30,7 @@ class AI(Player):
 
             if action_ia == "two":
                 dict_t2 = {}
-                for k, v in GameBoard.bank.items():
+                for k, v in self.game_board.bank.items():
                     if v >= self.game_board.nb_min_gem_stack:
                         dict_t2[k] = v
                 if len(dict_t2) == 0:
@@ -56,7 +58,7 @@ class AI(Player):
                         token_t3 = random.choice(list(dict_t3.items()))
                         token_type_t3 = token_t3[0]
                         self.game_rules.event(
-                            EventType.CLICK_TAKE_TOKEN_GAMEBOARD, token_t3)
+                            EventType.CLICK_TAKE_TOKEN_GAMEBOARD, token_type_t3)
                         del dict_t3[token_type_t3]
                     bool_action = True
 

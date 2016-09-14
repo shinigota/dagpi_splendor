@@ -95,10 +95,10 @@ class GameBoard:
 
     def init_players(self):
         self.players = []
-        self.players.append(Player("Joueur %d" % 0, 1))
+        self.players.append(Player("Player %d" % 0, 1))
         for i in range(1, self.nb_players):
             from src.player.AI import AI
-            self.players.append(AI("Joueur %d" % i, i + 1, 1))
+            self.players.append(AI("AI %d" % i, i + 1, 1, self, self.game_rules))
         self.current_player = 0
         self.human_player = self.players[0]
 
@@ -226,7 +226,7 @@ class GameBoard:
         self.get_current_player().init_turn()
         self.game_state = GameState.PLAYER_TURN
         self.current_player = (self.current_player + 1) % self.nb_players
-
+        self.get_current_player().action_AI_basic()
     def check_tiles(self):
         tiles = []
         for tile in self.displayed_tiles:

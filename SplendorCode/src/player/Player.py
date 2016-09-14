@@ -137,3 +137,6 @@ class Player:
             income[resource_type] += amount
 
         return income
+
+    def action_AI_basic(self):
+        pass
