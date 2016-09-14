@@ -138,15 +138,17 @@ class GameRules:
             if action_possible:
                 self.game_board.click_token_player(object)
         elif event_type == EventType.CLICK_DISPLAYED_CARD:
-            action_possible = self.check_enough_resources(
-                object) and self.check_reserve_amount()
-            if self.check_enough_resources(object):
-                pass
-            if self.check_reserve_amount():
-                pass
+            enough_resources = self.check_enough_resources(
+                object)
+            can_reserve = self.check_reserve_amount()
+            action_possible = enough_resources and can_reserve
+            if enough_resources or can_reserve:
+                self.display.popup_select_card_action(
+                    can_reserve,
+                    enough_resources, object)
 
-            # if action_possible:
-            self.game_board.click_displayed_card(object)
+                # if action_possible:
+                # self.game_board.click_displayed_card(object)
         elif event_type == EventType.CLICK_DECK_CARD:
             action_possible = self.check_reserve_amount()
             if action_possible:
@@ -172,11 +174,15 @@ class GameRules:
             if action_possible:
                 pass
         elif event_type == EventType.POPUP_PURCHASE:
-            # action_possible =
+            action_possible = self.check_enough_resources(object)
             if action_possible:
-                self.game_board.click_purchase_card(object)
+                self.game_board.click_purchase_gameboard_card(object)
+        elif event_type == EventType.RESERVE_PURCHASE:
+            action_possible = self.check_enough_resources(object)
+            if action_possible:
+                self.game_board.click_purchase_reserve_card(object)
         elif event_type == EventType.POPUP_RESERVE:
-            # action_possible =
+            action_possible = self.check_reserve_amount()
             if action_possible:
                 self.game_board.click_reserve_card(object)
 
@@ -189,7 +195,8 @@ class GameRules:
         current_player = self.game_board.get_current_player()
         bank_stack = int(self.game_board.get_bank()[token])
         if int(bank_stack) <= 0 or sum(current_player.tokens_took.values()) \
-                >= GameRules.nb_gem_diff:
+                >= GameRules.nb_gem_diff or not \
+                self.game_board_is_game_state(GameState.PLAYER_TURN):
             return False
 
         if current_player.tokens_took[token] > 0:
@@ -200,14 +207,17 @@ class GameRules:
         return True
 
     def check_click_player_token(self, token):
-        return self.game_board.get_current_player().bank[token.type] > 1
+        return self.game_board.get_current_player().bank[
+                   token] >= 1 and self.game_board_is_game_state(
+            GameState.PLAYER_GIVE_TOKENS_BACK)
 
     def check_click_card(self):
-        # ?
-        return True
+        return self.game_board_is_game_state(
+            GameState.PLAYER_TURN)
 
     def check_click_tile(self):
-        return self.game_board.gamestate == GameState.PLAYER_CHOOSE_TILE
+        return self.game_board_is_game_state(
+            GameState.PLAYER_CHOOSE_TILE)
 
     def check_winner(self, player):
         for n_player in player.name:
@@ -215,10 +225,13 @@ class GameRules:
                 return n_player
 
     def check_enough_resources(self, card):
-        return card.is_purchasable(self.game_board.get_current_player())
+        return card.is_purchasable(self.game_board.get_current_player()
+                                   .get_income()) and self\
+            .game_board_is_game_state(GameState.PLAYER_TURN)
 
     def check_reserve_amount(self):
-        return self.game_board.get_current_player().can_reserve_card()
+        return self.game_board.get_current_player().can_reserve_card() and \
+               self.game_board_is_game_state(GameState.PLAYER_TURN)
 
     def get_tiles(self):
         return self.tiles
@@ -228,3 +241,6 @@ class GameRules:
 
     def set_display(self, display):
         self.display = display
+
+    def game_board_is_game_state(self, game_state):
+        return self.game_board.get_game_state() == game_state

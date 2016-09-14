@@ -18,11 +18,13 @@ class Display:
 
     def __init__(self):
         self.window = Tk()
+        self.create_image()
 
     def create_window(self):
         self.window.title(GameRules.game_name)
         self.w, self.h = 1900, 1000
         self.window.geometry("%dx%d+0+0" % (self.w, self.h))
+        self.window.config(bg=None)
 
     def display_tiles(self):
         i = 1
@@ -33,7 +35,7 @@ class Display:
     def display_tile(self, position, tile):
         canvas = Canvas(self.window, width=100, height=100,
                         background='#725202')
-        points = canvas.create_text(10, 10, text=tile.points, fill="black")
+        canvas.create_image(13, 13, image=self.get_image_points(tile.points))
         i = 1
         for key in tile.gems_conditions:
             number = tile.gems_conditions[key]
@@ -42,23 +44,20 @@ class Display:
                 if ResourceType.get_color(key) == "white":
                     textcolor = "black"
                 if i == 1:
-                    cardBuy1 = canvas.create_rectangle(10, 25, 40, 55,
-                                                       fill=ResourceType.get_color(
-                                                           key))
+                    canvas.create_image(27, 40, image=self.get_image_rect_gem(
+                        key))
                     txtBuy1 = canvas.create_text(25, 40, text=number,
                                                  fill=textcolor)
                     i = 2
                 elif i == 2:
-                    cardBuy2 = canvas.create_rectangle(10, 65, 40, 95,
-                                                       fill=ResourceType.get_color(
-                                                           key))
+                    canvas.create_image(27, 80, image=self.get_image_rect_gem(
+                        key))
                     txtBuy2 = canvas.create_text(25, 80, text=number,
                                                  fill=textcolor)
                     i = 3
                 elif i == 3:
-                    cardBuy3 = canvas.create_rectangle(60, 65, 90, 95,
-                                                       fill=ResourceType.get_color(
-                                                           key))
+                    canvas.create_image(77, 80, image=self.get_image_rect_gem(
+                        key))
                     txtBuy3 = canvas.create_text(75, 80, text=number,
                                                  fill=textcolor)
                     i = 0
@@ -79,11 +78,9 @@ class Display:
     def display_card(self, canvas, x, y, card, event):
         canvas = Canvas(canvas, width=100, height=120,
                         background=self.get_color(int(card.level)))
-        points = canvas.create_text(10, 10, text=card.points, fill="black")
-
-        gem = canvas.create_oval(85, 5, 95, 15,
-                                 fill=ResourceType.get_color(
-                                     card.income_gem))
+        canvas.create_image(50, 75, image=self.get_image_card_gem(
+            card.income_gem))
+        canvas.create_image(15, 20, image=self.get_image_points(card.points))
         i = 1
         for key in card.purchase_gems:
             number = card.purchase_gems[key]
@@ -92,30 +89,26 @@ class Display:
                 if ResourceType.get_color(key) == "white":
                     textcolor = "black"
                 if i == 1:
-                    gemBuy1 = canvas.create_oval(10, 85, 40, 115,
-                                                 fill=ResourceType.get_color(
-                                                     key))
+                    canvas.create_image(25, 100,
+                                        image=self.get_image_circle_gem(key))
                     txtBuy1 = canvas.create_text(25, 100, text=number,
                                                  fill=textcolor)
                     i = 2
                 elif i == 2:
-                    gemBuy2 = canvas.create_oval(60, 85, 90, 115,
-                                                 fill=ResourceType.get_color(
-                                                     key))
+                    canvas.create_image(75, 100,
+                                        image=self.get_image_circle_gem(key))
                     txtBuy2 = canvas.create_text(75, 100, text=number,
                                                  fill=textcolor)
                     i = 3
                 elif i == 3:
-                    gemBuy3 = canvas.create_oval(10, 45, 40, 75,
-                                                 fill=ResourceType.get_color(
-                                                     key))
+                    canvas.create_image(25, 60,
+                                        image=self.get_image_circle_gem(key))
                     txtBuy3 = canvas.create_text(25, 60, text=number,
                                                  fill=textcolor)
                     i = 4
                 elif i == 4:
-                    gemBuy4 = canvas.create_oval(60, 45, 90, 75,
-                                                 fill=ResourceType.get_color(
-                                                     key))
+                    canvas.create_image(75, 60,
+                                        image=self.get_image_circle_gem(key))
                     txtBuy4 = canvas.create_text(75, 60, text=number,
                                                  fill=textcolor)
                     i = 0
@@ -153,19 +146,14 @@ class Display:
 
     def display_gold(self, canvas, x, y, nb):
         canvas = Canvas(canvas, width=80, height=80)
-        canvas.create_oval(10, 10, 70, 70,
-                           fill=ResourceType.get_color("Gold"))
-        canvas.create_text(40, 40, text=nb, fill="black")
+        canvas.create_image(40, 40, image=self.get_image_token_gem("Gold"))
+        canvas.create_image(40, 40, image=self.get_image_points(nb))
         canvas.place(x=x, y=y)
 
     def display_gem(self, canvas, x, y, nb, gem):
-        color = "white"
-        if ResourceType.get_color(gem) == "white":
-            color = "black"
         canvas = Canvas(canvas, width=80, height=80)
-        canvas.create_oval(10, 10, 70, 70,
-                           fill=ResourceType.get_color(gem))
-        canvas.create_text(40, 40, text=nb, fill=color)
+        canvas.create_image(40, 40, image=self.get_image_token_gem(gem))
+        canvas.create_image(40, 40, image=self.get_image_points(nb))
         canvas.place(x=x, y=y)
         canvas.bind("<Button-1>",
                     lambda event, e=EventType.CLICK_TAKE_TOKEN_GAMEBOARD,
@@ -193,14 +181,14 @@ class Display:
         canvas.create_text(50, 45, text=player.nickname, fill="black")
         canvas.create_text(50, 65, text=str(player.calcul_point_in_game()) +
                                         " / "
-                                        "%d"%
+                                        "%d" %
                                         self.game_rules.nb_points_end,
                            fill="black")
         y = 130
         i = 1
         for card in player.reserved_cards:
             x = 10 + 120 * (i - 1)
-            self.display_card(canvas, x, y, card, EventType.POPUP_RESERVE)
+            self.display_card(canvas, x, y, card, EventType.RESERVE_PURCHASE)
             i += 1
         self.display_player_tile(canvas, 370, 140, player)
         canvas.place(x=750, y=320)
@@ -216,7 +204,7 @@ class Display:
         canvas.create_text(50, 45, text=player.nickname, fill="black")
         canvas.create_text(50, 65, text=str(player.calcul_point_in_game()) +
                                         " / "
-                                        "%d"%
+                                        "%d" %
                                         self.game_rules.nb_points_end,
                            fill="black")
         y = 130
@@ -295,23 +283,16 @@ class Display:
         canvas.create_text(30, 30, text=nb, fill=color)
         canvas.place(x=x, y=y)
 
-    def refresh(self):
-        self.display_bank(self.game_board.bank)
-        self.display_stacks()
-        self.display_cards()
-        self.display_tiles()
-        self.display_players()
-
     def popup_select_card_action(self, isreserved, ispurchase, card):
         popup = Toplevel(height=250, width=280)
         # popup.protocol("WM_DELETE_WINDOW", self.on_exit)
-        Label(popup, text="Selectionner votre action :", height=1,
+        Label(popup, text="Sélectionnez votre action :", height=1,
               width=30).place(x=40, y=10)
         self.display_card(popup, 90, 50, card, None)
         if isreserved:
             canvas = Canvas(popup, height=20,
                             width=60, background="grey")
-            canvas.create_text(30, 10, text="Reserver", fill="black")
+            canvas.create_text(30, 10, text="Réserver", fill="black")
             canvas.bind("<Button-1>", lambda event,
                                              p=popup,
                                              e=EventType.POPUP_RESERVE,
@@ -337,6 +318,138 @@ class Display:
         """When you click to exit, this function is called"""
         pass
 
+    def create_image(self):
+        self.img0 = PhotoImage(file='../res/0.gif')
+        self.img0 = self.img0.subsample(3, 3)
+        self.img1 = PhotoImage(file='../res/1.gif')
+        self.img1 = self.img1.subsample(3, 3)
+        self.img2 = PhotoImage(file='../res/2.gif')
+        self.img2 = self.img2.subsample(3, 3)
+        self.img3 = PhotoImage(file='../res/3.gif')
+        self.img3 = self.img3.subsample(3, 3)
+        self.img4 = PhotoImage(file='../res/4.gif')
+        self.img4 = self.img4.subsample(3, 3)
+        self.img5 = PhotoImage(file='../res/5.gif')
+        self.img5 = self.img5.subsample(3, 3)
+        self.img6 = PhotoImage(file='../res/6.gif')
+        self.img6 = self.img6.subsample(3, 3)
+        self.img7 = PhotoImage(file='../res/7.gif')
+        self.img7 = self.img7.subsample(3, 3)
+
+        self.img_card_D = PhotoImage(file='../res/card_diamant.gif')
+        self.img_card_D = self.img_card_D.subsample(5, 5)
+        self.img_card_E = PhotoImage(file='../res/card_emeraude.gif')
+        self.img_card_E = self.img_card_E.subsample(5, 5)
+        self.img_card_O = PhotoImage(file='../res/card_onyx.gif')
+        self.img_card_O = self.img_card_O.subsample(5, 5)
+        self.img_card_R = PhotoImage(file='../res/card_rubis.gif')
+        self.img_card_R = self.img_card_R.subsample(5, 5)
+        self.img_card_S = PhotoImage(file='../res/card_saphir.gif')
+        self.img_card_S = self.img_card_S.subsample(5, 5)
+
+        self.img_circle_D = PhotoImage(file='../res/white_circle.gif')
+        self.img_circle_D = self.img_circle_D.subsample(2, 2)
+        self.img_circle_E = PhotoImage(file='../res/green_circle.gif')
+        self.img_circle_E = self.img_circle_E.subsample(2, 2)
+        self.img_circle_O = PhotoImage(file='../res/black_circle.gif')
+        self.img_circle_O = self.img_circle_O.subsample(2, 2)
+        self.img_circle_R = PhotoImage(file='../res/red_circle.gif')
+        self.img_circle_R = self.img_circle_R.subsample(2, 2)
+        self.img_circle_S = PhotoImage(file='../res/blue_circle.gif')
+        self.img_circle_S = self.img_circle_S.subsample(2, 2)
+
+        self.img_rect_D = PhotoImage(file='../res/white_rect.gif')
+        self.img_rect_D = self.img_rect_D.subsample(2, 2)
+        self.img_rect_E = PhotoImage(file='../res/green_rect.gif')
+        self.img_rect_E = self.img_rect_E.subsample(2, 2)
+        self.img_rect_O = PhotoImage(file='../res/black_rect.gif')
+        self.img_rect_O = self.img_rect_O.subsample(2, 2)
+        self.img_rect_R = PhotoImage(file='../res/red_rect.gif')
+        self.img_rect_R = self.img_rect_R.subsample(2, 2)
+        self.img_rect_S = PhotoImage(file='../res/blue_rect.gif')
+        self.img_rect_S = self.img_rect_S.subsample(2, 2)
+
+        self.img_token_D = PhotoImage(file='../res/token_diamant.gif')
+        self.img_token_D = self.img_token_D.subsample(3, 3)
+        self.img_token_E = PhotoImage(file='../res/token_emeraude.gif')
+        self.img_token_E = self.img_token_E.subsample(3, 3)
+        self.img_token_R = PhotoImage(file='../res/token_rubis.gif')
+        self.img_token_R = self.img_token_R.subsample(3, 3)
+        self.img_token_S = PhotoImage(file='../res/token_saphir.gif')
+        self.img_token_S = self.img_token_S.subsample(3, 3)
+        self.img_token_O = PhotoImage(file='../res/token_onyx.gif')
+        self.img_token_O = self.img_token_O.subsample(3, 3)
+        self.img_token_G = PhotoImage(file='../res/token_gold.gif')
+        self.img_token_G = self.img_token_G.subsample(3, 3)
+
+    def get_image_points(self, points):
+        if points == 0:
+            return self.img0
+        elif points == 1:
+            return self.img1
+        elif points == 2:
+            return self.img2
+        elif points == 3:
+            return self.img3
+        elif points == 4:
+            return self.img4
+        elif points == 5:
+            return self.img5
+        elif points == 6:
+            return self.img6
+        elif points == 7:
+            return self.img7
+
+    def get_image_card_gem(self, gem):
+        if gem == "Diamond":
+            return self.img_card_D
+        elif gem == "Emerald":
+            return self.img_card_E
+        elif gem == "Sapphire":
+            return self.img_card_S
+        elif gem == "Onyx":
+            return self.img_card_O
+        elif gem == "Ruby":
+            return self.img_card_R
+
+    def get_image_circle_gem(self, gem):
+        if gem == "Diamond":
+            return self.img_circle_D
+        elif gem == "Emerald":
+            return self.img_circle_E
+        elif gem == "Sapphire":
+            return self.img_circle_S
+        elif gem == "Onyx":
+            return self.img_circle_O
+        elif gem == "Ruby":
+            return self.img_circle_R
+
+    def get_image_rect_gem(self, gem):
+        if gem == "Diamond":
+            return self.img_rect_D
+        elif gem == "Emerald":
+            return self.img_rect_E
+        elif gem == "Sapphire":
+            return self.img_rect_S
+        elif gem == "Onyx":
+            return self.img_rect_O
+        elif gem == "Ruby":
+            return self.img_rect_R
+
+    def get_image_token_gem(self, gem):
+        if gem == "Diamond":
+            return self.img_token_D
+        elif gem == "Emerald":
+            return self.img_token_E
+        elif gem == "Sapphire":
+            return self.img_token_S
+        elif gem == "Onyx":
+            return self.img_token_O
+        elif gem == "Ruby":
+            return self.img_token_R
+        elif gem == "Gold":
+            return self.img_token_G
+
     @staticmethod
     def get_color(level):
         if level == 1:
@@ -353,6 +466,7 @@ class Display:
         self.display_cards()
         self.display_tiles()
         self.display_players()
+
 
 display = Display()
 display.game_board = GameBoard(display, GameRules())
