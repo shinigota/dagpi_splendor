@@ -201,7 +201,7 @@ class Display:
         i = 1
         for card in player.reserved_cards:
             x = 10 + 120 * (i - 1)
-            self.display_card(canvas, x, y, card, EventType.POPUP_RESERVE)
+            self.display_card(canvas, x, y, card, EventType.RESERVE_PURCHASE)
             i += 1
         self.display_player_tile(canvas, 370, 140, player)
         canvas.place(x=750, y=320)
