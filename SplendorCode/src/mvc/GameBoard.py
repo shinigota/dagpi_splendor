@@ -174,6 +174,8 @@ class GameBoard:
         self.get_current_player().add_purchased_card(card)
         self.get_current_player().remove_different_tokens(
             card.get_purchase_gems(), True)
+        print(card.get_purchase_gems())
+        print( self.get_current_player().bank)
         if self.get_current_player().is_action_complete():
             self.check_tiles()
         self.display.refresh()
@@ -226,7 +228,8 @@ class GameBoard:
         self.get_current_player().init_turn()
         self.game_state = GameState.PLAYER_TURN
         self.current_player = (self.current_player + 1) % self.nb_players
-        self.get_current_player().action_AI_basic()
+        # self.get_current_player().action_AI_basic()
+
     def check_tiles(self):
         tiles = []
         for tile in self.displayed_tiles:
@@ -259,7 +262,6 @@ class GameBoard:
         nb_token = sum(v for v in self.get_current_player().bank.values())
         if nb_token >= GameRules.nb_token_end_turn:
             return nb_token - GameRules.nb_token_end_turn
-            # return True
 
     # functions
 

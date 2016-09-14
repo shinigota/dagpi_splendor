@@ -35,15 +35,15 @@ class Player:
         self.purchased_cards = {}
         for resource_type, resource in ResourceType.resource_type.items():
             if resource_type != "Gold":
-                self.purchased_cards[resource_type] = [Card(0,
-                                                            resource_type, {
-                                                                "Emerald": 0,
-                                                                "Diamond": 0,
-                                                                "Sapphire": 0,
-                                                                "Onyx": 0,
-                                                                "Ruby": 0
-                                                            }, 1)]
-
+                # self.purchased_cards[resource_type] = [Card(0,
+                #                                             resource_type, {
+                #                                                 "Emerald": 0,
+                #                                                 "Diamond": 0,
+                #                                                 "Sapphire": 0,
+                #                                                 "Onyx": 0,
+                #                                                 "Ruby": 0
+                #                                             }, 1)]
+                self.purchased_cards[resource_type] = []
     def add_purchased_card(self, card):
         self.purchased_cards[card.get_income_gem()].append(card)
         self.purchased_card_amount += 1
@@ -69,11 +69,13 @@ class Player:
         self.tokens_took[token_type] += number
 
     def remove_different_tokens(self, tokens, use_card_income=False):
+        available_gold = self.bank["Gold"]
         card_income = self.get_card_income()
         for token_type, token_amount in tokens.items():
             delta = token_amount
             if use_card_income:
-                if card_income[token_type] + self.bank[token_type] >= \
+                if card_income[token_type] + self.bank[token_type] + available_gold \
+                        >= \
                         token_amount:
                     if token_amount - card_income[token_type] >= 0:
                         delta = token_amount - card_income[token_type]
