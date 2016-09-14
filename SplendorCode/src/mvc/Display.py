@@ -24,6 +24,7 @@ class Display:
         self.window.title(GameRules.game_name)
         self.w, self.h = 1900, 1000
         self.window.geometry("%dx%d+0+0" % (self.w, self.h))
+        self.window.config(bg=None)
 
     def display_tiles(self):
         i = 1
@@ -43,23 +44,20 @@ class Display:
                 if ResourceType.get_color(key) == "white":
                     textcolor = "black"
                 if i == 1:
-                    cardBuy1 = canvas.create_rectangle(10, 25, 40, 55,
-                                                       fill=ResourceType.get_color(
-                                                           key))
+                    canvas.create_image(27, 40, image=self.get_image_rect_gem(
+                        key))
                     txtBuy1 = canvas.create_text(25, 40, text=number,
                                                  fill=textcolor)
                     i = 2
                 elif i == 2:
-                    cardBuy2 = canvas.create_rectangle(10, 65, 40, 95,
-                                                       fill=ResourceType.get_color(
-                                                           key))
+                    canvas.create_image(27, 80, image=self.get_image_rect_gem(
+                        key))
                     txtBuy2 = canvas.create_text(25, 80, text=number,
                                                  fill=textcolor)
                     i = 3
                 elif i == 3:
-                    cardBuy3 = canvas.create_rectangle(60, 65, 90, 95,
-                                                       fill=ResourceType.get_color(
-                                                           key))
+                    canvas.create_image(77, 80, image=self.get_image_rect_gem(
+                        key))
                     txtBuy3 = canvas.create_text(75, 80, text=number,
                                                  fill=textcolor)
                     i = 0
@@ -91,30 +89,26 @@ class Display:
                 if ResourceType.get_color(key) == "white":
                     textcolor = "black"
                 if i == 1:
-                    gemBuy1 = canvas.create_oval(10, 85, 40, 115,
-                                                 fill=ResourceType.get_color(
-                                                     key))
+                    canvas.create_image(25, 100,
+                                        image=self.get_image_circle_gem(key))
                     txtBuy1 = canvas.create_text(25, 100, text=number,
                                                  fill=textcolor)
                     i = 2
                 elif i == 2:
-                    gemBuy2 = canvas.create_oval(60, 85, 90, 115,
-                                                 fill=ResourceType.get_color(
-                                                     key))
+                    canvas.create_image(75, 100,
+                                        image=self.get_image_circle_gem(key))
                     txtBuy2 = canvas.create_text(75, 100, text=number,
                                                  fill=textcolor)
                     i = 3
                 elif i == 3:
-                    gemBuy3 = canvas.create_oval(10, 45, 40, 75,
-                                                 fill=ResourceType.get_color(
-                                                     key))
+                    canvas.create_image(25, 60,
+                                        image=self.get_image_circle_gem(key))
                     txtBuy3 = canvas.create_text(25, 60, text=number,
                                                  fill=textcolor)
                     i = 4
                 elif i == 4:
-                    gemBuy4 = canvas.create_oval(60, 45, 90, 75,
-                                                 fill=ResourceType.get_color(
-                                                     key))
+                    canvas.create_image(75, 60,
+                                        image=self.get_image_circle_gem(key))
                     txtBuy4 = canvas.create_text(75, 60, text=number,
                                                  fill=textcolor)
                     i = 0
@@ -353,6 +347,28 @@ class Display:
         self.img_card_S = PhotoImage(file='../res/card_saphir.gif')
         self.img_card_S = self.img_card_S.subsample(5, 5)
 
+        self.img_circle_D = PhotoImage(file='../res/white_circle.gif')
+        self.img_circle_D = self.img_circle_D.subsample(2, 2)
+        self.img_circle_E = PhotoImage(file='../res/green_circle.gif')
+        self.img_circle_E = self.img_circle_E.subsample(2, 2)
+        self.img_circle_O = PhotoImage(file='../res/black_circle.gif')
+        self.img_circle_O = self.img_circle_O.subsample(2, 2)
+        self.img_circle_R = PhotoImage(file='../res/red_circle.gif')
+        self.img_circle_R = self.img_circle_R.subsample(2, 2)
+        self.img_circle_S = PhotoImage(file='../res/blue_circle.gif')
+        self.img_circle_S = self.img_circle_S.subsample(2, 2)
+
+        self.img_rect_D = PhotoImage(file='../res/white_rect.gif')
+        self.img_rect_D = self.img_rect_D.subsample(2, 2)
+        self.img_rect_E = PhotoImage(file='../res/green_rect.gif')
+        self.img_rect_E = self.img_rect_E.subsample(2, 2)
+        self.img_rect_O = PhotoImage(file='../res/black_rect.gif')
+        self.img_rect_O = self.img_rect_O.subsample(2, 2)
+        self.img_rect_R = PhotoImage(file='../res/red_rect.gif')
+        self.img_rect_R = self.img_rect_R.subsample(2, 2)
+        self.img_rect_S = PhotoImage(file='../res/blue_rect.gif')
+        self.img_rect_S = self.img_rect_S.subsample(2, 2)
+
         self.img_token_D = PhotoImage(file='../res/token_diamant.gif')
         self.img_token_D = self.img_token_D.subsample(3, 3)
         self.img_token_E = PhotoImage(file='../res/token_emeraude.gif')
@@ -396,6 +412,30 @@ class Display:
         elif gem == "Ruby":
             return self.img_card_R
 
+    def get_image_circle_gem(self, gem):
+        if gem == "Diamond":
+            return self.img_circle_D
+        elif gem == "Emerald":
+            return self.img_circle_E
+        elif gem == "Sapphire":
+            return self.img_circle_S
+        elif gem == "Onyx":
+            return self.img_circle_O
+        elif gem == "Ruby":
+            return self.img_circle_R
+
+    def get_image_rect_gem(self, gem):
+        if gem == "Diamond":
+            return self.img_rect_D
+        elif gem == "Emerald":
+            return self.img_rect_E
+        elif gem == "Sapphire":
+            return self.img_rect_S
+        elif gem == "Onyx":
+            return self.img_rect_O
+        elif gem == "Ruby":
+            return self.img_rect_R
+
     def get_image_token_gem(self, gem):
         if gem == "Diamond":
             return self.img_token_D
@@ -428,8 +468,6 @@ class Display:
         self.display_players()
 
 
-
-
 display = Display()
 display.game_board = GameBoard(display, GameRules())
 display.game_rules = display.game_board.game_rules
@@ -438,4 +476,3 @@ display.game_rules.display = display
 display.create_window()
 display.refresh()
 display.window.mainloop()
-
