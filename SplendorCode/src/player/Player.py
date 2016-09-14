@@ -38,15 +38,15 @@ class Player:
         self.purchased_cards = {}
         for resource_type, resource in ResourceType.resource_type.items():
             if resource_type != "Gold":
-                self.purchased_cards[resource_type] = [Card(0,
-                                                            resource_type, {
-                                                                "Emerald": 0,
-                                                                "Diamond": 0,
-                                                                "Sapphire": 0,
-                                                                "Onyx": 0,
-                                                                "Ruby": 0
-                                                            }, 2)]
-                # self.purchased_cards[resource_type] = []
+                # self.purchased_cards[resource_type] = [Card(0,
+                #                                             resource_type, {
+                #                                                 "Emerald": 0,
+                #                                                 "Diamond": 0,
+                #                                                 "Sapphire": 0,
+                #                                                 "Onyx": 0,
+                #                                                 "Ruby": 0
+                #                                             }, 2)]
+                self.purchased_cards[resource_type] = []
 
     def add_purchased_card(self, card):
         self.purchased_cards[card.get_income_gem()].append(card)
@@ -82,10 +82,8 @@ class Player:
 
     def get_tokens_to_spend(self, tokens):
         token_copy = copy(tokens)
+        token_copy["Gold"] = 0
         print("Player -- get_tokens_to_spend")
-        tokens_to_spend = {}
-        for resource_type in ResourceType.resource_type.keys():
-            tokens_to_spend[resource_type] = 0
 
         card_income = self.get_card_income()
         for token_type in token_copy.keys():
@@ -94,11 +92,13 @@ class Player:
             if token_copy[token_type] > 0:
                 token_copy[token_type] = max(token_copy[token_type] - card_income[
                     token_type], 0)
-            if self.bank[token_type] < token_copy[token_type]:
-                delta = tokens[token_type] - self.bank[token_type]
+            if self.bank[token_type] < token_copy[token_type] and \
+                    token_copy[token_type] > 0:
+                delta = token_copy[token_type] - self.bank[token_type]
                 token_copy["Gold"] += delta
                 token_copy[token_type] -= delta
 
+        print(token_copy)
         return token_copy
 
     def remove_specific_token(self, token_type, number=1):
@@ -113,10 +113,13 @@ class Player:
         self.reserved_card_amount = 0
 
     def is_action_complete(self, game_state):
-        return (self.token_choice_valid() or
+        print('is_action_complete')
+        val = (self.token_choice_valid() or
                 self.purchased_card_amount >= 1 or
                 self.reserved_card_amount >= 1
-                or game_state == GameState.PLAYER_CHOOSE_TILE)
+                or game_state == GameState.PLAYER_GIVE_TOKENS_BACK)
+        print(val)
+        return val
 
     def token_choice_valid(self):
         tokens_amount = sum(self.tokens_took.values())
