@@ -18,6 +18,7 @@ class Display:
 
     def __init__(self):
         self.window = Tk()
+        self.create_image()
 
     def create_window(self):
         self.window.title(GameRules.game_name)
@@ -33,7 +34,7 @@ class Display:
     def display_tile(self, position, tile):
         canvas = Canvas(self.window, width=100, height=100,
                         background='#725202')
-        points = canvas.create_text(10, 10, text=tile.points, fill="black")
+        canvas.create_image(13, 13, image=self.get_image_points(tile.points))
         i = 1
         for key in tile.gems_conditions:
             number = tile.gems_conditions[key]
@@ -79,7 +80,8 @@ class Display:
     def display_card(self, canvas, x, y, card, event):
         canvas = Canvas(canvas, width=100, height=120,
                         background=self.get_color(int(card.level)))
-        points = canvas.create_text(10, 10, text=card.points, fill="black")
+        #points = canvas.create_text(10, 10, text=card.points, fill="black")
+        canvas.create_image(15, 15, image=self.get_image_points(card.points))
         gem = canvas.create_oval(85, 5, 95, 15,
                                  fill=ResourceType.get_color(
                                      card.income_gem))
@@ -136,8 +138,6 @@ class Display:
         canvas = Canvas(self.window, width=100, height=120, background=color)
         canvas.create_text(50, 50, text="PILE DE NIVEAU", fill="black")
         canvas.create_text(50, 70, text=level, fill="black")
-        image = PhotoImage(file='two.gif')
-        canvas.create_image(100, 100, image=image)
         canvas.place(x=50, y=490 - (130 * (level - 1)))
         canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_DECK_CARD,
                                          l=level: self.game_rules.event(e, l))
@@ -296,13 +296,6 @@ class Display:
         canvas.create_text(30, 30, text=nb, fill=color)
         canvas.place(x=x, y=y)
 
-    def refresh(self):
-        self.display_bank(self.game_board.bank)
-        self.display_stacks()
-        self.display_cards()
-        self.display_tiles()
-        self.display_players()
-
     def popup_select_card_action(self, isreserved, ispurchase, card):
         popup = Toplevel(height=250, width=280)
         # popup.protocol("WM_DELETE_WINDOW", self.on_exit)
@@ -338,6 +331,42 @@ class Display:
         """When you click to exit, this function is called"""
         pass
 
+    def create_image(self):
+        self.img0 = PhotoImage(file='../res/0.gif')
+        self.img0 = self.img0.subsample(3, 3)
+        self.img1 = PhotoImage(file='../res/1.gif')
+        self.img1 = self.img1.subsample(3, 3)
+        self.img2 = PhotoImage(file='../res/2.gif')
+        self.img2 = self.img2.subsample(3, 3)
+        self.img3 = PhotoImage(file='../res/3.gif')
+        self.img3 = self.img3.subsample(3, 3)
+        self.img4 = PhotoImage(file='../res/4.gif')
+        self.img4 = self.img4.subsample(3, 3)
+        self.img5 = PhotoImage(file='../res/5.gif')
+        self.img5 = self.img5.subsample(3, 3)
+        self.img6 = PhotoImage(file='../res/6.gif')
+        self.img6 = self.img6.subsample(3, 3)
+        self.img7 = PhotoImage(file='../res/7.gif')
+        self.img7 = self.img7.subsample(3, 3)
+
+    def get_image_points(self, points):
+        if points == 0:
+            return self.img0
+        elif points == 1:
+            return self.img1
+        elif points == 2:
+            return self.img2
+        elif points == 3:
+            return self.img3
+        elif points == 4:
+            return self.img4
+        elif points == 5:
+            return self.img5
+        elif points == 6:
+            return self.img6
+        elif points == 7:
+            return self.img7
+
     @staticmethod
     def get_color(level):
         if level == 1:
@@ -356,6 +385,8 @@ class Display:
         self.display_players()
 
 
+
+
 display = Display()
 display.game_board = GameBoard(display, GameRules())
 display.game_rules = display.game_board.game_rules
@@ -364,3 +395,4 @@ display.game_rules.display = display
 display.create_window()
 display.refresh()
 display.window.mainloop()
+
