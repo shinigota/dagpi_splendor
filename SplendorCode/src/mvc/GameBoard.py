@@ -174,8 +174,6 @@ class GameBoard:
         self.get_current_player().add_purchased_card(card)
         self.get_current_player().remove_different_tokens(
             card.get_purchase_gems(), True)
-        print(card.get_purchase_gems())
-        print( self.get_current_player().bank)
         if self.get_current_player().is_action_complete():
             self.check_tiles()
         self.display.refresh()

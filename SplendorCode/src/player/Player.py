@@ -44,6 +44,7 @@ class Player:
                 #                                                 "Ruby": 0
                 #                                             }, 1)]
                 self.purchased_cards[resource_type] = []
+
     def add_purchased_card(self, card):
         self.purchased_cards[card.get_income_gem()].append(card)
         self.purchased_card_amount += 1
@@ -69,18 +70,22 @@ class Player:
         self.tokens_took[token_type] += number
 
     def remove_different_tokens(self, tokens, use_card_income=False):
-        available_gold = self.bank["Gold"]
         card_income = self.get_card_income()
-        for token_type, token_amount in tokens.items():
-            delta = token_amount
-            if use_card_income:
-                if card_income[token_type] + self.bank[token_type] + available_gold \
-                        >= \
-                        token_amount:
-                    if token_amount - card_income[token_type] >= 0:
-                        delta = token_amount - card_income[token_type]
-            self.bank[token_type] -= delta
-            self.tokens_took[token_type] -= delta
+        if use_card_income:
+            for token_type in tokens.keys():
+                if tokens[token_type] - card_income[token_type] \
+                        >= 0:
+                    tokens[token_type] -= card_income[token_type]
+
+        for resource_type in tokens.keys():
+
+            resource_to_subtract = self.bank[resource_type]
+            if resource_to_subtract > tokens[resource_type]:
+                resource_to_subtract = tokens[resource_type]
+            delta = tokens[resource_type] - self.bank[resource_type]
+            if delta > 0:
+                self.bank["Gold"] -= delta
+            self.bank[resource_type] -= resource_to_subtract
 
     def remove_specific_token(self, token_type, number=1):
         self.bank[token_type] -= number
