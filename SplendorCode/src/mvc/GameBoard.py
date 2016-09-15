@@ -39,12 +39,18 @@ class GameBoard:
     # game_board init methods
 
     def init_parameters(self, parameters):
+        print('GameBoard -- init_parameters')
         self.nb_players = len(parameters)
+        print(self.nb_players)
+        print(parameters)
         self.parameters = parameters
 
     def start_game(self):
-        self.display.refresh()
         self.init_game_board()
+        self.display.refresh()
+        self.get_current_player().play()
+
+
 
     def init_game_board(self):
         """
@@ -89,11 +95,13 @@ class GameBoard:
         Initialising the 3 different level of cards
         :return:
         """
+        print('GameBoard -- init_cards')
         self.decks = {}
         development_cards = self.game_rules.get_development_cards()
         for i in range(1, int(self.game_rules.nb_lvl_card) + 1):
             self.decks[i] = development_cards[i]
-
+            print('GameBoard -- init_cards FOR')
+        print(self.decks)
         self.displayed_cards = {}
         for i in range(1, int(self.game_rules.nb_lvl_card) + 1):
             self.displayed_cards[i] = []
@@ -120,12 +128,13 @@ class GameBoard:
 
         for i in range(1, self.nb_players):
             from src.player.AI import AI
+            print('JAJ')
             self.players.append(
                 AI(self.parameters[i]["name"], self.parameters[i]["position"],
                    self.parameters[i]["difficulty"], self, self.game_rules))
         self.current_player = 0
 
-        self.players.sort(key=lambda x: x.position(), reverse=False)
+        self.players.sort(key=lambda x: int(x.position), reverse=False)
 
         self.help_text = GameStateString.get_text(GameState.PLAYER_TURN,
                                                   self.get_current_player().nickname)

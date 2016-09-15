@@ -45,10 +45,12 @@ class Display:
         Label(popup, text="Name:").pack()
         entry = Entry(popup, textvariable=self.user_name)
         entry.pack()
+        self.nb_players=1
         self.players_level = dict()
         self.players_canvas = dict()
         self.players_position = dict()
         self.players_position[self.nb_players] = Variable()
+        self.players_position[self.nb_players].set(int(self.nb_players))
 
         Label(popup, text="Position:").pack()
         entry = Entry(popup,
@@ -64,7 +66,6 @@ class Display:
         canvas.pack()
 
     def add_player_click_action(self, popup, canvas):
-
         try:
             self.false_position.pack_forget()
         except:
@@ -76,7 +77,6 @@ class Display:
         text_nb_players = self.nb_players
         Label(popup, text="%s %s" % ("Adversaire n°", text_nb_players)).pack()
         self.nb_players = self.nb_players + 1
-
         self.players_level[self.nb_players] = Variable()
         self.players_level[self.nb_players].set(0)
         self.players_position[self.nb_players] = Variable()
@@ -85,6 +85,7 @@ class Display:
                         variable=self.players_level[self.nb_players])
         c.pack()
 
+        self.players_position[self.nb_players].set(int(self.nb_players))
         Label(popup, text="Position:").pack()
         entry = Entry(popup,
                       textvariable=self.players_position[self.nb_players])
@@ -130,10 +131,9 @@ class Display:
 
         if accept:
             popup.destroy()
-            self.start_button.grid_forget()
 
             final_players = []
-            for key in (0, self.nb_players):
+            for key in range(1, self.nb_players+1):
                 players_dict = dict()
                 players_dict["position"] = self.players_position[key].get()
                 if key == 1:
@@ -143,7 +143,7 @@ class Display:
                     players_dict["name"] = "IA %d" % key
                     players_dict["difficulty"] = self.players_level[key].get()
                 final_players.append(players_dict)
-                self.game_rules.event(EventType.START, final_players)
+            self.game_rules.event(EventType.START, final_players)
         else:
             self.false_position = Label(popup, text="Positions incorrectes",
                                         fg="red")
