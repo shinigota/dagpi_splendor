@@ -330,6 +330,9 @@ class GameBoard:
         if not self.player_can_play():
             self.end_action()
         # self.get_current_player().action_AI_basic()
+        else:
+            from src.player.AI import AI
+            self.get_current_player().play()
 
     def check_tiles(self):
         print("GameBoard -- check_tiles")
