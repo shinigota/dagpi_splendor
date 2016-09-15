@@ -6,7 +6,6 @@ from src.element.ResourceType import ResourceType
 from src.game.GameState import GameState
 from src.game.GameStateString import GameStateString
 from src.mvc.GameRules import GameRules
-from src.player.AI import AI
 import random
 
 from src.player.Player import Player

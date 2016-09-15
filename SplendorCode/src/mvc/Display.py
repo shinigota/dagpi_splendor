@@ -38,7 +38,8 @@ class Display:
     def popup_start_click_action(self):
         popup = Toplevel(height=250, width=280)
         # popup.protocol("WM_DELETE_WINDOW", self.on_exit)
-        Label(popup, text="Sélectionnez vos parametres", height=1, width=30).pack()
+        Label(popup, text="Sélectionnez vos parametres", height=1,
+              width=30).pack()
         self.user_name = StringVar()
         self.user_name.set("Player")
         Label(popup, text="Name:").pack()
@@ -50,7 +51,8 @@ class Display:
         self.players_position[self.nb_players] = Variable()
 
         Label(popup, text="Position:").pack()
-        entry = Entry(popup, textvariable=self.players_position[self.nb_players])
+        entry = Entry(popup,
+                      textvariable=self.players_position[self.nb_players])
         entry.pack()
         canvas = Canvas(popup, height=20,
                         width=160, background="grey")
@@ -68,7 +70,7 @@ class Display:
         except:
             pass
 
-        if self.nb_players >= 2 :
+        if self.nb_players >= 2:
             self.canvas_validate.pack_forget()
 
         text_nb_players = self.nb_players
@@ -76,28 +78,30 @@ class Display:
         self.nb_players = self.nb_players + 1
 
         self.players_level[self.nb_players] = Variable()
-        self.players_level[self.nb_players ].set(0)
+        self.players_level[self.nb_players].set(0)
         self.players_position[self.nb_players] = Variable()
 
-        c = Checkbutton(popup, text="Niveau difficile", variable=self.players_level[self.nb_players])
+        c = Checkbutton(popup, text="Niveau difficile",
+                        variable=self.players_level[self.nb_players])
         c.pack()
 
         Label(popup, text="Position:").pack()
-        entry = Entry(popup, textvariable=self.players_position[self.nb_players])
+        entry = Entry(popup,
+                      textvariable=self.players_position[self.nb_players])
         entry.pack()
 
         self.players_canvas[self.nb_players] = c
-
 
         if self.nb_players == 4:
             self.canvas_validate.pack()
             canvas.pack_forget()
         elif self.nb_players == 2:
             self.canvas_validate = Canvas(popup, height=20,
-                            width=60, background="grey")
-            self.canvas_validate.create_text(30, 10, text="Valider", fill="black")
+                                          width=60, background="grey")
+            self.canvas_validate.create_text(30, 10, text="Valider",
+                                             fill="black")
             self.canvas_validate.bind("<Button-1>", lambda event,
-                                             p=popup:
+                                                           p=popup:
             self.validate_popup_action(p))
             self.canvas_validate.pack()
         else:
@@ -120,7 +124,7 @@ class Display:
                 accept = False
 
         if accept:
-            for item in range(1,self.nb_players+1):
+            for item in range(1, self.nb_players + 1):
                 if item not in temp_positions:
                     accept = False
 
@@ -129,19 +133,20 @@ class Display:
             self.start_button.grid_forget()
 
             final_players = []
-            for key in (1,self.nb_players):
+            for key in (0, self.nb_players):
                 players_dict = dict()
                 players_dict["position"] = self.players_position[key].get()
                 if key == 1:
                     players_dict["name"] = self.user_name.get()
+                    players_dict["difficulty"] = 0
                 else:
+                    players_dict["name"] = "IA %d" % key
                     players_dict["difficulty"] = self.players_level[key].get()
                 final_players.append(players_dict)
-
-            if self.game_rules.event(EventType.START, final_players):
-                display.refresh()
+                self.game_rules.event(EventType.START, final_players)
         else:
-            self.false_position = Label(popup, text="Positions incorrectes", fg="red")
+            self.false_position = Label(popup, text="Positions incorrectes",
+                                        fg="red")
             self.false_position.pack()
 
     def display_tiles(self):
@@ -415,7 +420,8 @@ class Display:
         # GameState.toggle_modal(True)
         self.popup = Toplevel(height=250, width=280)
         self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
-        Label(self.popup, text="Selectionnez votre action :", height=1, width=30).place(x=40, y=10)
+        Label(self.popup, text="Selectionnez votre action :", height=1,
+              width=30).place(x=40, y=10)
         self.display_card(self.popup, 90, 50, card, None)
         if isreserved:
             canvas = Canvas(self.popup, height=20,
@@ -712,15 +718,5 @@ class Display:
         button_start.create_text(150, 50, text='Start', fill='gold')
         button_quit.create_text(150, 50, text='Quit', fill='gold')
         button_quit.bind("<Button-1>", lambda a, b=None: self.window.destroy())
-        button_start.bind("<Button-1>", lambda a, b=None: self.popup_start_click_action())
-
-
-
-display = Display()
-display.game_board = GameBoard(display, GameRules())
-display.game_rules = display.game_board.game_rules
-display.game_rules.game_board = display.game_board
-display.game_rules.display = display
-display.create_window()
-display.launch()
-display.window.mainloop()
+        button_start.bind("<Button-1>",
+                          lambda a, b=None: self.popup_start_click_action())
