@@ -27,6 +27,7 @@ class AI(Player):
     def play(self):
         print("AI !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         self.play_basic()
+        #self.play_advanced()
 
     def play_basic(self):
         print("Fonction AI ???????????????????????????????????")
@@ -191,26 +192,18 @@ class AI(Player):
 
     def play_advanced(self):
         print("Hello IA")
-        nb_turn = 0
-        self.l_action = ["take", "purchase", "reserved"]
         self.bool_action = False
-        action_ia = None
+        l_card_purchase = self.find_efficientCard()
 
-        l_card = self.find_efficientCard()
-        l_card_purchase = l_card
-        for c in self.reserved_cards:
-            l_card_purchase.append(c)
-        for c in l_card_purchase:
-            if self.purchase_advanced(c):
-                bool_action = True
-                break
+        if self.purchase_adv(l_card_purchase):
+            bool_action = True
 
         l_gem = list()
         if not self.bool_action:
             l_gem = self.tokens_to_take()
             if self.take_adv(l_gem):
                 self.bool_action = True
-            elif self.reserved_card_adv(l_card_purchase):
+            elif self.reserved_card_adv():
                 self.bool_action = True
 
         givetoken = self.game_board.game_state == \
@@ -222,6 +215,18 @@ class AI(Player):
 
         if not self.bool_action:
             self.game_board.end_action()
+
+
+
+    def purchase_adv(self,l_card):
+        for card in l_card:
+            if card.is_purchasable(self.game_board.get_current_player()
+                                    .get_income()):
+                self.game_rules.event(EventType.POPUP_PURCHASE,
+                                             card)
+                return True
+        return False
+
 
     def ending_event_adv(self, givetoken, choosetile):
         # Rendre Token
@@ -479,9 +484,9 @@ class AI(Player):
             for card in l_card_1:
                 n = self.worth_it(card)
                 dict_turn[n] = card
-
-            top_effi = min(dict_turn, key=dict_turn.get)
-            card_efficient = dict_turn[top_effi]
+        while(len(card_efficient) != len(dict_turn)):
+            top_effi = max(dict_turn, key=dict_turn.get)
+            card_efficient.append(dict_turn[top_effi])
 
         if self.purchased_card_amount >= 6:
             print("yolo")
