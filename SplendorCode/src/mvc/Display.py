@@ -7,8 +7,7 @@ from src.mvc.EventType import EventType
 from src.mvc.GameBoard import GameBoard
 from src.mvc.GameRules import GameRules
 from src.player.AI import AI
-
-
+import time
 class Display:
     window = None
     text = "test"
@@ -420,9 +419,9 @@ class Display:
         canvas.create_text(30, 30, text=nb, fill=color)
         canvas.place(x=x, y=y)
 
-    def display_text_help(self, text):
+    def display_text_help(self):
         canvas = Canvas(self.window, width=500, height=70)
-        canvas.create_text(100, 30, text=text)
+        canvas.create_text(100, 30, text=self.game_board.help_text)
         canvas.place(x=0, y=0)
 
     def popup_select_card_action(self, isreserved, ispurchase, card):
@@ -715,6 +714,7 @@ class Display:
         self.display_cards()
         self.display_tiles()
         self.display_players()
+        self.display_text_help()
 
     def launch(self):
         canvas = Canvas(self.window, height=self.h, width=self.w)

@@ -6,6 +6,7 @@ from src.player.Player import Player
 from src.mvc.EventType import EventType
 from src.mvc import GameBoard
 from src.mvc import GameRules
+
 import random
 
 
@@ -223,37 +224,34 @@ class AI(Player):
         if not self.bool_action:
             self.game_board.end_action()
 
-    def ending_event(self, givetoken, choosetile):
+    def ending_event_adv(self, givetoken, choosetile):
         # Rendre Token
         if givetoken:
 
             print("Rendre "
                   "l'argent!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             if sum(self.bank.values()) > 10:
-                token_gb = random.choice(list(self.bank.keys()))
-                self.game_rules.event(
-                             EventType.CLICK_GIVE_BACK_PLAYER_TOKEN, token_gb)
-                # l_gem = self.tokens_to_take()
-                # for gem,val in self.bank:
-                #     if not gem in l_gem:
-                #         if val > 0:
-                #             self.game_rules.event(
-                #                 EventType.CLICK_GIVE_BACK_PLAYER_TOKEN,
-                #                 gem)
-                #
-                # #Si il reste des tokens a rendre (alea)
-                # n = self.bank.values() - self.game_rules.nb_min_gem_stack
-                # if n > 0:
-                #     #Creation d'une copy des token de l'AI sans les piles à 0
-                #     d_bank = deepcopy(self.bank)
-                #     for k,v in d_bank:
-                #         if v == 0:
-                #             d_bank.remove(k)
-                #
-                #     for i in range (0,n):
-                #         type_gem = random.choice(list(d_bank))
-                #         self.game_rules.event(
-                #             EventType.CLICK_GIVE_BACK_PLAYER_TOKEN, type_gem)
+                l_gem = self.tokens_to_take()
+                for gem,val in self.bank:
+                    if not gem in l_gem:
+                        if val > 0:
+                            self.game_rules.event(
+                                EventType.CLICK_GIVE_BACK_PLAYER_TOKEN,
+                                gem)
+
+                #Si il reste des tokens a rendre (alea)
+                n = self.bank.values() - self.game_rules.nb_min_gem_stack
+                if n > 0:
+                    #Creation d'une copy des token de l'AI sans les piles à 0
+                    d_bank = deepcopy(self.bank)
+                    for k,v in d_bank:
+                        if v == 0:
+                            d_bank.remove(k)
+
+                    for i in range (0,n):
+                        type_gem = random.choice(list(d_bank))
+                        self.game_rules.event(
+                            EventType.CLICK_GIVE_BACK_PLAYER_TOKEN, type_gem)
 
 
         # Choisir Tile
