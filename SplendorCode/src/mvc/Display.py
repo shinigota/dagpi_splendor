@@ -184,7 +184,7 @@ class Display:
                         highlightbackground=color)
         self.display_player_bank(canvas, 100, 10, player)
         canvas.create_text(50, 45, text=player.nickname, fill="black")
-        canvas.create_text(50, 65, text=str(player.calcul_point_in_game()) +
+        canvas.create_text(50, 65, text=str(player.calculate_total_points()) +
                                         " / "
                                         "%d" %
                                         self.game_rules.nb_points_end,
@@ -207,7 +207,7 @@ class Display:
         canvas.place(x=x, y=y)
         self.display_player_bank(canvas, 100, 10, player)
         canvas.create_text(50, 45, text=player.nickname, fill="black")
-        canvas.create_text(50, 65, text=str(player.calcul_point_in_game()) +
+        canvas.create_text(50, 65, text=str(player.calculate_total_points()) +
                                         " / "
                                         "%d" %
                                         self.game_rules.nb_points_end,
@@ -588,12 +588,3 @@ class Display:
         canvas.create_image(500, 500, image=self.img_bg)
         canvas.place(x=0, y=0)
 
-
-display = Display()
-display.game_board = GameBoard(display, GameRules())
-display.game_rules = display.game_board.game_rules
-display.game_rules.game_board = display.game_board
-display.game_rules.display = display
-display.create_window()
-display.launch()
-display.window.mainloop()

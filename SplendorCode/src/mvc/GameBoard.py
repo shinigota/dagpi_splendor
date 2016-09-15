@@ -1,6 +1,7 @@
 import time
 
 import sys
+from copy import deepcopy
 
 from src.element.ResourceType import ResourceType
 from src.game.GameState import GameState
@@ -16,7 +17,7 @@ class GameBoard:
     current_player = None
     bank = None
     nb_gems = None
-    nb_players = 2
+    nb_players = 1
     ask_purchase_or_reserve_card = None
     display = None
     game_rules = None
@@ -29,9 +30,28 @@ class GameBoard:
     end_game = None
     winners = None
     help_text = None
+    parameters = None
+
     def __init__(self, display, game_rules):
         self.game_rules = game_rules
         self.display = display
+
+    # game_board init methods
+
+    def init_parameters(self, parameters):
+        self.nb_players = len(parameters)
+        self.parameters = parameters
+
+    def start_game(self):
+        self.display.refresh()
+        self.init_game_board()
+
+    def init_game_board(self):
+        """
+        game_board initialization / creation, adding the cards / tokens to
+        the board
+        :return:
+        """
         self.types = []
         self.game_state = GameState.PLAYER_TURN
         self.nb_gems = 2
@@ -47,17 +67,6 @@ class GameBoard:
         self.end_game = False
         self.winners = []
 
-        self.init_game_board()
-
-
-    # game_board init methods
-
-    def init_game_board(self):
-        """
-        game_board initialization / creation, adding the cards / tokens to
-        the board
-        :return:
-        """
         self.init_bank()
         self.init_cards()
         self.init_tiles()
@@ -105,16 +114,21 @@ class GameBoard:
 
     def init_players(self):
         self.players = []
-        self.players.append(Player("Player %d" % 0, 1))
+        self.players.append(Player(self.parameters[0]["name"],
+                                   self.parameters[0]["position"]))
+        self.human_player = self.players[0]
+
         for i in range(1, self.nb_players):
             from src.player.AI import AI
             self.players.append(
-                AI("AI %d" % i, i + 1, 1, self, self.game_rules))
+                AI(self.parameters[i]["name"], self.parameters[i]["position"],
+                   self.parameters[i]["difficulty"], self, self.game_rules))
         self.current_player = 0
-        self.human_player = self.players[0]
+
+        self.players.sort(key=lambda x: x.position(), reverse=False)
 
         self.help_text = GameStateString.get_text(GameState.PLAYER_TURN,
-                                     self.get_current_player().nickname)
+                                                  self.get_current_player().nickname)
         # self.display.display_text_help(
         #     GameStateString.get_text(GameState.PLAYER_TURN,
         #                              self.get_current_player().nickname))
@@ -276,7 +290,7 @@ class GameBoard:
             else:
                 self.check_tiles()
         self.display.refresh()
-        self.help_text= GameStateString.get_text(
+        self.help_text = GameStateString.get_text(
             GameState.PLAYER_GIVE_TOKENS_BACK,
             (self.get_current_player().nickname,
              sum(self.get_current_player().bank.values()) -
@@ -304,25 +318,25 @@ class GameBoard:
     # Game engine actions
 
     def check_winner(self):
-        if self.get_current_player().calcul_point_in_game() >= GameRules.nb_points_end:
+        if self.get_current_player().calculate_total_points() >= GameRules.nb_points_end:
             return True
         return False
 
     def end_action(self):
         if self.check_winner():
             self.end_game = True
-            self.winners.append(self.current_player)
+            self.winners.append(self.get_current_player())
         self.get_current_player().init_turn()
         self.game_state = GameState.PLAYER_TURN
         self.current_player = (self.current_player + 1) % self.nb_players
         if self.current_player == 0 and self.end_game:
-            # winner_popup_text = "Classement des joueurs"
+            self.sort_players_end()
+            winner_popup_text = "Classement d#es joueurs : "
 
             self.display.popup_txt()
-            sys.exit()
 
         self.help_text = GameStateString.get_text(GameState.PLAYER_TURN,
-                                     self.get_current_player().nickname)
+                                                  self.get_current_player().nickname)
         # self.display.display_text_help(
         #     GameStateString.get_text(GameState.PLAYER_TURN,
         #                              self.get_current_player().nickname))
@@ -333,6 +347,19 @@ class GameBoard:
         else:
             from src.player.AI import AI
             self.get_current_player().play()
+
+    def sort_players_end(self):
+        self.winners.sort(key=lambda x: x.calculate_total_points(),
+                          reverse=True)
+        missing_players = []
+        for player in self.players:
+            if player not in self.winners:
+                missing_players.append(player)
+
+        missing_players.sort(key=lambda x: x.calculate_total_points(),
+                             reverse=True)
+
+        self.winners.extend(missing_players)
 
     def check_tiles(self):
         print("GameBoard -- check_tiles")
