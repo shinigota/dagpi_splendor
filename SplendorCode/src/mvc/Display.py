@@ -2,6 +2,7 @@ from tkinter import *
 
 from src.element.Card import Card
 from src.element.ResourceType import ResourceType
+from src.game.GameState import GameState
 from src.mvc.EventType import EventType
 from src.mvc.GameBoard import GameBoard
 from src.mvc.GameRules import GameRules
@@ -409,7 +410,13 @@ class Display:
         canvas.create_text(30, 30, text=nb, fill=color)
         canvas.place(x=x, y=y)
 
+    def display_text_help(self, text):
+        canvas = Canvas(self.window, width=1920, height=70)
+        canvas.create_text(100, 30, text=text)
+        canvas.place(x=0, y=0)
+
     def popup_select_card_action(self, isreserved, ispurchase, card):
+        # GameState.toggle_modal(True)
         self.popup = Toplevel(height=250, width=280)
         self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
         Label(self.popup, text="Sélectionnez votre action :", height=1,
@@ -429,17 +436,17 @@ class Display:
                             width=60, background="grey")
             canvas.create_text(30, 10, text="Acheter", fill="black")
             canvas.bind("<Button-1>", lambda event,
-                                             p=self.popup,
                                              e=EventType.POPUP_PURCHASE,
                                              c=card:
-            self.click_on_popup(p, e, c))
+            self.click_on_popup(e, c))
             canvas.place(x=160, y=200)
 
     def popup_select_tile_action(self, tiles):
-        self.popup = Toplevel(height=250, width=280)
+        # GameState.toggle_modal(True)
+        self.popup = Toplevel(height=170, width=565)
         self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
-        Label(self.popup, text="Sélectionnez votre action :", height=1,
-              width=30).place(x=40, y=10)
+        Label(self.popup, text="Sélectionnez votre Noble:", height=1,
+              width=30).place(x=180, y=10)
         x = 10
         y = 50
         for tile in tiles:
@@ -447,20 +454,26 @@ class Display:
             x += 110
 
     def popup_txt(self, txt):
+        # GameState.toggle_modal(True)
         self.popup = Toplevel(height=50, width=280)
         self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
         Label(self.popup, text=txt, height=1,
               width=30).place(x=40, y=10)
 
     def click_on_popup(self, event, objet):
-        self.game_rules.event(event, objet)
         self.popup.destroy()
+        # GameState.toggle_modal(False)
+        self.game_rules.event(event, objet)
 
     def on_exit(self):
         self.game_rules.event(EventType.CLOSE_POPUP, None)
         self.popup.destroy()
 
     def create_image(self):
+
+        self.img_bg = PhotoImage(file='../res/bakground.gif')
+        self.img_button = PhotoImage(file='../res/Button.gif')
+
         self.img0 = PhotoImage(file='../res/0.gif')
         self.img0 = self.img0.subsample(3, 3)
         self.img1 = PhotoImage(file='../res/1.gif')
@@ -690,7 +703,11 @@ class Display:
         self.display_cards()
         self.display_tiles()
         self.display_players()
-        self.popup_select_tile_action(self.game_board.displayed_tiles)
+
+    def launch(self):
+        canvas = Canvas(self.window, height=self.h, width=self.w)
+        canvas.create_image(500, 500, image=self.img_bg)
+        canvas.place(x=0, y=0)
 
 
 display = Display()
@@ -701,4 +718,5 @@ display.game_rules.display = display
 display.create_window()
 display.start_menu()
     # display.refresh()
+display.launch()
 display.window.mainloop()
