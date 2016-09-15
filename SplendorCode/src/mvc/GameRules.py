@@ -19,7 +19,7 @@ class GameRules:
     nb_gem_for_3 = 0
     nb_gem_for_4 = 0
     nb_gold = 0
-    nb_gem_dif = 0
+    nb_gem_diff = 0
     nb_gem_same = 0
     nb_gold_take = 0
     nb_token_end_turn = 0

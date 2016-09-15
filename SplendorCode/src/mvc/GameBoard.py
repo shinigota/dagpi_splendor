@@ -16,7 +16,7 @@ class GameBoard:
     current_player = None
     bank = None
     nb_gems = None
-    nb_players = 2
+    nb_players = 4
     ask_purchase_or_reserve_card = None
     display = None
     game_rules = None
@@ -270,11 +270,8 @@ class GameBoard:
         self.current_player = (self.current_player + 1) % self.nb_players
         if self.current_player == 0 and self.end_game:
             sys.exit()
-
-        self.get_current_player().action_ai_basic()
-        self.display.popup_txt(GameStateString.get_text(
-            GameState.PLAYER_TURN,
-            self.get_current_player().nickname))
+        from src.player.AI import AI
+        self.get_current_player().play()
         # self.get_current_player().action_AI_basic()
 
     def check_tiles(self):

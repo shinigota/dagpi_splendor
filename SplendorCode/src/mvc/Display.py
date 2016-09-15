@@ -332,8 +332,8 @@ class Display:
               width=30).place(x=40, y=10)
 
     def click_on_popup(self, event, objet):
-        self.game_rules.event(event, objet)
         self.popup.destroy()
+        self.game_rules.event(event, objet)
 
     def on_exit(self):
         self.game_rules.event(EventType.CLOSE_POPUP, None)
@@ -573,19 +573,8 @@ class Display:
         self.display_cards()
         self.display_tiles()
         self.display_players()
-        self.popup_select_tile_action(self.game_board.displayed_tiles)
 
     def launch(self):
         canvas = Canvas(self.window, height=self.h, width=self.w)
         canvas.create_image(500, 500, image=self.img_bg)
         canvas.place(x=0, y=0)
-
-
-display = Display()
-display.game_board = GameBoard(display, GameRules())
-display.game_rules = display.game_board.game_rules
-display.game_rules.game_board = display.game_board
-display.game_rules.display = display
-display.create_window()
-display.launch()
-display.window.mainloop()

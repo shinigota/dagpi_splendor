@@ -24,20 +24,20 @@ class AI(Player):
         self.difficulty = difficulty
         self.position = position
 
+    def play(self):
+        print("AI !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        self.play_basic()
 
-    def action_ai_basic(self):
-        print("Fonction AI")
-        self.l_action = ["two", "three", "reserved", "purchase"]
+    def play_basic(self):
+        print("Fonction AI ???????????????????????????????????")
+        self.l_action = ["take", "purchase", "reserved"]
         self.bool_action = False
-
-        while len(self.l_action) > 1 and not self.bool_action:
+        action_ia = None
+        while len(self.l_action) > 0 and not self.bool_action:
             action_ia = random.choice(list(self.l_action))
 
-            if action_ia == "two":
-                self.take_two()
-
-            elif action_ia == "three":
-                self.take_three()
+            if action_ia == "take":
+                self.take_gem()
 
             elif action_ia == "reserved":
                 self.reserved()
@@ -46,78 +46,93 @@ class AI(Player):
                 self.purchase()
 
         givetoken = self.game_board.game_state == \
-        GameState.PLAYER_GIVE_TOKENS_BACK
+                    GameState.PLAYER_GIVE_TOKENS_BACK
         choosetile = self.game_board.game_state == \
-        GameState.PLAYER_CHOOSE_TILE
+                     GameState.PLAYER_CHOOSE_TILE
+
+        print("AI Ending ???????????????????????????????????")
         self.ending_event(givetoken, choosetile)
-
+        print("AI EVENT  ???????????????????????????????????")
         if not self.bool_action:
-            self.game_board.end_turn()
+            print("AI NO ACTION ???????????????????????????????????")
+            self.game_board.end_action()
 
-
-
-    def take_two(self):
-        print("Prendre 2 Jeton")
-        dict_t2 = {}
-        for k, v in self.game_board.bank.items():
-            if v >= self.game_rules.nb_min_gem_stack:
-                dict_t2[k] = v
-        if len(dict_t2) == 0:
-            self.l_action.remove("two")
+    def take_gem(self):
+        print("take Token")
+        list_gem = list()
+        list_choice = list()
+        list_choice.append("two")
+        list_choice.append("three")
+        take = random.choice(list_choice)
+        if take == "two":
+            print("take two")
+            for key in self.game_board.bank:
+                if self.game_board.bank[key] >= \
+                        self.game_rules.nb_min_gem_stack and key != "Gold":
+                    list_gem.append(key)
+            print(list_gem)
+            if len(list_gem) > 0:
+                gem = random.choice(list_gem)
+                self.take_two(gem)
+            else:
+                print("take three")
+                self.take_three()
         else:
-            token_t2 = random.choice(list(dict_t2.items()))
-            token_type_t2 = token_t2[1]
-            self.game_rules.event(EventType.CLICK_TAKE_TOKEN_GAMEBOARD,
-                                  token_t2[0])
-            self.game_rules.event(EventType.CLICK_TAKE_TOKEN_GAMEBOARD,
-                                  token_t2[0])
-            # token_nb_t2 = token_t2[0]
-            # token_t2 = (token_type_t2, token_nb_t2)
-            # self.game_rules.event(EventType.CLICK_TAKE_TOKEN_GAMEBOARD,
-            #                       token_type_t2)
-            bool_action = True
+            print("take three")
+            self.take_three()
+        self.l_action.remove("take")
 
-
+    def take_two(self, gem):
+        if self.game_rules.event(EventType.CLICK_TAKE_TOKEN_GAMEBOARD,
+                                 gem):
+            if self.game_rules.event(EventType.CLICK_TAKE_TOKEN_GAMEBOARD,
+                                     gem):
+                self.bool_action = True
 
     def take_three(self):
-        print("Prendre 3 Jeton")
-        dict_t3 = {}
-        for k, v in self.game_board.bank.items():
-            if v > 0 and not k == "Gold":
-                dict_t3[k] = v
-        if len(dict_t3) < 3:
-            self.l_action.remove("three")
-        else:
-            for i in range(1, 4):
-                token_t3 = random.choice(list(dict_t3.items()))
-                token_type_t3 = token_t3[0]
-                self.game_rules.event(
-                    EventType.CLICK_TAKE_TOKEN_GAMEBOARD, token_type_t3)
-                del dict_t3[token_type_t3]
-            bool_action = True
+        list_gem = list()
+        for key in self.game_board.bank:
+            if self.game_board.bank[key] > 0 and key != "Gold":
+                list_gem.append(key)
+        if len(list_gem) > 0:
+            print("Bouclu")
+            print(self.game_rules.nb_gem_diff)
+            for i in range(0, self.game_rules.nb_gem_diff):
+                print(i)
+                if len(list_gem) > 0:
+                    gem = random.choice(list_gem)
+                    self.game_rules.event(EventType.CLICK_TAKE_TOKEN_GAMEBOARD,
+                                          gem)
+                    list_gem.remove(gem)
+            self.bool_action = True
 
     def reserved(self):
         print("Reserv une carte")
-        if self.reserved_cards == self.game_rules.nb_max_res_card:
-            self.l_action.remove("reserved")
-            return None
-        l_where_r = ["deck", "card"]
-        where_r = random.choice(list(l_where_r))
-        l_lvl = [1, 2, 3]
-        if where_r == "deck":
-            print('LEVEL')
-            print(l_lvl)
-            self.game_rules.event(EventType.CLICK_DECK_CARD,
-                                  random.choice(list(l_lvl)))
-            bool_action = True
-        if where_r == "card":
-            card = random.choice(
-                list(self.game_board.displayed_cards.values()))
-            card = random.choice(card)
-            print('CARD')
-            print(card)
-            self.game_rules.event(EventType.POPUP_RESERVE, card)
-            bool_action = True
+        if len(self.reserved_cards) < self.game_rules.nb_max_res_card:
+            l_where_r = ["deck", "card"]
+            where_r = random.choice(list(l_where_r))
+            l_lvl = [1, 2, 3]
+            if where_r == "deck":
+                print('LEVEL')
+                print(l_lvl)
+                lvl = random.choice(list(l_lvl))
+                if not self.game_board.is_deck_empty(lvl):
+                    self.game_rules.event(EventType.CLICK_DECK_CARD,
+                                          lvl)
+                    self.bool_action = True
+            elif where_r == "card":
+                for i in range(0, self.game_rules.nb_lvl_card):
+                    lvl = random.choice(list(l_lvl))
+                    if len(self.game_board.displayed_cards[lvl]) > 0:
+                        card = random.choice(
+                            list(self.game_board.displayed_cards[lvl]))
+                        print('CARD')
+                        print(card)
+                        self.game_rules.event(EventType.POPUP_RESERVE, card)
+                        self.bool_action = True
+                        break
+                    l_lvl.remove(lvl)
+        self.l_action.remove("reserved")
 
     def purchase(self):
         # Acheter
@@ -155,8 +170,7 @@ class AI(Player):
                     break
         l_where_p.remove("visible")
 
-
-    def ending_event(self,givetoken,choosetile):
+    def ending_event(self, givetoken, choosetile):
         # Rendre Token
         if givetoken:
 
@@ -173,14 +187,12 @@ class AI(Player):
             for tiles_c in self.displayed_tiles:
                 self.game_rules.event(EventType.CLICK_TILE)
 
-
     def action_AI_advanced(self):
         print("Hello IA")
         nb_turn = 0
 
-
-    #Calcul de jeton manquant pour une carte
-    def real_value_card(self,card):
+    # Calcul de jeton manquant pour une carte
+    def real_value_card(self, card):
         comp_dict = {}
         dict_inc = self.get_card_income()
         for key_card in card.items():
@@ -189,32 +201,31 @@ class AI(Player):
                     comp_dict = card.values() - dict_inc.values()
         return comp_dict
 
-
-    def worth_it (card):
+    def worth_it(card):
         print(card.__dict__)
         count_turn = 0
         card_comp = None
         card_comp = deepcopy(card)
         bool_count = False
         while not bool_count:
-            print("debut",count_turn)
-            print("debut",bool_count)
+            print("debut", count_turn)
+            print("debut", bool_count)
             count_type = 0
 
             for type_card, val_card in card_comp.purchase_gems.items():
                 if val_card > 0:
                     count_type += 1
-            print("Count_type",count_type)
+            print("Count_type", count_type)
             if count_type >= 2:
                 count_ite = 0
                 max_gem = max(card_comp.purchase_gems,
-                       key=card_comp.purchase_gems.get)
+                              key=card_comp.purchase_gems.get)
                 for type_card, val_card in card_comp.purchase_gems.items():
                     if val_card > 0:
                         print("Cycle_d", card_comp.purchase_gems[type_card])
                         card_comp.purchase_gems[type_card] -= 1
                         print("Cycle_f", card_comp.purchase_gems[type_card])
-                        count_ite +=1
+                        count_ite += 1
                     if count_ite == 3:
                         count_turn += 1
                         break
@@ -235,9 +246,9 @@ class AI(Player):
                 bool_count = True
         return count_turn
 
-#Card Niveau 1 : Cout de gem = 3-5
-#Card Niveau 2 : Cout de gem = 5-8
-#Card Niveau 3 : Cout de gem =  7-14
+    # Card Niveau 1 : Cout de gem = 3-5
+    # Card Niveau 2 : Cout de gem = 5-8
+    # Card Niveau 3 : Cout de gem =  7-14
 
 
     def find_efficientCard(self):
@@ -246,13 +257,13 @@ class AI(Player):
 
         if self.purchased_card_amount < 6:
 
-            #Remplir une liste carte lvl 1
+            # Remplir une liste carte lvl 1
             l_card_1 = []
-            for k,l_card in dict_card.items():
+            for k, l_card in dict_card.items():
                 if k == 1:
                     l_card_1 = l_card
 
-            #Dictionnaire : clé le nombre de tour et la valeur une liste de
+            # Dictionnaire : clé le nombre de tour et la valeur une liste de
             # carte
             dict_turn = (list)
             n = 0
@@ -266,9 +277,7 @@ class AI(Player):
         if self.purchased_card_amount >= 6:
             print("yolo")
 
-        return  card_efficient
-
-
+        return card_efficient
 
     def action_ai_advanced(self):
 
@@ -276,11 +285,9 @@ class AI(Player):
         l_card = self.find_efficientCard()
         dict_nb_gem = {}
 
-
         for c in l_card:
             for type_gem, val_gem in c.purchase_gems.items():
                 dict_nb_gem[type_gem] += val_gem
-
 
 
 dict_c_cost = {}
@@ -305,9 +312,6 @@ for type_gem, val_gem in dict_c_cost.items():
     print(dict_nb_gem)
 
 print(dict_nb_gem)
-
-
-
 
 '''
 mostEfficientCards = dict()
@@ -349,6 +353,4 @@ for card in self.cards_info:
 
 
 
-        # def action_reserved_card(self):
-
-
+# def action_reserved_card(self):

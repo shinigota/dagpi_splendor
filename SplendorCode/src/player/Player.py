@@ -32,7 +32,7 @@ class Player:
     def init_bank(self):
         self.bank = {}
         for resource_type, resource in ResourceType.resource_type.items():
-            self.bank[resource_type] = 2
+            self.bank[resource_type] = 0
 
     def init_purchased_cards(self):
         self.purchased_cards = {}
@@ -70,7 +70,7 @@ class Player:
                                                             0)
                                                        ]'''
 
-                #self.purchased_cards[resource_type] = []
+                self.purchased_cards[resource_type] = []
 
     def add_purchased_card(self, card):
         self.purchased_cards[card.get_income_gem()].append(card)
@@ -185,6 +185,5 @@ class Player:
 
         return income
 
-    def action_ai_basic(self):
-        print("AI")
+    def play(self):
         pass
