@@ -315,10 +315,10 @@ class Display:
             canvas.place(x=160, y=200)
 
     def popup_select_tile_action(self, tiles):
-        self.popup = Toplevel(height=250, width=280)
+        self.popup = Toplevel(height=170, width=565)
         self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
-        Label(self.popup, text="Sélectionnez votre action :", height=1,
-              width=30).place(x=40, y=10)
+        Label(self.popup, text="Sélectionnez votre Noble:", height=1,
+              width=30).place(x=180, y=10)
         x = 10
         y = 50
         for tile in tiles:
