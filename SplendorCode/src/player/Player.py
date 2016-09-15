@@ -38,15 +38,28 @@ class Player:
         self.purchased_cards = {}
         for resource_type, resource in ResourceType.resource_type.items():
             if resource_type != "Gold":
-                # self.purchased_cards[resource_type] = [Card(0,
-                #                                             resource_type, {
-                #                                                 "Emerald": 0,
-                #                                                 "Diamond": 0,
-                #                                                 "Sapphire": 0,
-                #                                                 "Onyx": 0,
-                #                                                 "Ruby": 0
-                #                                             }, 2)]
-                self.purchased_cards[resource_type] = []
+                self.purchased_cards[resource_type] = [Card(0,
+                                                            resource_type,
+                                                            {
+                                                                "Emerald": 0,
+                                                                "Diamond": 0,
+                                                                "Sapphire": 0,
+                                                                "Onyx": 0,
+                                                                "Ruby": 0
+                                                            },
+                                                            0),
+                                                       Card(0,
+                                                            resource_type,
+                                                            {
+                                                                "Emerald": 0,
+                                                                "Diamond": 0,
+                                                                "Sapphire": 0,
+                                                                "Onyx": 0,
+                                                                "Ruby": 0
+                                                            },
+                                                            0),
+                                                       ]
+                # self.purchased_cards[resource_type] = []
 
     def add_purchased_card(self, card):
         self.purchased_cards[card.get_income_gem()].append(card)
@@ -98,7 +111,6 @@ class Player:
                 token_copy["Gold"] += delta
                 token_copy[token_type] -= delta
 
-        print(token_copy)
         return token_copy
 
     def remove_specific_token(self, token_type, number=1):
@@ -113,12 +125,11 @@ class Player:
         self.reserved_card_amount = 0
 
     def is_action_complete(self, game_state):
-        print('is_action_complete')
+        print('Player -- is_action_complete')
         val = (self.token_choice_valid() or
                 self.purchased_card_amount >= 1 or
                 self.reserved_card_amount >= 1
                 or game_state == GameState.PLAYER_GIVE_TOKENS_BACK)
-        print(val)
         return val
 
     def token_choice_valid(self):
