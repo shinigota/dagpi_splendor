@@ -150,6 +150,7 @@ class GameBoard:
         :param token: game_board's token which has been clicked
         :return: None
         """
+
         print('GameBoard -- click_token_game_board')
         print(self.player_can_play())
         self.get_current_player().add_specific_token(token)
@@ -162,9 +163,7 @@ class GameBoard:
                 self.display.refresh()
                 self.help_text = GameStateString.get_text(
                     GameState.PLAYER_GIVE_TOKENS_BACK,
-                    (self.get_current_player().nickname,
-                     sum(self.get_current_player().bank.values()) -
-                     GameRules.nb_token_end_turn))
+                    (self.get_current_player().nickname))
                 # self.display.display_text_help(GameStateString.get_text(
                 #     GameState.PLAYER_GIVE_TOKENS_BACK,
                 #     (self.get_current_player().nickname,
@@ -194,9 +193,7 @@ class GameBoard:
                 self.display.refresh()
                 self.help_text = GameStateString.get_text(
                     GameState.PLAYER_GIVE_TOKENS_BACK,
-                    (self.get_current_player().nickname,
-                     sum(self.get_current_player().bank.values()) -
-                     GameRules.nb_token_end_turn))
+                    (self.get_current_player().nickname))
                 # self.display.display_text_help(GameStateString.get_text(
                 #     GameState.PLAYER_GIVE_TOKENS_BACK,
                 #     (self.get_current_player().nickname,
@@ -237,9 +234,7 @@ class GameBoard:
         self.display.refresh()
         self.help_text = GameStateString.get_text(
             GameState.PLAYER_GIVE_TOKENS_BACK,
-            (self.get_current_player().nickname,
-             sum(self.get_current_player().bank.values()) -
-             GameRules.nb_token_end_turn))
+            (self.get_current_player().nickname))
         # self.display.display_text_help(GameStateString.get_text(
         #     GameState.PLAYER_GIVE_TOKENS_BACK,
         #     (self.get_current_player().nickname,
@@ -253,6 +248,8 @@ class GameBoard:
         :return:
         '''
         print("GameBoard -- click_purchase_gameboard_card")
+        print(self.get_current_player().nickname)
+        print(card)
         self.replace_displayed_card(card)
         self.get_current_player().add_purchased_card(card)
         cost = self.get_current_player().get_tokens_to_spend(
@@ -270,6 +267,8 @@ class GameBoard:
         :return:
         '''
         print("GameBoard -- click_purchase_reserve_card")
+        print(self.get_current_player().nickname)
+        print(card)
         self.get_current_player().reserved_cards.remove(card)
         self.get_current_player().add_purchased_card(card)
         cost = self.get_current_player().get_tokens_to_spend(
@@ -301,9 +300,7 @@ class GameBoard:
         self.display.refresh()
         self.help_text = GameStateString.get_text(
             GameState.PLAYER_GIVE_TOKENS_BACK,
-            (self.get_current_player().nickname,
-             sum(self.get_current_player().bank.values()) -
-             GameRules.nb_token_end_turn))
+            self.get_current_player().nickname)
         # self.display.display_text_help(GameStateString.get_text(
         #     GameState.PLAYER_GIVE_TOKENS_BACK,
         #     (self.get_current_player().nickname,
@@ -340,9 +337,14 @@ class GameBoard:
         self.current_player = (self.current_player + 1) % self.nb_players
         if self.current_player == 0 and self.end_game:
             self.sort_players_end()
-            winner_popup_text = "Classement d#es joueurs : "
-
-            self.display.popup_txt()
+            winner_popup_text = "Classement des joueurs : "
+            for winning_player in self.winners:
+                winner_popup_text += "\n%s : %d" % (
+                    winning_player.nickname,
+                    winning_player.calculate_total_points())
+            print('->>>>>>>>>>>>>>>>>>> PROUT1')
+            self.display.popup_txt(winner_popup_text)
+            print('-->>>>>>>>>>>>>>>>>>> PROUT2')
 
         self.help_text = GameStateString.get_text(GameState.PLAYER_TURN,
                                                   self.get_current_player().nickname)
