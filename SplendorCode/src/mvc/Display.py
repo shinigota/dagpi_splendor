@@ -67,7 +67,8 @@ class Display:
         canvas.place(x=x, y=y)
         if event is not None:
             canvas.bind("<Button-1>", lambda event, e=event,
-                                         t=tile: self.game_rules.event(e, t))
+                                             t=tile: self.game_rules.event(e,
+                                                                           t))
 
     def display_cards(self):
         for lvl in range(1, int(self.game_rules.nb_lvl_card) + 1):
@@ -228,7 +229,8 @@ class Display:
         canvas = Canvas(canvas, width=100, height=100,
                         background='#725202')
         canvas.create_image(50, 50, image=self.img_tile)
-        canvas.create_image(50, 50, image=self.get_image_points(len(player.owned_tiles)))
+        canvas.create_image(50, 50, image=self.get_image_points(
+            len(player.owned_tiles)))
         canvas.place(x=x, y=y)
 
     def display_player_bank(self, canvas, x, y, player):
@@ -257,7 +259,8 @@ class Display:
 
     def display_player_gold(self, canvas, x, y, nb):
         canvas = Canvas(canvas, width=60, height=60)
-        canvas.create_image(30, 30, image=self.get_image_token_bank_gem("Gold"))
+        canvas.create_image(30, 30,
+                            image=self.get_image_token_bank_gem("Gold"))
         canvas.create_image(30, 30, image=self.get_image_points(nb))
         canvas.place(x=x, y=y)
         canvas.bind("<Button-1>",
@@ -286,56 +289,55 @@ class Display:
         canvas.place(x=x, y=y)
 
     def popup_select_card_action(self, isreserved, ispurchase, card):
-        popup = Toplevel(height=250, width=280)
-        # popup.protocol("WM_DELETE_WINDOW", self.on_exit)
-        Label(popup, text="Sélectionnez votre action :", height=1,
+        self.popup = Toplevel(height=250, width=280)
+        self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
+        Label(self.popup, text="Sélectionnez votre action :", height=1,
               width=30).place(x=40, y=10)
-        self.display_card(popup, 90, 50, card, None)
+        self.display_card(self.popup, 90, 50, card, None)
         if isreserved:
-            canvas = Canvas(popup, height=20,
+            canvas = Canvas(self.popup, height=20,
                             width=60, background="grey")
             canvas.create_text(30, 10, text="Réserver", fill="black")
             canvas.bind("<Button-1>", lambda event,
-                                             p=popup,
                                              e=EventType.POPUP_RESERVE,
                                              c=card:
-            self.click_on_popup(p, e, c))
+            self.click_on_popup(e, c))
             canvas.place(x=60, y=200)
         if ispurchase:
-            canvas = Canvas(popup, height=20,
+            canvas = Canvas(self.popup, height=20,
                             width=60, background="grey")
             canvas.create_text(30, 10, text="Acheter", fill="black")
             canvas.bind("<Button-1>", lambda event,
-                                             p=popup,
+                                             p=self.popup,
                                              e=EventType.POPUP_PURCHASE,
                                              c=card:
             self.click_on_popup(p, e, c))
             canvas.place(x=160, y=200)
 
     def popup_select_tile_action(self, tiles):
-        popup = Toplevel(height=250, width=280)
-        # popup.protocol("WM_DELETE_WINDOW", self.on_exit)
-        Label(popup, text="Sélectionnez votre action :", height=1,
+        self.popup = Toplevel(height=250, width=280)
+        self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
+        Label(self.popup, text="Sélectionnez votre action :", height=1,
               width=30).place(x=40, y=10)
         x = 10
         y = 50
         for tile in tiles:
-            self.display_tile(popup, x, y, tile, EventType.CLICK_TILE)
+            self.display_tile(self.popup, x, y, tile, EventType.CLICK_TILE)
             x += 110
 
     def popup_txt(self, txt):
-        popup = Toplevel(height=50, width=280)
-        # popup.protocol("WM_DELETE_WINDOW", self.on_exit)
-        Label(popup, text=txt, height=1,
+        self.popup = Toplevel(height=50, width=280)
+        self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
+        Label(self.popup, text=txt, height=1,
               width=30).place(x=40, y=10)
 
-    def click_on_popup(self, popup, event, objet):
+    def click_on_popup(self, event, objet):
         self.game_rules.event(event, objet)
-        popup.destroy()
+        self.popup.destroy()
 
     def on_exit(self):
-        """When you click to exit, this function is called"""
-        pass
+        self.game_rules.event(EventType.CLOSE_POPUP, None)
+        self.popup.destroy()
 
     def create_image(self):
         self.img0 = PhotoImage(file='../res/0.gif')
@@ -568,7 +570,6 @@ class Display:
         self.display_tiles()
         self.display_players()
         self.popup_select_tile_action(self.game_board.displayed_tiles)
-
 
 
 display = Display()
