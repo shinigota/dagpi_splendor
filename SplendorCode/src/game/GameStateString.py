@@ -4,7 +4,8 @@ from src.game.GameState import GameState
 class GameStateString:
     TEXT = {}
     TEXT[GameState.PLAYER_TURN.value] = "%s, jouez !"
-    TEXT[GameState.PLAYER_GIVE_TOKENS_BACK.value] = "%s, vous avez %d jetons en " \
+    TEXT[GameState.PLAYER_GIVE_TOKENS_BACK.value] = "%s, vous avez des " \
+                                                    "jetons en " \
                                               "trop !"
     TEXT[GameState.CANNOT_PLAY.value] = "%s, vous ne pouvez pas jouer, " \
                                         "votre tour " \

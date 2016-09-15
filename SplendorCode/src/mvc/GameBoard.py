@@ -163,9 +163,7 @@ class GameBoard:
                 self.display.refresh()
                 self.help_text = GameStateString.get_text(
                     GameState.PLAYER_GIVE_TOKENS_BACK,
-                    (self.get_current_player().nickname,
-                     sum(self.get_current_player().bank.values()) -
-                     GameRules.nb_token_end_turn))
+                    (self.get_current_player().nickname))
                 # self.display.display_text_help(GameStateString.get_text(
                 #     GameState.PLAYER_GIVE_TOKENS_BACK,
                 #     (self.get_current_player().nickname,
@@ -195,9 +193,7 @@ class GameBoard:
                 self.display.refresh()
                 self.help_text = GameStateString.get_text(
                     GameState.PLAYER_GIVE_TOKENS_BACK,
-                    (self.get_current_player().nickname,
-                     sum(self.get_current_player().bank.values()) -
-                     GameRules.nb_token_end_turn))
+                    (self.get_current_player().nickname))
                 # self.display.display_text_help(GameStateString.get_text(
                 #     GameState.PLAYER_GIVE_TOKENS_BACK,
                 #     (self.get_current_player().nickname,
@@ -238,9 +234,7 @@ class GameBoard:
         self.display.refresh()
         self.help_text = GameStateString.get_text(
             GameState.PLAYER_GIVE_TOKENS_BACK,
-            (self.get_current_player().nickname,
-             sum(self.get_current_player().bank.values()) -
-             GameRules.nb_token_end_turn))
+            (self.get_current_player().nickname))
         # self.display.display_text_help(GameStateString.get_text(
         #     GameState.PLAYER_GIVE_TOKENS_BACK,
         #     (self.get_current_player().nickname,
@@ -306,9 +300,7 @@ class GameBoard:
         self.display.refresh()
         self.help_text = GameStateString.get_text(
             GameState.PLAYER_GIVE_TOKENS_BACK,
-            (self.get_current_player().nickname,
-             sum(self.get_current_player().bank.values()) -
-             GameRules.nb_token_end_turn))
+            self.get_current_player().nickname)
         # self.display.display_text_help(GameStateString.get_text(
         #     GameState.PLAYER_GIVE_TOKENS_BACK,
         #     (self.get_current_player().nickname,
