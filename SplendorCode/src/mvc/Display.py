@@ -35,6 +35,7 @@ class Display:
     def display_tile(self, position, tile):
         canvas = Canvas(self.window, width=100, height=100,
                         background='#725202')
+        canvas.create_image(50, 50, image=self.img_tile)
         canvas.create_image(13, 13, image=self.get_image_points(tile.points))
         i = 1
         for key in tile.gems_conditions:
@@ -127,9 +128,8 @@ class Display:
         color = Display.get_color(level)
         if empty:
             color = "grey"
-        canvas = Canvas(self.window, width=100, height=120, background=color)
-        canvas.create_text(50, 50, text="PILE DE NIVEAU", fill="black")
-        canvas.create_text(50, 70, text=level, fill="black")
+        canvas = Canvas(self.window, width=100, height=120)
+        canvas.create_image(50, 60, image=self.get_image_deck_(level, empty))
         canvas.place(x=50, y=490 - (130 * (level - 1)))
         canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_DECK_CARD,
                                          l=level: self.game_rules.event(e, l))
@@ -217,13 +217,15 @@ class Display:
 
     def display_card_ia(self, canvas, x, y, level):
         color = Display.get_color(level)
-        canvas = Canvas(canvas, width=100, height=120, background=color)
+        canvas = Canvas(canvas, width=100, height=120)
+        canvas.create_image(50, 60, image=self.get_image_deck_(level, False))
         canvas.place(x=x, y=y)
 
     def display_player_tile(self, canvas, x, y, player):
         canvas = Canvas(canvas, width=100, height=100,
                         background='#725202')
-        canvas.create_text(50, 50, text=len(player.owned_tiles), fill="black")
+        canvas.create_image(50, 50, image=self.img_tile)
+        canvas.create_image(50, 50, image=self.get_image_points(len(player.owned_tiles)))
         canvas.place(x=x, y=y)
 
     def display_player_bank(self, canvas, x, y, player):
@@ -252,9 +254,8 @@ class Display:
 
     def display_player_gold(self, canvas, x, y, nb):
         canvas = Canvas(canvas, width=60, height=60)
-        canvas.create_oval(10, 10, 50, 50,
-                           fill=ResourceType.get_color("Gold"))
-        canvas.create_text(30, 30, text=nb, fill="black")
+        canvas.create_image(30, 30, image=self.get_image_token_bank_gem("Gold"))
+        canvas.create_image(30, 30, image=self.get_image_points(nb))
         canvas.place(x=x, y=y)
         canvas.bind("<Button-1>",
                     lambda event, e=EventType.CLICK_GIVE_BACK_PLAYER_TOKEN,
@@ -265,9 +266,8 @@ class Display:
         if ResourceType.get_color(gem) == "white":
             color = "black"
         canvas = Canvas(canvas, width=60, height=60)
-        canvas.create_oval(10, 10, 50, 50,
-                           fill=ResourceType.get_color(gem))
-        canvas.create_text(30, 30, text=nb, fill=color)
+        canvas.create_image(30, 30, image=self.get_image_token_bank_gem(gem))
+        canvas.create_image(30, 30, image=self.get_image_points(nb))
         canvas.place(x=x, y=y)
         canvas.bind("<Button-1>",
                     lambda event, e=EventType.CLICK_GIVE_BACK_PLAYER_TOKEN,
@@ -278,8 +278,7 @@ class Display:
         if ResourceType.get_color(gem) == "white":
             color = "black"
         canvas = Canvas(canvas, width=60, height=60)
-        canvas.create_rectangle(10, 10, 50, 50,
-                                fill=ResourceType.get_color(gem))
+        canvas.create_image(35, 30, image=self.get_image_rect_bank_gem(gem))
         canvas.create_text(30, 30, text=nb, fill=color)
         canvas.place(x=x, y=y)
 
@@ -369,6 +368,12 @@ class Display:
         self.img_rect_S = PhotoImage(file='../res/blue_rect.gif')
         self.img_rect_S = self.img_rect_S.subsample(2, 2)
 
+        self.img_rect_bank_D = PhotoImage(file='../res/white_rect.gif')
+        self.img_rect_bank_E = PhotoImage(file='../res/green_rect.gif')
+        self.img_rect_bank_O = PhotoImage(file='../res/black_rect.gif')
+        self.img_rect_bank_R = PhotoImage(file='../res/red_rect.gif')
+        self.img_rect_bank_S = PhotoImage(file='../res/blue_rect.gif')
+
         self.img_token_D = PhotoImage(file='../res/token_diamant.gif')
         self.img_token_D = self.img_token_D.subsample(3, 3)
         self.img_token_E = PhotoImage(file='../res/token_emeraude.gif')
@@ -381,6 +386,37 @@ class Display:
         self.img_token_O = self.img_token_O.subsample(3, 3)
         self.img_token_G = PhotoImage(file='../res/token_gold.gif')
         self.img_token_G = self.img_token_G.subsample(3, 3)
+
+        self.img_token_bank_D = PhotoImage(file='../res/token_diamant.gif')
+        self.img_token_bank_D = self.img_token_bank_D.subsample(4, 4)
+        self.img_token_bank_E = PhotoImage(file='../res/token_emeraude.gif')
+        self.img_token_bank_E = self.img_token_bank_E.subsample(4, 4)
+        self.img_token_bank_R = PhotoImage(file='../res/token_rubis.gif')
+        self.img_token_bank_R = self.img_token_bank_R.subsample(4, 4)
+        self.img_token_bank_S = PhotoImage(file='../res/token_saphir.gif')
+        self.img_token_bank_S = self.img_token_bank_S.subsample(4, 4)
+        self.img_token_bank_O = PhotoImage(file='../res/token_onyx.gif')
+        self.img_token_bank_O = self.img_token_bank_O.subsample(4, 4)
+        self.img_token_bank_G = PhotoImage(file='../res/token_gold.gif')
+        self.img_token_bank_G = self.img_token_bank_G.subsample(4, 4)
+
+        self.img_deck_1 = PhotoImage(file='../res/deck_lvl1.gif')
+        self.img_deck_1 = self.img_deck_1.subsample(3, 3)
+        self.img_deck_empty_1 = PhotoImage(file='../res/deck_lvl1_empty.gif')
+        self.img_deck_empty_1 = self.img_deck_empty_1.subsample(3, 3)
+
+        self.img_deck_2 = PhotoImage(file='../res/deck_lvl2.gif')
+        self.img_deck_2 = self.img_deck_2.subsample(3, 3)
+        self.img_deck_empty_2 = PhotoImage(file='../res/deck_lvl2_empty.gif')
+        self.img_deck_empty_2 = self.img_deck_empty_2.subsample(3, 3)
+
+        self.img_deck_3 = PhotoImage(file='../res/deck_lvl3.gif')
+        self.img_deck_3 = self.img_deck_3.subsample(3, 3)
+        self.img_deck_empty_3 = PhotoImage(file='../res/deck_lvl3_empty.gif')
+        self.img_deck_empty_3 = self.img_deck_empty_3.subsample(3, 3)
+
+        self.img_tile = PhotoImage(file='../res/tuile.gif')
+        self.img_tile = self.img_tile.subsample(1, 1)
 
     def get_image_points(self, points):
         if points == 0:
@@ -411,6 +447,23 @@ class Display:
             return self.img_card_O
         elif gem == "Ruby":
             return self.img_card_R
+
+    def get_image_deck_(self, lvl, empty):
+        if lvl == 1:
+            if empty:
+                return self.img_deck_empty_1
+            else:
+                return self.img_deck_1
+        elif lvl == 2:
+            if empty:
+                return self.img_deck_empty_2
+            else:
+                return self.img_deck_2
+        elif lvl == 3:
+            if empty:
+                return self.img_deck_empty_3
+            else:
+                return self.img_deck_3
 
     def get_image_circle_gem(self, gem):
         if gem == "Diamond":
@@ -450,6 +503,32 @@ class Display:
         elif gem == "Gold":
             return self.img_token_G
 
+    def get_image_rect_bank_gem(self, gem):
+        if gem == "Diamond":
+            return self.img_rect_bank_D
+        elif gem == "Emerald":
+            return self.img_rect_bank_E
+        elif gem == "Sapphire":
+            return self.img_rect_bank_S
+        elif gem == "Onyx":
+            return self.img_rect_bank_O
+        elif gem == "Ruby":
+            return self.img_rect_bank_R
+
+    def get_image_token_bank_gem(self, gem):
+        if gem == "Diamond":
+            return self.img_token_bank_D
+        elif gem == "Emerald":
+            return self.img_token_bank_E
+        elif gem == "Sapphire":
+            return self.img_token_bank_S
+        elif gem == "Onyx":
+            return self.img_token_bank_O
+        elif gem == "Ruby":
+            return self.img_token_bank_R
+        elif gem == "Gold":
+            return self.img_token_bank_G
+
     @staticmethod
     def get_color(level):
         if level == 1:
@@ -461,11 +540,14 @@ class Display:
         return color
 
     def refresh(self):
+        canvas = Canvas(self.window, height=self.h, width=self.w)
+        canvas.place(x=0, y=0)
         self.display_bank(self.game_board.bank)
         self.display_stacks()
         self.display_cards()
         self.display_tiles()
         self.display_players()
+
 
 
 display = Display()
