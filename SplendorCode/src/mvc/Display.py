@@ -65,6 +65,15 @@ class Display:
         self.add_player_click_action(p, c))
         canvas.pack()
 
+        self.canvas_validate = Canvas(popup, height=20,
+                                      width=60, background="grey")
+        self.canvas_validate.create_text(30, 10, text="Valider",
+                                         fill="black")
+        self.canvas_validate.bind("<Button-1>", lambda event,
+                                                       p=popup:
+        self.validate_popup_action(p))
+        self.canvas_validate.pack()
+
     def add_player_click_action(self, popup, canvas):
         try:
             self.false_position.pack_forget()
@@ -456,10 +465,12 @@ class Display:
 
     def popup_txt(self, txt):
         # GameState.toggle_modal(True)
-        self.popup = Toplevel(height=50, width=280)
+        self.popup = Toplevel(height=300, width=260)
         self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
-        Label(self.popup, text=txt, height=1,
-              width=30).place(x=40, y=10)
+        label = Label(self.popup,
+              text=txt, height=7,
+              width=30)
+        label.place(x=20, y=50)
 
     def click_on_popup(self, event, objet):
         self.popup.destroy()

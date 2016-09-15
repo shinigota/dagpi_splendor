@@ -30,10 +30,9 @@ class AI(Player):
 
     def play_basic(self):
         print("Fonction AI ???????????????????????????????????")
-        self.l_action = ["take", "purchase", "reserved"]
+        self.l_action = ["purchase", "take", "reserved"]
         self.bool_action = False
-        action_ia = None
-        while len(self.l_action) > 0 and not self.bool_action:
+        for i in range(0, len(self.l_action)):
             action_ia = random.choice(list(self.l_action))
 
             if action_ia == "take":
@@ -44,6 +43,9 @@ class AI(Player):
 
             elif action_ia == "purchase":
                 self.purchase()
+
+            if self.bool_action:
+                break
 
         givetoken = self.game_board.game_state == \
                     GameState.PLAYER_GIVE_TOKENS_BACK
@@ -56,6 +58,7 @@ class AI(Player):
 
     def take_gem(self):
         print("take Token")
+        self.l_action.remove("take")
         list_gem = list()
         list_choice = list()
         list_choice.append("two")
@@ -77,7 +80,6 @@ class AI(Player):
         else:
             print("take three")
             self.take_three()
-        self.l_action.remove("take")
 
     def take_two(self, gem):
         if self.game_rules.event(EventType.CLICK_TAKE_TOKEN_GAMEBOARD,
@@ -105,6 +107,7 @@ class AI(Player):
 
     def reserved(self):
         print("Reserv une carte")
+        self.l_action.remove("reserved")
         if len(self.reserved_cards) < self.game_rules.nb_max_res_card:
             l_where_r = ["deck", "card"]
             where_r = random.choice(list(l_where_r))
@@ -129,11 +132,11 @@ class AI(Player):
                         self.bool_action = True
                         break
                     l_lvl.remove(lvl)
-        self.l_action.remove("reserved")
 
     def purchase(self):
         # Acheter
         print("Acheter une carte")
+        self.l_action.remove("purchase")
         l_where_p = ["reserved", "visible"]
         where_p = None
         if len(self.reserved_cards) > 1:
@@ -148,24 +151,27 @@ class AI(Player):
                     self.purchase_reserved(l_where_p)
         else:
             self.purchase_visible(l_where_p)
-        self.l_action.remove("purchase")
 
     def purchase_reserved(self, l_where_p):
-        for card_r in self.reserved_cards:
-            if self.game_rules.event(EventType.POPUP_PURCHASE,
-                                     card_r):
-                bool_action = True
-                break
         l_where_p.remove("reserved")
+        for card_r in self.reserved_cards:
+                if card_r.is_purchasable(self.game_board.get_current_player()
+                                .get_income()):
+                    self.game_rules.event(EventType.RESERVE_PURCHASE,
+                                     card_r)
+                    self.bool_action = True
+                    return
 
     def purchase_visible(self, l_where_p):
+        l_where_p.remove("visible")
         for lvl in self.game_board.displayed_cards:
             for card in self.game_board.displayed_cards[lvl]:
-                if self.game_rules.event(EventType.POPUP_PURCHASE,
-                                         card):
-                    bool_action = True
-                    break
-        l_where_p.remove("visible")
+                if card.is_purchasable(self.game_board.get_current_player()
+                                .get_income()):
+                    self.game_rules.event(EventType.POPUP_PURCHASE,
+                                         card)
+                    self.bool_action = True
+                    return
 
     def ending_event(self, givetoken, choosetile):
         # Rendre Token
