@@ -52,9 +52,6 @@ class AI(Player):
         print("AI Ending ???????????????????????????????????")
         self.ending_event(givetoken, choosetile)
         print("AI EVENT  ???????????????????????????????????")
-        if not self.bool_action:
-            print("AI NO ACTION ???????????????????????????????????")
-            self.game_board.end_action()
 
     def take_gem(self):
         print("take Token")
@@ -172,19 +169,18 @@ class AI(Player):
     def ending_event(self, givetoken, choosetile):
         # Rendre Token
         if givetoken:
-
             print("Rendre "
                   "l'argent!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             while sum(self.bank.values()) > 10:
-                token_gb = random.choice(list(self.bank.items()))
+                token_gb = random.choice(list(self.bank.keys()))
                 self.game_rules.event(
                     EventType.CLICK_GIVE_BACK_PLAYER_TOKEN, token_gb)
 
         # Choisir Tile
         if choosetile:
             print("Choisir une tile")
-            for tiles_c in self.displayed_tiles:
-                self.game_rules.event(EventType.CLICK_TILE)
+            for tiles_c in self.game_board.tiles:
+                self.game_rules.event(EventType.CLICK_TILE, tiles_c)
 
     def action_AI_advanced(self):
         print("Hello IA")

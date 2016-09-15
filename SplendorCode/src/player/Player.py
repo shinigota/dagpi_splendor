@@ -81,8 +81,6 @@ class Player:
                 #                                        ]
                 self.purchased_cards[resource_type] = []
 
-                self.purchased_cards[resource_type] = []
-
     def add_purchased_card(self, card):
         self.purchased_cards[card.get_income_gem()].append(card)
         self.purchased_card_amount += 1
@@ -163,7 +161,7 @@ class Player:
                     3 not in self.tokens_took.values())
         return tokens_amount <= 0
 
-    def calcul_point_in_game(self):
+    def calculate_total_points(self):
         nb_points = 0
         for card_type, cards in self.purchased_cards.items():
             for card in cards:
