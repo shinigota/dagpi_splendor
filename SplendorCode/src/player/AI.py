@@ -266,13 +266,13 @@ class AI(Player):
 
 
 
-            '''
-            mostEfficientCards = dict()
-            min_turn = 99
 
-            for card in self.cards_info:
-                if card_info[card].values() == min_turn:
-                    mostEfficientCards[card]'''
+            # mostEfficientCards = dict()
+            # min_turn = 99
+            #
+            # for card in self.cards_info:
+            #     if card_info[card].values() == min_turn:
+            #         mostEfficientCards[card]
 
 
 

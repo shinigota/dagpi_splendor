@@ -166,9 +166,8 @@ class GameRules:
             if action_possible:
                 self.game_board.click_tile(object)
         elif event_type == EventType.START:
-            # action_possible =
-            if action_possible:
-                pass
+            # if action_possible:
+            pass
         elif event_type == EventType.EXIT:
             # action_possible =
             if action_possible:
