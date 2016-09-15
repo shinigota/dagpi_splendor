@@ -163,75 +163,61 @@ class AI(Player):
         nb_turn = 0
 
 
-#Calcul de jeton manquant pour une carte
-def real_value_card(self,card):
-    comp_dict = {}
-    dict_inc = self.get_card_income()
-    for key_card in card.items():
-        for key_inc in dict_inc:
-            if key_card == key_inc:
-                comp_dict = card.values() - dict_inc.values()
-    return comp_dict
+    #Calcul de jeton manquant pour une carte
+    def real_value_card(self,card):
+        comp_dict = {}
+        dict_inc = self.get_card_income()
+        for key_card in card.items():
+            for key_inc in dict_inc:
+                if key_card == key_inc:
+                    comp_dict = card.values() - dict_inc.values()
+        return comp_dict
 
 
-def worth_it (card):
-    print(card.__dict__)
-    count_turn = 0
-    card_comp = None
-    card_comp = deepcopy(card)
-    bool_count = False
-    while not bool_count:
-        print("debut",count_turn)
-        print("debut",bool_count)
-        count_type = 0
+    def worth_it (card):
+        print(card.__dict__)
+        count_turn = 0
+        card_comp = None
+        card_comp = deepcopy(card)
+        bool_count = False
+        while not bool_count:
+            print("debut",count_turn)
+            print("debut",bool_count)
+            count_type = 0
 
-        for type_card, val_card in card_comp.purchase_gems.items():
-            if val_card > 0:
-                count_type += 1
-        print("Count_type",count_type)
-        if count_type >= 2:
-            count_ite = 0
             for type_card, val_card in card_comp.purchase_gems.items():
                 if val_card > 0:
-                    print("Cycle_d", card_comp.purchase_gems[type_card])
-                    card_comp.purchase_gems[type_card] -= 1
-                    print("Cycle_f", card_comp.purchase_gems[type_card])
-                    count_ite +=1
-                if count_ite == 3:
-                    count_turn += 1
-                    break
-                if count_type == 2 and count_ite == 2:
-                    count_turn += 1
-                    break
-        elif count_type == 1:
-            for type_card, val_card in card_comp.purchase_gems.items():
-                if val_card >= 2:
-                    card_comp.purchase_gems[type_card] -= 2
-                    count_turn += 1
-                elif val_card == 1:
-                    card_comp.purchase_gems[type_card] -= 1
-                    count_turn += 1
-        elif count_type == 0:
-            print("FIN")
-            print(card_comp.__dict__)
-            bool_count = True
-    return count_turn
-
-
-
-
-
-
-
-c = Card(3, "Saphir", {'Saphir': 1, 'Ruby': 1, 'Onyx': 1, 'Diamond': 1,
-                       'Emerald': 0}, 1)
-n = worth_it(c)
-print(n)
-
-
-
-
-
+                    count_type += 1
+            print("Count_type",count_type)
+            if count_type >= 2:
+                count_ite = 0
+                max_gem = max(card_comp.purchase_gems,
+                       key=card_comp.purchase_gems.get)
+                for type_card, val_card in card_comp.purchase_gems.items():
+                    if val_card > 0:
+                        print("Cycle_d", card_comp.purchase_gems[type_card])
+                        card_comp.purchase_gems[type_card] -= 1
+                        print("Cycle_f", card_comp.purchase_gems[type_card])
+                        count_ite +=1
+                    if count_ite == 3:
+                        count_turn += 1
+                        break
+                    if count_type == 2 and count_ite == 2:
+                        count_turn += 1
+                        break
+            elif count_type == 1:
+                for type_card, val_card in card_comp.purchase_gems.items():
+                    if val_card >= 2:
+                        card_comp.purchase_gems[type_card] -= 2
+                        count_turn += 1
+                    elif val_card == 1:
+                        card_comp.purchase_gems[type_card] -= 1
+                        count_turn += 1
+            elif count_type == 0:
+                print("FIN")
+                print(card_comp.__dict__)
+                bool_count = True
+        return count_turn
 
 #Card Niveau 1 : Cout de gem = 3-5
 #Card Niveau 2 : Cout de gem = 5-8
@@ -239,17 +225,39 @@ print(n)
 
 
     def find_efficientCard(self):
-        for
-        self.cards_info = list(self)
+        card_efficient = []
+        dict_card = deepcopy(self.game_board.displayed_cards)
 
-        while Player.purchased_card_amount < 6:
-            for card in self.GameBoard.displayed_cards[card.get_level() == 1]:
-                #             if card.get_level() == 1:
-                self.cards_info[card] = card.purchase_gems()
- #               print(self.cards_info[card])
-            for card in self.cards_info:
-                self.card_info[card] = AI.worth_it(card)
+        if self.purchased_card_amount < 6:
 
+            #Remplir une liste carte lvl 1
+            l_card_1 = []
+            for k,l_card in dict_card.items():
+                if k == 1:
+                    l_card_1 = l_card
+
+            #Dictionnaire : clé le nombre de tour et la valeur une liste de
+            # carte
+            dict_turn = (list)
+            n = 0
+            for card in l_card_1:
+                n = self.worth_it(card)
+                dict_turn[n].append(card)
+
+            top_effi = min(dict, key=dict.get)
+            card_efficient = dict_turn[top_effi]
+
+        if self.purchased_card_amount >= 6:
+            print("yolo")
+
+        return  card_efficient
+
+
+
+    def action_ai_advanced(self):
+
+        l_card = []
+        l_card = self.find_efficientCard()
 
 
 
