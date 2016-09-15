@@ -411,7 +411,7 @@ class Display:
         canvas.place(x=x, y=y)
 
     def display_text_help(self, text):
-        canvas = Canvas(self.window, width=1920, height=70)
+        canvas = Canvas(self.window, width=500, height=70)
         canvas.create_text(100, 30, text=text)
         canvas.place(x=0, y=0)
 

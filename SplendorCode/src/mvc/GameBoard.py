@@ -17,7 +17,7 @@ class GameBoard:
     current_player = None
     bank = None
     nb_gems = None
-    nb_players = 2
+    nb_players = 4
     ask_purchase_or_reserve_card = None
     display = None
     game_rules = None
@@ -337,18 +337,18 @@ class GameBoard:
 
     def check_tiles(self):
         print("GameBoard -- check_tiles")
-        tiles = []
+        self.tiles = []
         for tile in self.displayed_tiles:
             if self.check_enough_cards(tile):
-                tiles.append(tile)
-        if len(tiles) > 1:
+                self.tiles.append(tile)
+        if len(self.tiles) > 1:
             self.game_state = GameState.PLAYER_CHOOSE_TILE
-            self.display.popup_select_tile_action(tiles)
+            self.display.popup_select_tile_action(self.tiles)
             return True
-        if len(tiles) == 1:
-            tiles[0].visit_player(self.get_current_player())
-            self.displayed_tiles.remove(tiles[0])
-            tiles.pop(0)
+        if len(self.tiles) == 1:
+            self.tiles[0].visit_player(self.get_current_player())
+            self.displayed_tiles.remove(self.tiles[0])
+            self.tiles.pop(0)
         self.end_action()
         return False
 
