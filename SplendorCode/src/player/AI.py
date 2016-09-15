@@ -253,7 +253,11 @@ class AI(Player):
     # Return: Dictionnary of tokens ratio
     def tokens_to_take(self):
         l_card = []
-        l_card = self.find_efficientCard()
+        l_c = self.find_efficientCard()
+        l_card = list()
+        for c in l_c:
+            l_card.append(self.real_value_card(c))
+
         dict_nb_gem = {}
         dict_nb_type = {}
         dict_gem_type = {}
@@ -293,11 +297,34 @@ class AI(Player):
                 ratio[type_gem] = val_gem
         print(ratio, " : ratio de retour")
 
-
+        #Trouver la liste de gem a take
         dict_tokens_to_take = deepcopy(ratio)
-        dict_3tokens = dict()
+        l_gem = list()
+        l_type_see = list()
+        for i in range(1,4):
+            #ratio_max = max(dict_tokens_to_take.iteritems(), key=ratio.get)
+            max_gem = 0
+            max_type = None
+            for key,val in dict_tokens_to_take:
+                if max_gem < val:
+                    max_gem = val
+                    max_type =
+            del dict_tokens_to_take[max_type]
+            l_gem.append(max_type)
+        return l_gem
 
-        for key_gem, value_ratio in dict_tokens_to_take.items():
+
+
+
+
+
+            dict_3tokens[dict_tokens_to_take.keys()]
+            dict_tokens_to_take.remove(ratio_max)
+
+
+
+
+
 
 
 
