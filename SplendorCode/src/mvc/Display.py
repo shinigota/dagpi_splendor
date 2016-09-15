@@ -2,6 +2,7 @@ from tkinter import *
 
 from src.element.Card import Card
 from src.element.ResourceType import ResourceType
+from src.game.GameState import GameState
 from src.mvc.EventType import EventType
 from src.mvc.GameBoard import GameBoard
 from src.mvc.GameRules import GameRules
@@ -15,6 +16,8 @@ class Display:
     game_board = None
     w = None
     h = None
+    nb_players = 1
+    false_position = None
 
     def __init__(self):
         self.window = Tk()
@@ -25,6 +28,125 @@ class Display:
         self.w, self.h = 1900, 1000
         self.window.geometry("%dx%d+0+0" % (self.w, self.h))
         self.window.config(bg=None)
+
+    def start_menu(self):
+        self.start_button = Button(self.window, text="Start", compound=CENTER, command=self.popup_start_click_action)
+        self.start_button.grid()
+
+    def make_entry(self, parent, caption, var):
+        Label(parent, text=caption).pack()
+        entry = Entry(parent, textvariable=var)
+        entry.pack()
+        return entry
+
+    def popup_start_click_action(self):
+        popup = Toplevel(height=250, width=280)
+        # popup.protocol("WM_DELETE_WINDOW", self.on_exit)
+        Label(popup, text="Sélectionnez vos parametres", height=1, width=30).pack()
+        self.user_name = StringVar()
+        self.user_name.set("Player")
+        Label(popup, text="Name:").pack()
+        entry = Entry(popup, textvariable=self.user_name)
+        entry.pack()
+        self.players_level = dict()
+        self.players_canvas = dict()
+        self.players_position = dict()
+        self.players_position[self.nb_players] = Variable()
+
+        Label(popup, text="Position:").pack()
+        entry = Entry(popup, textvariable=self.players_position[self.nb_players])
+        entry.pack()
+        canvas = Canvas(popup, height=20,
+                        width=160, background="grey")
+        canvas.create_text(82, 10, text="Ajouter un adversaire", fill="black")
+        canvas.bind("<Button-1>", lambda event,
+                                         p=popup,
+                                         c=canvas:
+        self.add_player_click_action(p, c))
+        canvas.pack()
+
+    def add_player_click_action(self, popup, canvas):
+
+        try:
+            self.false_position.pack_forget()
+        except:
+            pass
+
+        if self.nb_players >= 2 :
+            self.canvas_validate.pack_forget()
+
+        text_nb_players = self.nb_players
+        Label(popup, text="%s %s" % ("Adversaire n°", text_nb_players)).pack()
+        self.nb_players = self.nb_players + 1
+
+        self.players_level[self.nb_players] = Variable()
+        self.players_level[self.nb_players ].set(0)
+        self.players_position[self.nb_players] = Variable()
+
+        c = Checkbutton(popup, text="Niveau difficile", variable=self.players_level[self.nb_players])
+        c.pack()
+
+        Label(popup, text="Position:").pack()
+        entry = Entry(popup, textvariable=self.players_position[self.nb_players])
+        entry.pack()
+
+        self.players_canvas[self.nb_players] = c
+
+
+        if self.nb_players == 4:
+            self.canvas_validate.pack()
+            canvas.pack_forget()
+        elif self.nb_players == 2:
+            self.canvas_validate = Canvas(popup, height=20,
+                            width=60, background="grey")
+            self.canvas_validate.create_text(30, 10, text="Valider", fill="black")
+            self.canvas_validate.bind("<Button-1>", lambda event,
+                                             p=popup:
+            self.validate_popup_action(p))
+            self.canvas_validate.pack()
+        else:
+            self.canvas_validate.pack()
+
+    def validate_popup_action(self, popup):
+
+        try:
+            self.false_position.pack_forget()
+        except:
+            pass
+
+        accept = True
+
+        temp_positions = []
+        for item in self.players_position:
+            try:
+                temp_positions.append(int(self.players_position[item].get()))
+            except:
+                accept = False
+
+        if accept:
+            for item in range(1,self.nb_players+1):
+                if item not in temp_positions:
+                    accept = False
+
+        if accept:
+            popup.destroy()
+            self.start_button.grid_forget()
+
+            final_players = []
+            for key in (1,self.nb_players):
+                players_dict = dict()
+                players_dict["position"] = self.players_position[key].get()
+                if key == 1:
+                    players_dict["name"] = self.user_name.get()
+                else:
+                    players_dict["difficulty"] = self.players_level[key].get()
+                final_players.append(players_dict)
+
+            if self.game_rules.event(EventType.START, final_players):
+                display.refresh()
+        else:
+            self.false_position = Label(popup, text="Positions incorrectes", fg="red")
+            self.false_position.pack()
 
     def display_tiles(self):
         i = 1
@@ -288,7 +410,13 @@ class Display:
         canvas.create_text(30, 30, text=nb, fill=color)
         canvas.place(x=x, y=y)
 
+    def display_text_help(self, text):
+        canvas = Canvas(self.window, width=500, height=70)
+        canvas.create_text(100, 30, text=text)
+        canvas.place(x=0, y=0)
+
     def popup_select_card_action(self, isreserved, ispurchase, card):
+        # GameState.toggle_modal(True)
         self.popup = Toplevel(height=250, width=280)
         self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
         Label(self.popup, text="Selectionnez votre action :", height=1, width=30).place(x=40, y=10)
@@ -307,13 +435,13 @@ class Display:
                             width=60, background="grey")
             canvas.create_text(30, 10, text="Acheter", fill="black")
             canvas.bind("<Button-1>", lambda event,
-                                             p=self.popup,
                                              e=EventType.POPUP_PURCHASE,
                                              c=card:
-            self.click_on_popup(p, e, c))
+            self.click_on_popup(e, c))
             canvas.place(x=160, y=200)
 
     def popup_select_tile_action(self, tiles):
+        # GameState.toggle_modal(True)
         self.popup = Toplevel(height=170, width=565)
         self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
         Label(self.popup, text="Selectionnez votre Noble:", height=1,
@@ -325,14 +453,16 @@ class Display:
             x += 110
 
     def popup_txt(self, txt):
+        # GameState.toggle_modal(True)
         self.popup = Toplevel(height=50, width=280)
         self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
         Label(self.popup, text=txt, height=1,
               width=30).place(x=40, y=10)
 
     def click_on_popup(self, event, objet):
-        self.game_rules.event(event, objet)
         self.popup.destroy()
+        # GameState.toggle_modal(False)
+        self.game_rules.event(event, objet)
 
     def on_exit(self):
         self.game_rules.event(EventType.CLOSE_POPUP, None)
@@ -572,7 +702,6 @@ class Display:
         self.display_cards()
         self.display_tiles()
         self.display_players()
-        self.popup_select_tile_action(self.game_board.displayed_tiles)
 
     def launch(self):
         canvas = Canvas(self.window, height=self.h, width=self.w)
@@ -597,5 +726,7 @@ display.game_rules = display.game_board.game_rules
 display.game_rules.game_board = display.game_board
 display.game_rules.display = display
 display.create_window()
+display.start_menu()
+    # display.refresh()
 display.launch()
 display.window.mainloop()

@@ -6,6 +6,7 @@ from src.element.ResourceType import ResourceType
 from src.game.GameState import GameState
 from src.game.GameStateString import GameStateString
 from src.mvc.GameRules import GameRules
+from src.player.AI import AI
 import random
 
 from src.player.Player import Player
@@ -16,7 +17,7 @@ class GameBoard:
     current_player = None
     bank = None
     nb_gems = None
-    nb_players = 1
+    nb_players = 4
     ask_purchase_or_reserve_card = None
     display = None
     game_rules = None
@@ -28,7 +29,7 @@ class GameBoard:
     displayed_tiles = None
     end_game = None
     winners = None
-
+    help_text = None
     def __init__(self, display, game_rules):
         self.game_rules = game_rules
         self.display = display
@@ -43,10 +44,12 @@ class GameBoard:
         else:
             self.nb_gems = self.game_rules.nb_gem_for_4
 
-        self.init_game_board()
-
+        self.help_text = ""
         self.end_game = False
         self.winners = []
+
+        self.init_game_board()
+
 
     # game_board init methods
 
@@ -110,8 +113,12 @@ class GameBoard:
                 AI("AI %d" % i, i + 1, 1, self, self.game_rules))
         self.current_player = 0
         self.human_player = self.players[0]
-        self.display.popup_txt(GameStateString.get_text(GameState.PLAYER_TURN,
-                               self.get_current_player().nickname))
+
+        self.help_text = GameStateString.get_text(GameState.PLAYER_TURN,
+                                     self.get_current_player().nickname)
+        # self.display.display_text_help(
+        #     GameStateString.get_text(GameState.PLAYER_TURN,
+        #                              self.get_current_player().nickname))
 
     # Actions triggered by events
 
@@ -121,6 +128,8 @@ class GameBoard:
         :param token: game_board's token which has been clicked
         :return: None
         """
+        print('GameBoard -- click_token_game_board')
+        print(self.player_can_play())
         self.get_current_player().add_specific_token(token)
         self.bank[token] -= 1
 
@@ -128,15 +137,23 @@ class GameBoard:
                 not self.can_take_token():
             if self.check_tokens_amount():
                 self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK
-                self.display.popup_txt(GameStateString.get_text(
+                self.display.refresh()
+                self.help_text = GameStateString.get_text(
                     GameState.PLAYER_GIVE_TOKENS_BACK,
                     (self.get_current_player().nickname,
                      sum(self.get_current_player().bank.values()) -
-                     GameRules.nb_token_end_turn)))
+                     GameRules.nb_token_end_turn))
+                # self.display.display_text_help(GameStateString.get_text(
+                #     GameState.PLAYER_GIVE_TOKENS_BACK,
+                #     (self.get_current_player().nickname,
+                #      sum(self.get_current_player().bank.values()) -
+                #      GameRules.nb_token_end_turn)))
 
             else:
                 self.check_tiles()
-        self.display.refresh()
+                self.display.refresh()
+        else:
+            self.display.refresh()
 
     def click_token_player(self, token):
         """
@@ -144,20 +161,30 @@ class GameBoard:
         :param token:  player's token which has been clicked
         :return:
         """
+        print('GameBoard -- click_token_player')
+        print(self.player_can_play())
         self.get_current_player().remove_specific_token(token)
         self.bank[token] += 1
 
         if self.get_current_player().is_action_complete(self.game_state):
             if self.check_tokens_amount():
                 self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK
-                self.display.popup_txt(GameStateString.get_text(
+                self.display.refresh()
+                self.help_text = GameStateString.get_text(
                     GameState.PLAYER_GIVE_TOKENS_BACK,
                     (self.get_current_player().nickname,
                      sum(self.get_current_player().bank.values()) -
-                     GameRules.nb_token_end_turn)))
+                     GameRules.nb_token_end_turn))
+                # self.display.display_text_help(GameStateString.get_text(
+                #     GameState.PLAYER_GIVE_TOKENS_BACK,
+                #     (self.get_current_player().nickname,
+                #      sum(self.get_current_player().bank.values()) -
+                #      GameRules.nb_token_end_turn)))
             else:
                 self.check_tiles()
-        self.display.refresh()
+                self.display.refresh()
+        else:
+            self.display.refresh()
 
     def click_displayed_card(self, card):
         """
@@ -177,6 +204,7 @@ class GameBoard:
         card = self.choose_card_in_deck(lvl)
         self.get_current_player().add_reserved_card(card)
         self.add_gold_to_player()
+
         # remove from deck
 
         if self.get_current_player().is_action_complete(self.game_state):
@@ -185,6 +213,16 @@ class GameBoard:
             else:
                 self.check_tiles()
         self.display.refresh()
+        self.help_text = GameStateString.get_text(
+            GameState.PLAYER_GIVE_TOKENS_BACK,
+            (self.get_current_player().nickname,
+             sum(self.get_current_player().bank.values()) -
+             GameRules.nb_token_end_turn))
+        # self.display.display_text_help(GameStateString.get_text(
+        #     GameState.PLAYER_GIVE_TOKENS_BACK,
+        #     (self.get_current_player().nickname,
+        #      sum(self.get_current_player().bank.values()) -
+        #      GameRules.nb_token_end_turn)))
 
     def click_purchase_gameboard_card(self, card):
         '''
@@ -197,7 +235,7 @@ class GameBoard:
         self.get_current_player().add_purchased_card(card)
         cost = self.get_current_player().get_tokens_to_spend(
             card.get_purchase_gems())
-        gold_to_add = self.get_current_player().remove_different_tokens(cost)
+        self.get_current_player().remove_different_tokens(cost)
         self.add_to_bank(cost)
         if self.get_current_player().is_action_complete(self.game_state):
             self.check_tiles()
@@ -214,7 +252,7 @@ class GameBoard:
         self.get_current_player().add_purchased_card(card)
         cost = self.get_current_player().get_tokens_to_spend(
             card.get_purchase_gems())
-        gold_to_add = self.get_current_player().remove_different_tokens(cost)
+        self.get_current_player().remove_different_tokens(cost)
         self.add_to_bank(cost)
         if self.get_current_player().is_action_complete(self.game_state):
             if self.check_tokens_amount():
@@ -239,6 +277,16 @@ class GameBoard:
             else:
                 self.check_tiles()
         self.display.refresh()
+        self.help_text= GameStateString.get_text(
+            GameState.PLAYER_GIVE_TOKENS_BACK,
+            (self.get_current_player().nickname,
+             sum(self.get_current_player().bank.values()) -
+             GameRules.nb_token_end_turn))
+        # self.display.display_text_help(GameStateString.get_text(
+        #     GameState.PLAYER_GIVE_TOKENS_BACK,
+        #     (self.get_current_player().nickname,
+        #      sum(self.get_current_player().bank.values()) -
+        #      GameRules.nb_token_end_turn)))
 
     def click_tile(self, tile):
         print('GameBoard -- click_tile')
@@ -269,26 +317,38 @@ class GameBoard:
         self.game_state = GameState.PLAYER_TURN
         self.current_player = (self.current_player + 1) % self.nb_players
         if self.current_player == 0 and self.end_game:
+            # winner_popup_text = "Classement des joueurs"
+
+            self.display.popup_txt()
             sys.exit()
 
-        self.display.popup_txt(GameStateString.get_text(
-            GameState.PLAYER_TURN,
-            self.get_current_player().nickname))
+        self.help_text = GameStateString.get_text(GameState.PLAYER_TURN,
+                                     self.get_current_player().nickname)
+        # self.display.display_text_help(
+        #     GameStateString.get_text(GameState.PLAYER_TURN,
+        #                              self.get_current_player().nickname))
+
+        if not self.player_can_play():
+            self.end_action()
         # self.get_current_player().action_AI_basic()
+        else:
+            from src.player.AI import AI
+            self.get_current_player().play()
 
     def check_tiles(self):
         print("GameBoard -- check_tiles")
-        tiles = []
+        self.tiles = []
         for tile in self.displayed_tiles:
             if self.check_enough_cards(tile):
-                tiles.append(tile)
-        if len(tiles) > 1:
+                self.tiles.append(tile)
+        if len(self.tiles) > 1:
             self.game_state = GameState.PLAYER_CHOOSE_TILE
+            self.display.popup_select_tile_action(self.tiles)
             return True
-        if len(tiles) == 1:
-            tiles[0].visit_player(self.get_current_player())
-            self.displayed_tiles.remove(tiles[0])
-            tiles.pop(0)
+        if len(self.tiles) == 1:
+            self.tiles[0].visit_player(self.get_current_player())
+            self.displayed_tiles.remove(self.tiles[0])
+            self.tiles.pop(0)
         self.end_action()
         return False
 
@@ -389,6 +449,36 @@ class GameBoard:
         if self.bank["Gold"] > 0:
             self.get_current_player().bank["Gold"] += 1
             self.bank["Gold"] -= 1
+
+    def player_can_play(self):
+        print('GameBoard -- player_can_play')
+        player = self.get_current_player()
+
+        number_cards_deck = 0
+        for deck in self.decks.items():
+            print(deck)
+            number_cards_deck += len(deck)
+
+        if player.can_reserve_card() and number_cards_deck < GameRules.nb_max_res_card:
+            return True
+
+        for cards_from_lvl in self.displayed_cards.values():
+            for card in cards_from_lvl:
+                if card.is_purchasable(player.get_income()):
+                    return True
+
+        possible_resources = 0
+        for token_type, token_amount in self.bank.items():
+            if token_type != "Gold" and token_amount >= 4:
+                return True
+
+            if token_type != "Gold" and token_amount >= 1:
+                possible_resources += 1
+
+            if possible_resources >= 3:
+                return True
+
+        return False
 
     # Getters
 
