@@ -291,13 +291,12 @@ class Display:
     def popup_select_card_action(self, isreserved, ispurchase, card):
         self.popup = Toplevel(height=250, width=280)
         self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
-        Label(self.popup, text="Sélectionnez votre action :", height=1,
-              width=30).place(x=40, y=10)
+        Label(self.popup, text="Selectionnez votre action :", height=1, width=30).place(x=40, y=10)
         self.display_card(self.popup, 90, 50, card, None)
         if isreserved:
             canvas = Canvas(self.popup, height=20,
                             width=60, background="grey")
-            canvas.create_text(30, 10, text="Réserver", fill="black")
+            canvas.create_text(30, 10, text="Reserver", fill="black")
             canvas.bind("<Button-1>", lambda event,
                                              e=EventType.POPUP_RESERVE,
                                              c=card:
@@ -317,7 +316,7 @@ class Display:
     def popup_select_tile_action(self, tiles):
         self.popup = Toplevel(height=170, width=565)
         self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
-        Label(self.popup, text="Sélectionnez votre Noble:", height=1,
+        Label(self.popup, text="Selectionnez votre Noble:", height=1,
               width=30).place(x=180, y=10)
         x = 10
         y = 50
@@ -577,8 +576,19 @@ class Display:
 
     def launch(self):
         canvas = Canvas(self.window, height=self.h, width=self.w)
-        canvas.create_image(500, 500, image=self.img_bg)
+        canvas.create_image(1000, 500, image=self.img_bg)
+        button_quit = Canvas(self.window, height=100, width=300)
+        button_start = Canvas(self.window, height=100, width=300)
+        button_start.create_image(151, 52, image=self.img_button)
+        button_quit.create_image(151, 52, image=self.img_button)
+        button_quit.place(x=1400, y=500)
+        button_start.place(x=300, y=500)
         canvas.place(x=0, y=0)
+        button_start.create_text(150, 50, text='Start', fill='gold')
+        button_quit.create_text(150, 50, text='Quit', fill='gold')
+        button_quit.bind("<Button-1>", lambda a, b=None: self.window.destroy())
+        button_start.bind("<Button-1>", lambda a, b=None: self.window.destroy())
+
 
 
 display = Display()
