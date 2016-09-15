@@ -16,7 +16,7 @@ class GameBoard:
     current_player = None
     bank = None
     nb_gems = None
-    nb_players = 1
+    nb_players = 2
     ask_purchase_or_reserve_card = None
     display = None
     game_rules = None

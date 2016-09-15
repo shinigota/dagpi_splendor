@@ -81,6 +81,8 @@ class Player:
                 #                                        ]
                 self.purchased_cards[resource_type] = []
 
+                #self.purchased_cards[resource_type] = []
+
     def add_purchased_card(self, card):
         self.purchased_cards[card.get_income_gem()].append(card)
         self.purchased_card_amount += 1
@@ -194,5 +196,6 @@ class Player:
 
         return income
 
-    def action_AI_basic(self):
+    def action_ai_basic(self):
+        print("AI")
         pass

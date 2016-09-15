@@ -349,6 +349,10 @@ class Display:
         self.popup.destroy()
 
     def create_image(self):
+
+        self.img_bg = PhotoImage(file='../res/bakground.gif')
+        self.img_button = PhotoImage(file='../res/Button.gif')
+
         self.img0 = PhotoImage(file='../res/0.gif')
         self.img0 = self.img0.subsample(3, 3)
         self.img1 = PhotoImage(file='../res/1.gif')
@@ -579,6 +583,11 @@ class Display:
         self.display_tiles()
         self.display_players()
 
+    def launch(self):
+        canvas = Canvas(self.window, height=self.h, width=self.w)
+        canvas.create_image(500, 500, image=self.img_bg)
+        canvas.place(x=0, y=0)
+
 
 display = Display()
 display.game_board = GameBoard(display, GameRules())
@@ -586,5 +595,5 @@ display.game_rules = display.game_board.game_rules
 display.game_rules.game_board = display.game_board
 display.game_rules.display = display
 display.create_window()
-display.refresh()
+display.launch()
 display.window.mainloop()
