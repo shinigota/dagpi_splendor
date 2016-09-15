@@ -38,7 +38,7 @@ class Player:
         self.purchased_cards = {}
         for resource_type, resource in ResourceType.resource_type.items():
             if resource_type != "Gold":
-                self.purchased_cards[resource_type] = [Card(0,
+                '''self.purchased_cards[resource_type] = [Card(0,
                                                             resource_type,
                                                             {
                                                                 "Emerald": 0,
@@ -58,8 +58,19 @@ class Player:
                                                                 "Ruby": 0
                                                             },
                                                             0),
-                                                       ]
-                # self.purchased_cards[resource_type] = []
+                                                       Card(0,
+                                                            resource_type,
+                                                            {
+                                                                "Emerald": 0,
+                                                                "Diamond": 0,
+                                                                "Sapphire": 0,
+                                                                "Onyx": 0,
+                                                                "Ruby": 0
+                                                            },
+                                                            0)
+                                                       ]'''
+
+                #self.purchased_cards[resource_type] = []
 
     def add_purchased_card(self, card):
         self.purchased_cards[card.get_income_gem()].append(card)
@@ -174,5 +185,6 @@ class Player:
 
         return income
 
-    def action_AI_basic(self):
+    def action_ai_basic(self):
+        print("AI")
         pass

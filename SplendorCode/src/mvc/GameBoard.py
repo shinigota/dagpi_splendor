@@ -15,7 +15,7 @@ class GameBoard:
     current_player = None
     bank = None
     nb_gems = None
-    nb_players = 1
+    nb_players = 2
     ask_purchase_or_reserve_card = None
     display = None
     game_rules = None
@@ -254,7 +254,7 @@ class GameBoard:
         if self.current_player == 0 and self.end_game:
             sys.exit()
 
-            # self.get_current_player().action_AI_basic()
+        self.get_current_player().action_ai_basic()
 
     def check_tiles(self):
         print("GameBoard -- check_tiles")
