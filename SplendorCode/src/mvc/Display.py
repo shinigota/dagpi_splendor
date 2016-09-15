@@ -28,12 +28,14 @@ class Display:
 
     def display_tiles(self):
         i = 1
+        y = 100
         for tile in self.game_board.displayed_tiles:
-            self.display_tile(i, tile)
+            x = 170 + 120 * (i - 1)
+            self.display_tile(self.window, x, y, tile, None)
             i += 1
 
-    def display_tile(self, position, tile):
-        canvas = Canvas(self.window, width=100, height=100,
+    def display_tile(self, canvas, x, y, tile, event):
+        canvas = Canvas(canvas, width=100, height=100,
                         background='#725202')
         canvas.create_image(50, 50, image=self.img_tile)
         canvas.create_image(13, 13, image=self.get_image_points(tile.points))
@@ -62,8 +64,9 @@ class Display:
                     txtBuy3 = canvas.create_text(75, 80, text=number,
                                                  fill=textcolor)
                     i = 0
-        canvas.place(x=170 + 120 * (position - 1), y=100)
-        canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_TILE,
+        canvas.place(x=x, y=y)
+        if event is not None:
+            canvas.bind("<Button-1>", lambda event, e=event,
                                          t=tile: self.game_rules.event(e, t))
 
     def display_cards(self):
@@ -309,6 +312,17 @@ class Display:
             self.click_on_popup(p, e, c))
             canvas.place(x=160, y=200)
 
+    def popup_select_tile_action(self, tiles):
+        popup = Toplevel(height=250, width=280)
+        # popup.protocol("WM_DELETE_WINDOW", self.on_exit)
+        Label(popup, text="Sélectionnez votre action :", height=1,
+              width=30).place(x=40, y=10)
+        x = 10
+        y = 50
+        for tile in tiles:
+            self.display_tile(popup, x, y, tile, EventType.CLICK_TILE)
+            x += 110
+
     def popup_txt(self, txt):
         popup = Toplevel(height=50, width=280)
         # popup.protocol("WM_DELETE_WINDOW", self.on_exit)
@@ -409,7 +423,7 @@ class Display:
         self.img_deck_1 = PhotoImage(file='../res/deck_lvl1.gif')
         self.img_deck_1 = self.img_deck_1.subsample(3, 3)
         self.img_deck_empty_1 = PhotoImage(file='../res/deck_lvl1_empty.gif')
-        self.img_deck_empty_1 = self.img_deck_empty_1.subsample(3, 3)
+        self.img_deck_empty_1 = self.img_deck_empty_1.subsample(7, 7)
 
         self.img_deck_2 = PhotoImage(file='../res/deck_lvl2.gif')
         self.img_deck_2 = self.img_deck_2.subsample(3, 3)
@@ -553,6 +567,7 @@ class Display:
         self.display_cards()
         self.display_tiles()
         self.display_players()
+        self.popup_select_tile_action(self.game_board.displayed_tiles)
 
 
 
