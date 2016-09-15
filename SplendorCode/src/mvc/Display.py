@@ -2,6 +2,7 @@ from tkinter import *
 
 from src.element.Card import Card
 from src.element.ResourceType import ResourceType
+from src.game.GameState import GameState
 from src.mvc.EventType import EventType
 from src.mvc.GameBoard import GameBoard
 from src.mvc.GameRules import GameRules
@@ -288,7 +289,13 @@ class Display:
         canvas.create_text(30, 30, text=nb, fill=color)
         canvas.place(x=x, y=y)
 
+    def display_text_help(self, text):
+        canvas = Canvas(self.window, width=1920, height=70)
+        canvas.create_text(100, 30, text=text)
+        canvas.place(x=0, y=0)
+
     def popup_select_card_action(self, isreserved, ispurchase, card):
+        # GameState.toggle_modal(True)
         self.popup = Toplevel(height=250, width=280)
         self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
         Label(self.popup, text="Sélectionnez votre action :", height=1,
@@ -308,13 +315,13 @@ class Display:
                             width=60, background="grey")
             canvas.create_text(30, 10, text="Acheter", fill="black")
             canvas.bind("<Button-1>", lambda event,
-                                             p=self.popup,
                                              e=EventType.POPUP_PURCHASE,
                                              c=card:
-            self.click_on_popup(p, e, c))
+            self.click_on_popup(e, c))
             canvas.place(x=160, y=200)
 
     def popup_select_tile_action(self, tiles):
+        # GameState.toggle_modal(True)
         self.popup = Toplevel(height=170, width=565)
         self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
         Label(self.popup, text="Sélectionnez votre Noble:", height=1,
@@ -326,6 +333,7 @@ class Display:
             x += 110
 
     def popup_txt(self, txt):
+        # GameState.toggle_modal(True)
         self.popup = Toplevel(height=50, width=280)
         self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
         Label(self.popup, text=txt, height=1,
@@ -333,6 +341,7 @@ class Display:
 
     def click_on_popup(self, event, objet):
         self.popup.destroy()
+        # GameState.toggle_modal(False)
         self.game_rules.event(event, objet)
 
     def on_exit(self):

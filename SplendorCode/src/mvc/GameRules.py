@@ -164,6 +164,7 @@ class GameRules:
         elif event_type == EventType.CLICK_TILE:
             action_possible = self.check_click_tile()
             if action_possible:
+                self.display.popup.destroy()
                 self.game_board.click_tile(object)
         elif event_type == EventType.START:
             # action_possible =
@@ -222,10 +223,6 @@ class GameRules:
 
     def check_enough_resources(self, card):
         print("GameRules -- check_enough_resources")
-        print("is_purchasable && state = %r && %r" % (
-            card.is_purchasable(self.game_board.get_current_player()
-                                .get_income()),
-            self.game_board_is_game_state(GameState.PLAYER_TURN)))
         return card.is_purchasable(self.game_board.get_current_player()
                                    .get_income()) and self \
                    .game_board_is_game_state(GameState.PLAYER_TURN)
