@@ -29,10 +29,6 @@ class Display:
         self.window.geometry("%dx%d+0+0" % (self.w, self.h))
         self.window.config(bg=None)
 
-    def start_menu(self):
-        self.start_button = Button(self.window, text="Start", compound=CENTER, command=self.popup_start_click_action)
-        self.start_button.grid()
-
     def make_entry(self, parent, caption, var):
         Label(parent, text=caption).pack()
         entry = Entry(parent, textvariable=var)
@@ -716,7 +712,7 @@ class Display:
         button_start.create_text(150, 50, text='Start', fill='gold')
         button_quit.create_text(150, 50, text='Quit', fill='gold')
         button_quit.bind("<Button-1>", lambda a, b=None: self.window.destroy())
-        button_start.bind("<Button-1>", lambda a, b=None: self.window.destroy())
+        button_start.bind("<Button-1>", lambda a, b=None: self.popup_start_click_action())
 
 
 
@@ -726,7 +722,5 @@ display.game_rules = display.game_board.game_rules
 display.game_rules.game_board = display.game_board
 display.game_rules.display = display
 display.create_window()
-display.start_menu()
-    # display.refresh()
 display.launch()
 display.window.mainloop()
