@@ -238,19 +238,17 @@ print(n)
 #Card Niveau 3 : Cout de gem =  7-14
 
 
-    def find_efficientCard(self):
-        for
-        self.cards_info = list(self)
+def find_efficientCard(self):
 
-        while Player.purchased_card_amount < 6:
-            for card in self.GameBoard.displayed_cards[card.get_level() == 1]:
-                #             if card.get_level() == 1:
-                self.cards_info[card] = card.purchase_gems()
- #               print(self.cards_info[card])
-            for card in self.cards_info:
-                self.card_info[card] = AI.worth_it(card)
+    self.cards_info = list(self)
 
-
+    while Player.purchased_card_amount < 6:
+        for card in self.GameBoard.displayed_cards[card.get_level() == 1]:
+            #             if card.get_level() == 1:
+            self.cards_info[card] = card.purchase_gems()
+#               print(self.cards_info[card])
+        for card in self.cards_info:
+            self.card_info[card] = AI.worth_it(card)
 
 
 
@@ -258,26 +256,26 @@ print(n)
 
 
 
-            '''
-            mostEfficientCards = dict()
-            min_turn = 99
-
-            for card in self.cards_info:
-                if card_info[card].values() == min_turn:
-                    mostEfficientCards[card]'''
 
 
+        '''
+        mostEfficientCards = dict()
+        min_turn = 99
+
+        for card in self.cards_info:
+            if card_info[card].values() == min_turn:
+                mostEfficientCards[card]'''
 
 
-            #
-            # the_card = self.cards_info[card]
-            # card_min = None
-            # for card in self.cards_info:
-            #     min_values  =   min(the_card)
-            #
-            #
 
 
+        #
+        # the_card = self.cards_info[card]
+        # card_min = None
+        # for card in self.cards_info:
+        #     min_values  =   min(the_card)
+        #
+        #
 
 
 
@@ -298,6 +296,8 @@ print(n)
 
 
 
-        # def action_reserved_card(self):
+
+
+    # def action_reserved_card(self):
 
 
