@@ -125,6 +125,7 @@ class GameRules:
             GameRules.development_cards[int(level)].append(card)
 
     def event(self, event_type, object):
+        print('GameRules -- event')
         action_possible = False
         # if self.game_board.get_current_player().position != \
         #         self.game_board.get_human_player().position:
@@ -190,9 +191,11 @@ class GameRules:
         return action_possible
 
     def get_development_cards(self):
+        print('GameRules -- get_development_cards')
         return self.development_cards
 
     def check_click_game_board_token(self, token):
+        print('GameRules -- check_click_game_board_token')
         current_player = self.game_board.get_current_player()
         bank_stack = int(self.game_board.get_bank()[token])
         if int(bank_stack) <= 0 or sum(current_player.tokens_took.values()) \
@@ -208,18 +211,20 @@ class GameRules:
         return True
 
     def check_click_player_token(self, token):
+        print('GameRules -- check_click_player_token')
         return self.game_board.get_current_player().bank[
                    token] >= 1 and self.game_board_is_game_state(
             GameState.PLAYER_GIVE_TOKENS_BACK)
 
     def check_click_card(self):
+        print('GameRules -- check_click_card')
         return self.game_board_is_game_state(
             GameState.PLAYER_TURN)
 
     def check_click_tile(self):
+        print('GameRules -- check_click_tile')
         return self.game_board_is_game_state(
             GameState.PLAYER_CHOOSE_TILE)
-
 
     def check_enough_resources(self, card):
         print("GameRules -- check_enough_resources")
@@ -228,17 +233,22 @@ class GameRules:
                    .game_board_is_game_state(GameState.PLAYER_TURN)
 
     def check_reserve_amount(self):
+        print('GameRules -- check_reserve_amount')
         return self.game_board.get_current_player().can_reserve_card() and \
                self.game_board_is_game_state(GameState.PLAYER_TURN)
 
     def get_tiles(self):
+        print('GameRules -- get_tiles')
         return self.tiles
 
     def set_game_board(self, game_board):
+        print('GameRules -- set_game_board')
         self.game_board = game_board
 
     def set_display(self, display):
+        print('GameRules -- set_display')
         self.display = display
 
     def game_board_is_game_state(self, game_state):
+        print('GameRules -- game_board_is_game_state')
         return self.game_board.get_game_state() == game_state

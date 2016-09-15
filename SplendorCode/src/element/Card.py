@@ -11,15 +11,19 @@ class Card:
         self.level = level
 
     def get_purchase_gems(self):
+        print('Card -- get_purchase_gems')
         return self.purchase_gems
 
     def get_income_gem(self):
+        print('Card -- get_income_gem')
         return self.income_gem
 
     def get_level(self):
+        print('Card -- get_level')
         return self.level
 
     def get_points(self):
+        print('Card -- get_points')
         return self.points
 
     def is_purchasable(self, tokens):

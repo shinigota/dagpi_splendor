@@ -8,7 +8,9 @@ class Token:
         self.type = type
 
     def get_color(self):
+        print('Token -- get_color')
         return ResourceType.get_ressource_color(self.type)
 
     def get_type(self):
+        print('Token -- get_type')
         return self.type

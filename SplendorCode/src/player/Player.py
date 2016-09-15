@@ -30,11 +30,13 @@ class Player:
         self.init_turn()
 
     def init_bank(self):
+        print('Player -- init_bank')
         self.bank = {}
         for resource_type, resource in ResourceType.resource_type.items():
             self.bank[resource_type] = 0
 
     def init_purchased_cards(self):
+        print('Player -- init_purchased_cards')
         self.purchased_cards = {}
         for resource_type, resource in ResourceType.resource_type.items():
             if resource_type != "Gold":
@@ -84,30 +86,37 @@ class Player:
                 #self.purchased_cards[resource_type] = []
 
     def add_purchased_card(self, card):
+        print('Player -- add_purchased_card')
         self.purchased_cards[card.get_income_gem()].append(card)
         self.purchased_card_amount += 1
 
     def add_reserved_card(self, card):
+        print('Player -- add_reserved_card')
         self.reserved_cards.append(card)
         self.reserved_card_amount += 1
 
     def del_reserved_card(self, card):
+        print('Player -- del_reserved_card')
         self.reserved_cards.remove(card)
         self.reserved_card_amount -= 1
 
     def add_owned_tile(self, tile):
+        print('Player -- add_owned_tile')
         self.owned_tiles.append(tile)
 
     def add_different_tokens(self, tokens):
+        print('Player -- add_different_tokens')
         for tokenType, token_amount in tokens:
             self.bank[tokenType] += token_amount
             self.tokens_took[tokenType] += token_amount
 
     def add_specific_token(self, token_type, number=1):
+        print('Player -- add_specific_token')
         self.bank[token_type] += number
         self.tokens_took[token_type] += number
 
     def remove_different_tokens(self, tokens):
+        print('Player -- remove_different_tokens')
         amount_gold_removed = 0
         for resource_type, amount in tokens.items():
             self.bank[resource_type] -= amount
@@ -116,9 +125,9 @@ class Player:
         return amount_gold_removed
 
     def get_tokens_to_spend(self, tokens):
+        print("Player -- get_tokens_to_spend")
         token_copy = copy(tokens)
         token_copy["Gold"] = 0
-        print("Player -- get_tokens_to_spend")
 
         card_income = self.get_card_income()
         for token_type in token_copy.keys():
@@ -136,10 +145,12 @@ class Player:
         return token_copy
 
     def remove_specific_token(self, token_type, number=1):
+        print('Player -- remove_specific_token')
         self.bank[token_type] -= number
         self.tokens_took[token_type] -= number
 
     def init_turn(self):
+        print('Player -- init_turn')
         self.tokens_took = {}
         for resource_type in ResourceType.resource_type:
             self.tokens_took[resource_type] = 0
@@ -155,6 +166,7 @@ class Player:
         return val
 
     def token_choice_valid(self):
+        print('Player -- token_choice_valid')
         tokens_amount = sum(self.tokens_took.values())
         if tokens_amount == 2:
             return 2 in self.tokens_took.values()
@@ -164,6 +176,7 @@ class Player:
         return tokens_amount <= 0
 
     def calculate_total_points(self):
+        print('Player -- calculate_total_points')
         nb_points = 0
         for card_type, cards in self.purchased_cards.items():
             for card in cards:
@@ -175,10 +188,12 @@ class Player:
         return nb_points
 
     def can_reserve_card(self):
+        print('Player -- can_reserve_card')
         return len(self.reserved_cards) < GameRules.nb_max_res_card and sum(
             self.tokens_took.values()) == 0
 
     def get_card_income(self):
+        print('Player -- get_card_income')
         income = {}
         for resource_type in ResourceType.resource_type.keys():
             if resource_type != "Gold":
@@ -190,6 +205,7 @@ class Player:
         return income
 
     def get_income(self):
+        print('Player -- get_income')
         income = self.bank.copy()
         for resource_type, amount in self.get_card_income().items():
             income[resource_type] += amount
@@ -197,4 +213,5 @@ class Player:
         return income
 
     def play(self):
+        print('Player -- play')
         pass
