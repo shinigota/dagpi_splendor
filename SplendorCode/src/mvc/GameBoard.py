@@ -28,7 +28,7 @@ class GameBoard:
     displayed_tiles = None
     end_game = None
     winners = None
-
+    help_text = None
     def __init__(self, display, game_rules):
         self.game_rules = game_rules
         self.display = display
@@ -43,10 +43,12 @@ class GameBoard:
         else:
             self.nb_gems = self.game_rules.nb_gem_for_4
 
-        self.init_game_board()
-
+        self.help_text = ""
         self.end_game = False
         self.winners = []
+
+        self.init_game_board()
+
 
     # game_board init methods
 
@@ -110,9 +112,12 @@ class GameBoard:
                 AI("AI %d" % i, i + 1, 1, self, self.game_rules))
         self.current_player = 0
         self.human_player = self.players[0]
-        self.display.display_text_help(
-            GameStateString.get_text(GameState.PLAYER_TURN,
-                                     self.get_current_player().nickname))
+
+        self.help_text = GameStateString.get_text(GameState.PLAYER_TURN,
+                                     self.get_current_player().nickname)
+        # self.display.display_text_help(
+        #     GameStateString.get_text(GameState.PLAYER_TURN,
+        #                              self.get_current_player().nickname))
 
     # Actions triggered by events
 
@@ -132,11 +137,16 @@ class GameBoard:
             if self.check_tokens_amount():
                 self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK
                 self.display.refresh()
-                self.display.display_text_help(GameStateString.get_text(
+                self.help_text = GameStateString.get_text(
                     GameState.PLAYER_GIVE_TOKENS_BACK,
                     (self.get_current_player().nickname,
                      sum(self.get_current_player().bank.values()) -
-                     GameRules.nb_token_end_turn)))
+                     GameRules.nb_token_end_turn))
+                # self.display.display_text_help(GameStateString.get_text(
+                #     GameState.PLAYER_GIVE_TOKENS_BACK,
+                #     (self.get_current_player().nickname,
+                #      sum(self.get_current_player().bank.values()) -
+                #      GameRules.nb_token_end_turn)))
 
             else:
                 self.check_tiles()
@@ -159,11 +169,16 @@ class GameBoard:
             if self.check_tokens_amount():
                 self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK
                 self.display.refresh()
-                self.display.display_text_help(GameStateString.get_text(
+                self.help_text = GameStateString.get_text(
                     GameState.PLAYER_GIVE_TOKENS_BACK,
                     (self.get_current_player().nickname,
                      sum(self.get_current_player().bank.values()) -
-                     GameRules.nb_token_end_turn)))
+                     GameRules.nb_token_end_turn))
+                # self.display.display_text_help(GameStateString.get_text(
+                #     GameState.PLAYER_GIVE_TOKENS_BACK,
+                #     (self.get_current_player().nickname,
+                #      sum(self.get_current_player().bank.values()) -
+                #      GameRules.nb_token_end_turn)))
             else:
                 self.check_tiles()
                 self.display.refresh()
@@ -197,12 +212,16 @@ class GameBoard:
             else:
                 self.check_tiles()
         self.display.refresh()
-
-        self.display.display_text_help(GameStateString.get_text(
+        self.help_text = GameStateString.get_text(
             GameState.PLAYER_GIVE_TOKENS_BACK,
             (self.get_current_player().nickname,
              sum(self.get_current_player().bank.values()) -
-             GameRules.nb_token_end_turn)))
+             GameRules.nb_token_end_turn))
+        # self.display.display_text_help(GameStateString.get_text(
+        #     GameState.PLAYER_GIVE_TOKENS_BACK,
+        #     (self.get_current_player().nickname,
+        #      sum(self.get_current_player().bank.values()) -
+        #      GameRules.nb_token_end_turn)))
 
     def click_purchase_gameboard_card(self, card):
         '''
@@ -257,11 +276,16 @@ class GameBoard:
             else:
                 self.check_tiles()
         self.display.refresh()
-        self.display.display_text_help(GameStateString.get_text(
+        self.help_text= GameStateString.get_text(
             GameState.PLAYER_GIVE_TOKENS_BACK,
             (self.get_current_player().nickname,
              sum(self.get_current_player().bank.values()) -
-             GameRules.nb_token_end_turn)))
+             GameRules.nb_token_end_turn))
+        # self.display.display_text_help(GameStateString.get_text(
+        #     GameState.PLAYER_GIVE_TOKENS_BACK,
+        #     (self.get_current_player().nickname,
+        #      sum(self.get_current_player().bank.values()) -
+        #      GameRules.nb_token_end_turn)))
 
     def click_tile(self, tile):
         print('GameBoard -- click_tile')
@@ -292,12 +316,19 @@ class GameBoard:
         self.game_state = GameState.PLAYER_TURN
         self.current_player = (self.current_player + 1) % self.nb_players
         if self.current_player == 0 and self.end_game:
+            # winner_popup_text = "Classement des joueurs"
+
+            self.display.popup_txt()
             sys.exit()
 
-        self.display.display_text_help(
-            GameStateString.get_text(GameState.PLAYER_TURN,
-                                     self.get_current_player().nickname))
+        self.help_text = GameStateString.get_text(GameState.PLAYER_TURN,
+                                     self.get_current_player().nickname)
+        # self.display.display_text_help(
+        #     GameStateString.get_text(GameState.PLAYER_TURN,
+        #                              self.get_current_player().nickname))
 
+        if not self.player_can_play():
+            self.end_action()
         # self.get_current_player().action_AI_basic()
 
     def check_tiles(self):
