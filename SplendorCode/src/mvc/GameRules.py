@@ -225,9 +225,14 @@ class GameRules:
                 return n_player
 
     def check_enough_resources(self, card):
+        print("GameRules -- check_enough_resources")
+        print("is_purchasable && state = %r && %r" % (
+            card.is_purchasable(self.game_board.get_current_player()
+                                .get_income()),
+            self.game_board_is_game_state(GameState.PLAYER_TURN)))
         return card.is_purchasable(self.game_board.get_current_player()
-                                   .get_income()) and self\
-            .game_board_is_game_state(GameState.PLAYER_TURN)
+                                   .get_income()) and self \
+                   .game_board_is_game_state(GameState.PLAYER_TURN)
 
     def check_reserve_amount(self):
         return self.game_board.get_current_player().can_reserve_card() and \
