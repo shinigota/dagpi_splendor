@@ -10,10 +10,10 @@ class Splendor:
 
     def __init__(self):
         self.display = Display()
-        self.game_rules = GameRules()
-        self.game_board = GameBoard(self.display, self.game_rules)
-        self.game_rules.set_game_board(self.game_board)
-        self.game_rules.set_display(self.display)
+        self.game_board = GameBoard(self.display, GameRules())
+        self.game_rules = self.game_board.game_rules
+        self.game_rules.game_board(self.game_board)
+        self.game_rules.display(self.display)
         self.display.create_window()
         self.display.refresh()
         self.display.window.mainloop()
