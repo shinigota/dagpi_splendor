@@ -32,13 +32,13 @@ class Player:
     def init_bank(self):
         self.bank = {}
         for resource_type, resource in ResourceType.resource_type.items():
-            self.bank[resource_type] = 1
+            self.bank[resource_type] = 0
 
     def init_purchased_cards(self):
         self.purchased_cards = {}
         for resource_type, resource in ResourceType.resource_type.items():
             if resource_type != "Gold":
-                self.purchased_cards[resource_type] = [Card(0,
+                '''self.purchased_cards[resource_type] = [Card(0,
                                                             resource_type,
                                                             {
                                                                 "Emerald": 0,
@@ -78,8 +78,8 @@ class Player:
                                                                 "Ruby": 0
                                                             },
                                                             1),
-                                                       ]
-                # self.purchased_cards[resource_type] = []
+                                                       ]'''
+                self.purchased_cards[resource_type] = []
 
                 #self.purchased_cards[resource_type] = []
 

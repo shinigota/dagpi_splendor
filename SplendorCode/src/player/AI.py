@@ -27,6 +27,7 @@ class AI(Player):
     def play(self):
         print("AI !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         self.play_basic()
+        #self.play_advanced()
 
     def play_basic(self):
         print("Fonction AI ???????????????????????????????????")
@@ -191,26 +192,18 @@ class AI(Player):
 
     def play_advanced(self):
         print("Hello IA")
-        nb_turn = 0
-        self.l_action = ["take", "purchase", "reserved"]
         self.bool_action = False
-        action_ia = None
-
-        l_card = self.find_efficientCard()
-        l_card_purchase = l_card
-        for c in self.reserved_cards:
-            l_card_purchase.append(c)
-        for c in l_card_purchase:
-            if self.purchase_advanced(c):
-                bool_action = True
-                break
+        l_card_purchase = self.find_efficientCard()
+        print(l_card_purchase)
+        if self.purchase_adv(l_card_purchase):
+            bool_action = True
 
         l_gem = list()
         if not self.bool_action:
             l_gem = self.tokens_to_take()
             if self.take_adv(l_gem):
                 self.bool_action = True
-            elif self.reserved_card_adv(l_card_purchase):
+            elif self.reserved_card_adv():
                 self.bool_action = True
 
         givetoken = self.game_board.game_state == \
@@ -222,6 +215,18 @@ class AI(Player):
 
         if not self.bool_action:
             self.game_board.end_action()
+
+
+
+    def purchase_adv(self,l_card):
+        for card in l_card:
+            if card.is_purchasable(self.game_board.get_current_player()
+                                    .get_income()):
+                self.game_rules.event(EventType.POPUP_PURCHASE,
+                                             card)
+                return True
+        return False
+
 
     def ending_event_adv(self, givetoken, choosetile):
         # Rendre Token
@@ -300,7 +305,8 @@ class AI(Player):
 
         elif len(list_gem_dispo) > 0:
             count = 0
-            for i in range(0, len(gems)):
+            print(gems)
+            for i in range(0, len(gems)-1):
                 print("gems[i]", gems[i])
                 if self.game_rules.event(
                     EventType.CLICK_TAKE_TOKEN_GAMEBOARD, gems[i]):
@@ -335,10 +341,11 @@ class AI(Player):
     def real_value_card(self, card):
         comp_dict = {}
         dict_inc = self.get_card_income()
-        for key_card in card.items():
+        for key_card in card.purchase_gems:
             for key_inc in dict_inc:
                 if key_card == key_inc:
-                    comp_dict = card.values() - dict_inc.values()
+                    comp_dict = card.purchase_gems[key_card] - \
+                                dict_inc[key_inc]
         return comp_dict
 
     #return number of turn of card
@@ -396,11 +403,10 @@ class AI(Player):
     # Return: Dictionnary of tokens ratio
     def tokens_to_take(self):
         print("TOKENS TO TAKE")
-        l_card = []
-        l_c = self.find_efficientCard()
-        l_card = list()
-        for c in l_c:
-            l_card.append(self.real_value_card(c))
+
+        l_card = self.find_efficientCard()
+        #for c in l_c:
+            #l_card.append(self.real_value_card(c))
 
         dict_nb_gem = {}
         dict_nb_type = {}
@@ -409,7 +415,7 @@ class AI(Player):
 
         # Initialize the gems dictionnary
         for card in l_card:
-            for type_gem, val_gem in card.items():
+            for type_gem, val_gem in card.purchase_gems.items():
                 dict_nb_gem[type_gem] = 0
 
         # Pour chaque carte on ajoute la valeur du gem correspondant dans le dictionnaire
@@ -419,7 +425,7 @@ class AI(Player):
 
         # Initialize the type dictionnary
         for card in l_card:
-            for type_gem, val_gem in card.items():
+            for type_gem, val_gem in card.purchase_gems.items():
                 dict_nb_type[type_gem] = 0
 
         # Pour chaque carte on ajoute +1 au type de gem présent dans la carte
@@ -430,31 +436,39 @@ class AI(Player):
 
         # Initialize the gems dictionnary
         for card in l_card:
-            for type_gem, val_gem in card.items():
+            for type_gem, val_gem in card.purchase_gems.items():
                 dict_gem_type[type_gem] = 0
 
         # Comparer les deux dictionnaires et mettre le ratio dans le nouveau
-        for type_gem, val_gem in dict_nb_type.iteritems():
-            if type_gem in dict_nb_gem:
-                ratio[type_gem] = val_gem / dict_nb_gem[type_gem]
-            else:
-                ratio[type_gem] = val_gem
+        for type_gem, val_gem in dict_nb_type.items():
+            if dict_nb_gem[type_gem] != 0:
+                if type_gem in dict_nb_gem:
+                    ratio[type_gem] = val_gem / dict_nb_gem[type_gem]
+                else:
+                    ratio[type_gem] = val_gem
         print(ratio, " : ratio de retour")
 
         #Trouver la liste de gem a take
         dict_tokens_to_take = deepcopy(ratio)
+        print("DICT TOKEN TO TAKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKE")
+        print(dict_tokens_to_take)
         l_gem = list()
         l_type_see = list()
         for i in range(1,4):
             #ratio_max = max(dict_tokens_to_take.iteritems(), key=ratio.get)
             max_gem = 0
             max_type = None
-            for key,val in dict_tokens_to_take:
+            for key,val in dict_tokens_to_take.items():
                 if max_gem < val:
-                    max_gem = val
+                    print("ok1")
                     max_type = key
-            del dict_tokens_to_take[max_type]
-            l_gem.append(max_type)
+                    max_gem = val
+                    print(max_type)
+            if max_gem != 0:
+                print("ok2")
+                l_gem.append(max_type)
+                del dict_tokens_to_take[max_type]
+        print(l_gem)
         return l_gem
 
 
@@ -472,6 +486,8 @@ class AI(Player):
                 if k == 1:
                     l_card_1 = l_card
 
+            print("LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOL")
+            print(l_card_1)
             # Dictionnaire : clé le nombre de tour et la valeur une liste de
             # carte
             dict_turn = {}
@@ -479,13 +495,12 @@ class AI(Player):
             for card in l_card_1:
                 n = self.worth_it(card)
                 dict_turn[n] = card
-
-            top_effi = min(dict_turn, key=dict_turn.get)
-            card_efficient = dict_turn[top_effi]
+        while(len(card_efficient) != len(dict_turn)):
+            top_effi = max(dict_turn, key=dict_turn.get)
+            card_efficient.append(dict_turn[top_effi])
 
         if self.purchased_card_amount >= 6:
             print("yolo")
-
         return card_efficient
 
     #def action_ai_advanced(self):
