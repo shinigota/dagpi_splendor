@@ -167,9 +167,9 @@ class GameRules:
                 self.display.popup.destroy()
                 self.game_board.click_tile(object)
         elif event_type == EventType.START:
-            # action_possible =
-            if action_possible:
-                pass
+            action_possible = True
+            self.game_board.init_parameters(object)
+            self.game_board.start_game()
         elif event_type == EventType.EXIT:
             # action_possible =
             if action_possible:

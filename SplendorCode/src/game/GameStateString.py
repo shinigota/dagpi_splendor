@@ -9,6 +9,10 @@ class GameStateString:
     TEXT[GameState.CANNOT_PLAY.value] = "%s, vous ne pouvez pas jouer, " \
                                         "votre tour " \
                                   "est passé !"
+    TEXT[GameState.END.value] = "%s, vous ne pouvez pas jouer, " \
+                                        "votre tour " \
+                                  "est passé !"
+
     # TEXT[GameState.PLAYER_CHOOSE_PURHCASE_OR_RESERVE] = ""
     # TEXT[GameState.PLAYER_CHOOSE_TILE] = ""
 

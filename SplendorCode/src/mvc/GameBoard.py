@@ -1,6 +1,7 @@
 import time
 
 import sys
+from copy import deepcopy
 
 from src.element.ResourceType import ResourceType
 from src.game.GameState import GameState
@@ -16,7 +17,7 @@ class GameBoard:
     current_player = None
     bank = None
     nb_gems = None
-    nb_players = 2
+    nb_players = 1
     ask_purchase_or_reserve_card = None
     display = None
     game_rules = None
@@ -28,10 +29,35 @@ class GameBoard:
     displayed_tiles = None
     end_game = None
     winners = None
+    help_text = None
+    parameters = None
 
     def __init__(self, display, game_rules):
         self.game_rules = game_rules
         self.display = display
+
+    # game_board init methods
+
+    def init_parameters(self, parameters):
+        print('GameBoard -- init_parameters')
+        self.nb_players = len(parameters)
+        print(self.nb_players)
+        print(parameters)
+        self.parameters = parameters
+
+    def start_game(self):
+        self.init_game_board()
+        self.display.refresh()
+        self.get_current_player().play()
+
+
+
+    def init_game_board(self):
+        """
+        game_board initialization / creation, adding the cards / tokens to
+        the board
+        :return:
+        """
         self.types = []
         self.game_state = GameState.PLAYER_TURN
         self.nb_gems = 2
@@ -43,19 +69,10 @@ class GameBoard:
         else:
             self.nb_gems = self.game_rules.nb_gem_for_4
 
-        self.init_game_board()
-
+        self.help_text = ""
         self.end_game = False
         self.winners = []
 
-    # game_board init methods
-
-    def init_game_board(self):
-        """
-        game_board initialization / creation, adding the cards / tokens to
-        the board
-        :return:
-        """
         self.init_bank()
         self.init_cards()
         self.init_tiles()
@@ -78,11 +95,13 @@ class GameBoard:
         Initialising the 3 different level of cards
         :return:
         """
+        print('GameBoard -- init_cards')
         self.decks = {}
         development_cards = self.game_rules.get_development_cards()
         for i in range(1, int(self.game_rules.nb_lvl_card) + 1):
             self.decks[i] = development_cards[i]
-
+            print('GameBoard -- init_cards FOR')
+        print(self.decks)
         self.displayed_cards = {}
         for i in range(1, int(self.game_rules.nb_lvl_card) + 1):
             self.displayed_cards[i] = []
@@ -103,16 +122,25 @@ class GameBoard:
 
     def init_players(self):
         self.players = []
-        self.players.append(Player("Player %d" % 0, 1))
+        self.players.append(Player(self.parameters[0]["name"],
+                                   self.parameters[0]["position"]))
+        self.human_player = self.players[0]
+
         for i in range(1, self.nb_players):
             from src.player.AI import AI
+            print('JAJ')
             self.players.append(
-                AI("AI %d" % i, i + 1, 1, self, self.game_rules))
+                AI(self.parameters[i]["name"], self.parameters[i]["position"],
+                   self.parameters[i]["difficulty"], self, self.game_rules))
         self.current_player = 0
-        self.human_player = self.players[0]
-        self.display.display_text_help(
-            GameStateString.get_text(GameState.PLAYER_TURN,
-                                     self.get_current_player().nickname))
+
+        self.players.sort(key=lambda x: int(x.position), reverse=False)
+
+        self.help_text = GameStateString.get_text(GameState.PLAYER_TURN,
+                                                  self.get_current_player().nickname)
+        # self.display.display_text_help(
+        #     GameStateString.get_text(GameState.PLAYER_TURN,
+        #                              self.get_current_player().nickname))
 
     # Actions triggered by events
 
@@ -132,11 +160,16 @@ class GameBoard:
             if self.check_tokens_amount():
                 self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK
                 self.display.refresh()
-                self.display.display_text_help(GameStateString.get_text(
+                self.help_text = GameStateString.get_text(
                     GameState.PLAYER_GIVE_TOKENS_BACK,
                     (self.get_current_player().nickname,
                      sum(self.get_current_player().bank.values()) -
-                     GameRules.nb_token_end_turn)))
+                     GameRules.nb_token_end_turn))
+                # self.display.display_text_help(GameStateString.get_text(
+                #     GameState.PLAYER_GIVE_TOKENS_BACK,
+                #     (self.get_current_player().nickname,
+                #      sum(self.get_current_player().bank.values()) -
+                #      GameRules.nb_token_end_turn)))
 
             else:
                 self.check_tiles()
@@ -159,11 +192,16 @@ class GameBoard:
             if self.check_tokens_amount():
                 self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK
                 self.display.refresh()
-                self.display.display_text_help(GameStateString.get_text(
+                self.help_text = GameStateString.get_text(
                     GameState.PLAYER_GIVE_TOKENS_BACK,
                     (self.get_current_player().nickname,
                      sum(self.get_current_player().bank.values()) -
-                     GameRules.nb_token_end_turn)))
+                     GameRules.nb_token_end_turn))
+                # self.display.display_text_help(GameStateString.get_text(
+                #     GameState.PLAYER_GIVE_TOKENS_BACK,
+                #     (self.get_current_player().nickname,
+                #      sum(self.get_current_player().bank.values()) -
+                #      GameRules.nb_token_end_turn)))
             else:
                 self.check_tiles()
                 self.display.refresh()
@@ -197,12 +235,16 @@ class GameBoard:
             else:
                 self.check_tiles()
         self.display.refresh()
-
-        self.display.display_text_help(GameStateString.get_text(
+        self.help_text = GameStateString.get_text(
             GameState.PLAYER_GIVE_TOKENS_BACK,
             (self.get_current_player().nickname,
              sum(self.get_current_player().bank.values()) -
-             GameRules.nb_token_end_turn)))
+             GameRules.nb_token_end_turn))
+        # self.display.display_text_help(GameStateString.get_text(
+        #     GameState.PLAYER_GIVE_TOKENS_BACK,
+        #     (self.get_current_player().nickname,
+        #      sum(self.get_current_player().bank.values()) -
+        #      GameRules.nb_token_end_turn)))
 
     def click_purchase_gameboard_card(self, card):
         '''
@@ -257,11 +299,16 @@ class GameBoard:
             else:
                 self.check_tiles()
         self.display.refresh()
-        self.display.display_text_help(GameStateString.get_text(
+        self.help_text = GameStateString.get_text(
             GameState.PLAYER_GIVE_TOKENS_BACK,
             (self.get_current_player().nickname,
              sum(self.get_current_player().bank.values()) -
-             GameRules.nb_token_end_turn)))
+             GameRules.nb_token_end_turn))
+        # self.display.display_text_help(GameStateString.get_text(
+        #     GameState.PLAYER_GIVE_TOKENS_BACK,
+        #     (self.get_current_player().nickname,
+        #      sum(self.get_current_player().bank.values()) -
+        #      GameRules.nb_token_end_turn)))
 
     def click_tile(self, tile):
         print('GameBoard -- click_tile')
@@ -280,37 +327,63 @@ class GameBoard:
     # Game engine actions
 
     def check_winner(self):
-        if self.get_current_player().calcul_point_in_game() >= GameRules.nb_points_end:
+        if self.get_current_player().calculate_total_points() >= GameRules.nb_points_end:
             return True
         return False
 
     def end_action(self):
         if self.check_winner():
             self.end_game = True
-            self.winners.append(self.current_player)
+            self.winners.append(self.get_current_player())
         self.get_current_player().init_turn()
         self.game_state = GameState.PLAYER_TURN
         self.current_player = (self.current_player + 1) % self.nb_players
         if self.current_player == 0 and self.end_game:
-            sys.exit()
-        from src.player.AI import AI
-        self.get_current_player().play()
+            self.sort_players_end()
+            winner_popup_text = "Classement d#es joueurs : "
+
+            self.display.popup_txt()
+
+        self.help_text = GameStateString.get_text(GameState.PLAYER_TURN,
+                                                  self.get_current_player().nickname)
+        # self.display.display_text_help(
+        #     GameStateString.get_text(GameState.PLAYER_TURN,
+        #                              self.get_current_player().nickname))
+
+        if not self.player_can_play():
+            self.end_action()
         # self.get_current_player().action_AI_basic()
+        else:
+            from src.player.AI import AI
+            self.get_current_player().play()
+
+    def sort_players_end(self):
+        self.winners.sort(key=lambda x: x.calculate_total_points(),
+                          reverse=True)
+        missing_players = []
+        for player in self.players:
+            if player not in self.winners:
+                missing_players.append(player)
+
+        missing_players.sort(key=lambda x: x.calculate_total_points(),
+                             reverse=True)
+
+        self.winners.extend(missing_players)
 
     def check_tiles(self):
         print("GameBoard -- check_tiles")
-        tiles = []
+        self.tiles = []
         for tile in self.displayed_tiles:
             if self.check_enough_cards(tile):
-                tiles.append(tile)
-        if len(tiles) > 1:
+                self.tiles.append(tile)
+        if len(self.tiles) > 1:
             self.game_state = GameState.PLAYER_CHOOSE_TILE
-            self.display.popup_select_tile_action(tiles)
+            self.display.popup_select_tile_action(self.tiles)
             return True
-        if len(tiles) == 1:
-            tiles[0].visit_player(self.get_current_player())
-            self.displayed_tiles.remove(tiles[0])
-            tiles.pop(0)
+        if len(self.tiles) == 1:
+            self.tiles[0].visit_player(self.get_current_player())
+            self.displayed_tiles.remove(self.tiles[0])
+            self.tiles.pop(0)
         self.end_action()
         return False
 
