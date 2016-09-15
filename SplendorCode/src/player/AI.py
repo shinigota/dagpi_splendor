@@ -258,32 +258,60 @@ class AI(Player):
 
         l_card = []
         l_card = self.find_efficientCard()
+        dict_nb_gem = {}
+        for c in l_card:
+            for type_gem, val_gem in c.purchase_gems.items():
+                dict_nb_gem[type_gem] += val_gem
+
+
+
+dict_c_cost = {}
+dict_c_cost["Emerald"] = 3
+dict_c_cost["Saphir"] = 2
+dict_c_cost["Ruby"] = 1
+
+dict_c_cost1 = {}
+dict_c_cost1["Emerald"] = 1
+dict_c_cost1["Saphir"] = 2
+dict_c_cost1["Ruby"] = 3
+
+dict_nb_gem = {}
+
+for type_gem, val_gem in dict_c_cost.items():
+    print("type_gem", type_gem)
+    print("val_gem", val_gem)
+    dict_nb_gem[type_gem] = 0
+    print(dict_nb_gem)
+
+for type_gem, val_gem in dict_c_cost.items():
+    print("type_gem", type_gem)
+    print("val_gem", val_gem)
+    dict_nb_gem[type_gem] += val_gem
+    print(dict_nb_gem)
+
+print(dict_nb_gem)
 
 
 
 
+'''
+mostEfficientCards = dict()
+min_turn = 99
+
+for card in self.cards_info:
+    if card_info[card].values() == min_turn:
+        mostEfficientCards[card]'''
 
 
 
 
-
-            # mostEfficientCards = dict()
-            # min_turn = 99
-            #
-            # for card in self.cards_info:
-            #     if card_info[card].values() == min_turn:
-            #         mostEfficientCards[card]
-
-
-
-
-            #
-            # the_card = self.cards_info[card]
-            # card_min = None
-            # for card in self.cards_info:
-            #     min_values  =   min(the_card)
-            #
-            #
+#
+# the_card = self.cards_info[card]
+# card_min = None
+# for card in self.cards_info:
+#     min_values  =   min(the_card)
+#
+#
 
 
 

@@ -218,10 +218,6 @@ class GameRules:
         return self.game_board_is_game_state(
             GameState.PLAYER_CHOOSE_TILE)
 
-    def check_winner(self, player):
-        for n_player in player.name:
-            if n_player.calcul_point_in_game() >= GameRules.nb_points_end:
-                return n_player
 
     def check_enough_resources(self, card):
         print("GameRules -- check_enough_resources")

@@ -1,5 +1,7 @@
 import time
 
+import sys
+
 from src.element.ResourceType import ResourceType
 from src.game.GameState import GameState
 from src.mvc.GameRules import GameRules
@@ -24,6 +26,8 @@ class GameBoard:
     displayed_cards = None
     hidden_tiles = None
     displayed_tiles = None
+    end_game = None
+    winners = None
 
     def __init__(self, display, game_rules):
         self.game_rules = game_rules
@@ -40,6 +44,9 @@ class GameBoard:
             self.nb_gems = self.game_rules.nb_gem_for_4
 
         self.init_game_board()
+
+        self.end_game = False
+        self.winners = []
 
     # game_board init methods
 
@@ -99,7 +106,8 @@ class GameBoard:
         self.players.append(Player("Player %d" % 0, 1))
         for i in range(1, self.nb_players):
             from src.player.AI import AI
-            self.players.append(AI("AI %d" % i, i + 1, 1, self, self.game_rules))
+            self.players.append(
+                AI("AI %d" % i, i + 1, 1, self, self.game_rules))
         self.current_player = 0
         self.human_player = self.players[0]
 
@@ -177,8 +185,6 @@ class GameBoard:
         cost = self.get_current_player().get_tokens_to_spend(
             card.get_purchase_gems())
         gold_to_add = self.get_current_player().remove_different_tokens(cost)
-        self.bank["Gold"] += gold_to_add
-        print("gold_to_add = %d" % gold_to_add)
         self.add_to_bank(cost)
         if self.get_current_player().is_action_complete(self.game_state):
             self.check_tiles()
@@ -196,8 +202,6 @@ class GameBoard:
         cost = self.get_current_player().get_tokens_to_spend(
             card.get_purchase_gems())
         gold_to_add = self.get_current_player().remove_different_tokens(cost)
-        self.bank["Gold"] += gold_to_add
-        print("gold_to_add = %d" % gold_to_add)
         self.add_to_bank(cost)
         if self.get_current_player().is_action_complete(self.game_state):
             self.check_tiles()
@@ -221,6 +225,7 @@ class GameBoard:
         self.display.refresh()
 
     def click_tile(self, tile):
+        print('GameBoard -- click_tile')
         '''
         Action user clicks on some available tiles
         :param tile: Tile clicked
@@ -228,17 +233,29 @@ class GameBoard:
         '''
         self.del_displayed_tile(tile)
         self.get_current_player().add_owned_tile(tile)
-        self.displayed_tiles.remove(tile)
+        # self.displayed_tiles.remove(tile)
         if self.get_current_player().is_action_complete(self.game_state):
             self.end_action()
+        self.display.refresh()
 
     # Game engine actions
 
+    def check_winner(self):
+        if self.get_current_player().calcul_point_in_game() >= GameRules.nb_points_end:
+            return True
+        return False
+
     def end_action(self):
+        if self.check_winner():
+            self.end_game = True
+            self.winners.append(self.current_player)
         self.get_current_player().init_turn()
         self.game_state = GameState.PLAYER_TURN
         self.current_player = (self.current_player + 1) % self.nb_players
-        # self.get_current_player().action_AI_basic()
+        if self.current_player == 0 and self.end_game:
+            sys.exit()
+
+            # self.get_current_player().action_AI_basic()
 
     def check_tiles(self):
         print("GameBoard -- check_tiles")
@@ -247,17 +264,12 @@ class GameBoard:
             if self.check_enough_cards(tile):
                 tiles.append(tile)
         if len(tiles) > 1:
-            print('> 1 tiles')
             self.game_state = GameState.PLAYER_CHOOSE_TILE
             return True
         if len(tiles) == 1:
-            print('1 tile')
-            print(tiles)
             tiles[0].visit_player(self.get_current_player())
             self.displayed_tiles.remove(tiles[0])
             tiles.pop(0)
-            print(tiles)
-        print('0 tile')
         self.end_action()
         return False
 
@@ -278,8 +290,6 @@ class GameBoard:
 
     def check_tokens_amount(self):
         print('check token')
-        print(self.get_current_player().bank)
-        print(sum(v for v in self.get_current_player().bank.values()))
         nb_token = sum(v for v in self.get_current_player().bank.values())
         if nb_token >= GameRules.nb_token_end_turn:
             return nb_token - GameRules.nb_token_end_turn
