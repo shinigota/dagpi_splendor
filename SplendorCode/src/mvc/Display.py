@@ -2,6 +2,7 @@ from tkinter import *
 
 from src.element.Card import Card
 from src.element.ResourceType import ResourceType
+from src.game.GameState import GameState
 from src.mvc.EventType import EventType
 from src.mvc.GameBoard import GameBoard
 from src.mvc.GameRules import GameRules
@@ -28,12 +29,14 @@ class Display:
 
     def display_tiles(self):
         i = 1
+        y = 100
         for tile in self.game_board.displayed_tiles:
-            self.display_tile(i, tile)
+            x = 170 + 120 * (i - 1)
+            self.display_tile(self.window, x, y, tile, None)
             i += 1
 
-    def display_tile(self, position, tile):
-        canvas = Canvas(self.window, width=100, height=100,
+    def display_tile(self, canvas, x, y, tile, event):
+        canvas = Canvas(canvas, width=100, height=100,
                         background='#725202')
         canvas.create_image(50, 50, image=self.img_tile)
         canvas.create_image(13, 13, image=self.get_image_points(tile.points))
@@ -62,9 +65,11 @@ class Display:
                     txtBuy3 = canvas.create_text(75, 80, text=number,
                                                  fill=textcolor)
                     i = 0
-        canvas.place(x=170 + 120 * (position - 1), y=100)
-        canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_TILE,
-                                         t=tile: self.game_rules.event(e, t))
+        canvas.place(x=x, y=y)
+        if event is not None:
+            canvas.bind("<Button-1>", lambda event, e=event,
+                                             t=tile: self.game_rules.event(e,
+                                                                           t))
 
     def display_cards(self):
         for lvl in range(1, int(self.game_rules.nb_lvl_card) + 1):
@@ -225,7 +230,8 @@ class Display:
         canvas = Canvas(canvas, width=100, height=100,
                         background='#725202')
         canvas.create_image(50, 50, image=self.img_tile)
-        canvas.create_image(50, 50, image=self.get_image_points(len(player.owned_tiles)))
+        canvas.create_image(50, 50, image=self.get_image_points(
+            len(player.owned_tiles)))
         canvas.place(x=x, y=y)
 
     def display_player_bank(self, canvas, x, y, player):
@@ -254,7 +260,8 @@ class Display:
 
     def display_player_gold(self, canvas, x, y, nb):
         canvas = Canvas(canvas, width=60, height=60)
-        canvas.create_image(30, 30, image=self.get_image_token_bank_gem("Gold"))
+        canvas.create_image(30, 30,
+                            image=self.get_image_token_bank_gem("Gold"))
         canvas.create_image(30, 30, image=self.get_image_points(nb))
         canvas.place(x=x, y=y)
         canvas.bind("<Button-1>",
@@ -282,48 +289,70 @@ class Display:
         canvas.create_text(30, 30, text=nb, fill=color)
         canvas.place(x=x, y=y)
 
+    def display_text_help(self, text):
+        canvas = Canvas(self.window, width=1920, height=70)
+        canvas.create_text(100, 30, text=text)
+        canvas.place(x=0, y=0)
+
     def popup_select_card_action(self, isreserved, ispurchase, card):
-        popup = Toplevel(height=250, width=280)
-        # popup.protocol("WM_DELETE_WINDOW", self.on_exit)
-        Label(popup, text="Sélectionnez votre action :", height=1,
+        # GameState.toggle_modal(True)
+        self.popup = Toplevel(height=250, width=280)
+        self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
+        Label(self.popup, text="Sélectionnez votre action :", height=1,
               width=30).place(x=40, y=10)
-        self.display_card(popup, 90, 50, card, None)
+        self.display_card(self.popup, 90, 50, card, None)
         if isreserved:
-            canvas = Canvas(popup, height=20,
+            canvas = Canvas(self.popup, height=20,
                             width=60, background="grey")
             canvas.create_text(30, 10, text="Réserver", fill="black")
             canvas.bind("<Button-1>", lambda event,
-                                             p=popup,
                                              e=EventType.POPUP_RESERVE,
                                              c=card:
-            self.click_on_popup(p, e, c))
+            self.click_on_popup(e, c))
             canvas.place(x=60, y=200)
         if ispurchase:
-            canvas = Canvas(popup, height=20,
+            canvas = Canvas(self.popup, height=20,
                             width=60, background="grey")
             canvas.create_text(30, 10, text="Acheter", fill="black")
             canvas.bind("<Button-1>", lambda event,
-                                             p=popup,
                                              e=EventType.POPUP_PURCHASE,
                                              c=card:
-            self.click_on_popup(p, e, c))
+            self.click_on_popup(e, c))
             canvas.place(x=160, y=200)
 
+    def popup_select_tile_action(self, tiles):
+        # GameState.toggle_modal(True)
+        self.popup = Toplevel(height=170, width=565)
+        self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
+        Label(self.popup, text="Sélectionnez votre Noble:", height=1,
+              width=30).place(x=180, y=10)
+        x = 10
+        y = 50
+        for tile in tiles:
+            self.display_tile(self.popup, x, y, tile, EventType.CLICK_TILE)
+            x += 110
+
     def popup_txt(self, txt):
-        popup = Toplevel(height=50, width=280)
-        # popup.protocol("WM_DELETE_WINDOW", self.on_exit)
-        Label(popup, text=txt, height=1,
+        # GameState.toggle_modal(True)
+        self.popup = Toplevel(height=50, width=280)
+        self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
+        Label(self.popup, text=txt, height=1,
               width=30).place(x=40, y=10)
 
-    def click_on_popup(self, popup, event, objet):
+    def click_on_popup(self, event, objet):
+        self.popup.destroy()
+        # GameState.toggle_modal(False)
         self.game_rules.event(event, objet)
-        popup.destroy()
 
     def on_exit(self):
-        """When you click to exit, this function is called"""
-        pass
+        self.game_rules.event(EventType.CLOSE_POPUP, None)
+        self.popup.destroy()
 
     def create_image(self):
+
+        self.img_bg = PhotoImage(file='../res/bakground.gif')
+        self.img_button = PhotoImage(file='../res/Button.gif')
+
         self.img0 = PhotoImage(file='../res/0.gif')
         self.img0 = self.img0.subsample(3, 3)
         self.img1 = PhotoImage(file='../res/1.gif')
@@ -409,7 +438,7 @@ class Display:
         self.img_deck_1 = PhotoImage(file='../res/deck_lvl1.gif')
         self.img_deck_1 = self.img_deck_1.subsample(3, 3)
         self.img_deck_empty_1 = PhotoImage(file='../res/deck_lvl1_empty.gif')
-        self.img_deck_empty_1 = self.img_deck_empty_1.subsample(3, 3)
+        self.img_deck_empty_1 = self.img_deck_empty_1.subsample(7, 7)
 
         self.img_deck_2 = PhotoImage(file='../res/deck_lvl2.gif')
         self.img_deck_2 = self.img_deck_2.subsample(3, 3)
@@ -554,13 +583,7 @@ class Display:
         self.display_tiles()
         self.display_players()
 
-
-
-display = Display()
-display.game_board = GameBoard(display, GameRules())
-display.game_rules = display.game_board.game_rules
-display.game_rules.game_board = display.game_board
-display.game_rules.display = display
-display.create_window()
-display.refresh()
-display.window.mainloop()
+    def launch(self):
+        canvas = Canvas(self.window, height=self.h, width=self.w)
+        canvas.create_image(500, 500, image=self.img_bg)
+        canvas.place(x=0, y=0)
