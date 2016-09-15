@@ -4,6 +4,7 @@ import sys
 
 from src.element.ResourceType import ResourceType
 from src.game.GameState import GameState
+from src.game.GameStateString import GameStateString
 from src.mvc.GameRules import GameRules
 import random
 
@@ -109,6 +110,8 @@ class GameBoard:
                 AI("AI %d" % i, i + 1, 1, self, self.game_rules))
         self.current_player = 0
         self.human_player = self.players[0]
+        self.display.popup_txt(GameStateString.get_text(GameState.PLAYER_TURN,
+                               self.get_current_player().nickname))
 
     # Actions triggered by events
 
@@ -125,6 +128,12 @@ class GameBoard:
                 not self.can_take_token():
             if self.check_tokens_amount():
                 self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK
+                self.display.popup_txt(GameStateString.get_text(
+                    GameState.PLAYER_GIVE_TOKENS_BACK,
+                    (self.get_current_player().nickname,
+                     sum(self.get_current_player().bank.values()) -
+                     GameRules.nb_token_end_turn)))
+
             else:
                 self.check_tiles()
         self.display.refresh()
@@ -141,6 +150,11 @@ class GameBoard:
         if self.get_current_player().is_action_complete(self.game_state):
             if self.check_tokens_amount():
                 self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK
+                self.display.popup_txt(GameStateString.get_text(
+                    GameState.PLAYER_GIVE_TOKENS_BACK,
+                    (self.get_current_player().nickname,
+                     sum(self.get_current_player().bank.values()) -
+                     GameRules.nb_token_end_turn)))
             else:
                 self.check_tiles()
         self.display.refresh()
@@ -203,7 +217,10 @@ class GameBoard:
         gold_to_add = self.get_current_player().remove_different_tokens(cost)
         self.add_to_bank(cost)
         if self.get_current_player().is_action_complete(self.game_state):
-            self.check_tiles()
+            if self.check_tokens_amount():
+                self.game_state = GameState.PLAYER_GIVE_TOKENS_BACK
+            else:
+                self.check_tiles()
         self.display.refresh()
 
     def click_reserve_card(self, card):
@@ -255,6 +272,10 @@ class GameBoard:
             sys.exit()
 
         self.get_current_player().action_ai_basic()
+        self.display.popup_txt(GameStateString.get_text(
+            GameState.PLAYER_TURN,
+            self.get_current_player().nickname))
+        # self.get_current_player().action_AI_basic()
 
     def check_tiles(self):
         print("GameBoard -- check_tiles")
@@ -292,6 +313,7 @@ class GameBoard:
         nb_token = sum(v for v in self.get_current_player().bank.values())
         if nb_token >= GameRules.nb_token_end_turn:
             return nb_token - GameRules.nb_token_end_turn
+        return False
 
     # functions
 

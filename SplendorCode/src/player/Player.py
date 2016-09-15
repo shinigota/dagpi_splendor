@@ -32,7 +32,7 @@ class Player:
     def init_bank(self):
         self.bank = {}
         for resource_type, resource in ResourceType.resource_type.items():
-            self.bank[resource_type] = 0
+            self.bank[resource_type] = 2
 
     def init_purchased_cards(self):
         self.purchased_cards = {}
