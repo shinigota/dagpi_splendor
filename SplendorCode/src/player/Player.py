@@ -81,6 +81,8 @@ class Player:
                                                        ]
                 # self.purchased_cards[resource_type] = []
 
+                #self.purchased_cards[resource_type] = []
+
     def add_purchased_card(self, card):
         self.purchased_cards[card.get_income_gem()].append(card)
         self.purchased_card_amount += 1
