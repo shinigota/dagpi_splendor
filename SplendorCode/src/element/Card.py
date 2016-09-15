@@ -23,6 +23,7 @@ class Card:
         return self.points
 
     def is_purchasable(self, tokens):
+        print('Card -- is_purchasable')
         available_gold = tokens["Gold"]
         for res_type in self.purchase_gems:
             if tokens[res_type] + available_gold >= \
