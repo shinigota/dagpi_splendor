@@ -309,6 +309,12 @@ class Display:
             self.click_on_popup(p, e, c))
             canvas.place(x=160, y=200)
 
+    def popup_txt(self, txt):
+        popup = Toplevel(height=50, width=280)
+        # popup.protocol("WM_DELETE_WINDOW", self.on_exit)
+        Label(popup, text=txt, height=1,
+              width=30).place(x=40, y=10)
+
     def click_on_popup(self, popup, event, objet):
         self.game_rules.event(event, objet)
         popup.destroy()
