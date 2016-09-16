@@ -23,18 +23,21 @@ class Display:
         self.create_image()
 
     def create_window(self):
+        print('Display -- create_window')
         self.window.title(GameRules.game_name)
         self.w, self.h = 1900, 1000
         self.window.geometry("%dx%d+0+0" % (self.w, self.h))
         self.window.config(bg=None)
 
     def make_entry(self, parent, caption, var):
+        print('Display -- make_entry')
         Label(parent, text=caption).pack()
         entry = Entry(parent, textvariable=var)
         entry.pack()
         return entry
 
     def popup_start_click_action(self):
+        print('Display -- popup_start_click_action')
         popup = Toplevel(height=250, width=280)
         # popup.protocol("WM_DELETE_WINDOW", self.on_exit)
         Label(popup, text="Sélectionnez vos parametres", height=1,
@@ -64,16 +67,17 @@ class Display:
         self.add_player_click_action(p, c))
         canvas.pack()
 
-        self.canvas_validate = Canvas(popup, height=20,
-                                      width=60, background="grey")
-        self.canvas_validate.create_text(30, 10, text="Valider",
-                                         fill="black")
-        self.canvas_validate.bind("<Button-1>", lambda event,
-                                                       p=popup:
-        self.validate_popup_action(p))
-        self.canvas_validate.pack()
+        # self.canvas_validate = Canvas(popup, height=20,
+        #                               width=60, background="grey")
+        # self.canvas_validate.create_text(30, 10, text="Valider",
+        #                                  fill="black")
+        # self.canvas_validate.bind("<Button-1>", lambda event,
+        #                                                p=popup:
+        # self.validate_popup_action(p))
+        # self.canvas_validate.pack()
 
     def add_player_click_action(self, popup, canvas):
+        print('Display -- add_player_click_action')
         try:
             self.false_position.pack_forget()
         except:
@@ -117,7 +121,7 @@ class Display:
             self.canvas_validate.pack()
 
     def validate_popup_action(self, popup):
-
+        print('Display -- validate_popup_action')
         try:
             self.false_position.pack_forget()
         except:
@@ -158,6 +162,7 @@ class Display:
             self.false_position.pack()
 
     def display_tiles(self):
+        print('Display -- display_tiles')
         i = 1
         y = 100
         for tile in self.game_board.displayed_tiles:
@@ -166,6 +171,7 @@ class Display:
             i += 1
 
     def display_tile(self, canvas, x, y, tile, event):
+        print('Display -- display_tile')
         canvas = Canvas(canvas, width=100, height=100,
                         background='#725202')
         canvas.create_image(50, 50, image=self.img_tile)
@@ -202,6 +208,7 @@ class Display:
                                                                            t))
 
     def display_cards(self):
+        print('Display -- display_cards')
         for lvl in range(1, int(self.game_rules.nb_lvl_card) + 1):
             i = 1
             for card in self.game_board.displayed_cards[lvl]:
@@ -212,6 +219,7 @@ class Display:
                 i += 1
 
     def display_card(self, canvas, x, y, card, event):
+        print('Display -- display_card')
         canvas = Canvas(canvas, width=100, height=120,
                         background=self.get_color(int(card.level)))
         canvas.create_image(50, 75, image=self.get_image_card_gem(
@@ -256,20 +264,23 @@ class Display:
                                c=card: self.game_rules.event(e, c))
 
     def display_stacks(self):
+        print('Display -- display_stacks')
         for i in range(1, int(self.game_rules.nb_lvl_card) + 1):
             self.display_stack(i, self.game_board.is_deck_empty(i))
 
     def display_stack(self, level, empty):
+        print('Display -- display_stack')
         color = Display.get_color(level)
         if empty:
             color = "grey"
         canvas = Canvas(self.window, width=100, height=120)
-        canvas.create_image(50, 60, image=self.get_image_deck_(level, empty))
+        canvas.create_image(50, 60, image=self.get_image_deck(level, empty))
         canvas.place(x=50, y=490 - (130 * (level - 1)))
         canvas.bind("<Button-1>", lambda event, e=EventType.CLICK_DECK_CARD,
                                          l=level: self.game_rules.event(e, l))
 
     def display_bank(self, bank):
+        print('Display -- display_bank')
         x = 70
         y = 650
         for token in ResourceType.get_sorted_resources():
@@ -280,12 +291,14 @@ class Display:
                 x += 100
 
     def display_gold(self, canvas, x, y, nb):
+        print('Display -- display_gold')
         canvas = Canvas(canvas, width=80, height=80)
         canvas.create_image(40, 40, image=self.get_image_token_gem("Gold"))
         canvas.create_image(40, 40, image=self.get_image_points(nb))
         canvas.place(x=x, y=y)
 
     def display_gem(self, canvas, x, y, nb, gem):
+        print('Display -- display_gem')
         canvas = Canvas(canvas, width=80, height=80)
         canvas.create_image(40, 40, image=self.get_image_token_gem(gem))
         canvas.create_image(40, 40, image=self.get_image_points(nb))
@@ -297,6 +310,7 @@ class Display:
     ###################### Display hand of player #################################
 
     def display_players(self):
+        print('Display -- display_players')
         x = 1300
         y = 40
         for player in self.game_board.players:
@@ -307,6 +321,7 @@ class Display:
                 self.display_player_human(player)
 
     def display_player_human(self, player):
+        print('Display -- display_player_human')
         color = "grey"
         if self.game_board.get_current_player() == player:
             color = "orange"
@@ -329,6 +344,7 @@ class Display:
         canvas.place(x=750, y=320)
 
     def display_player_ia(self, x, y, player):
+        print('Display -- display_player_ia')
         color = "grey"
         if self.game_board.get_current_player() == player:
             color = "orange"
@@ -351,12 +367,14 @@ class Display:
         self.display_player_tile(canvas, 370, 140, player)
 
     def display_card_ia(self, canvas, x, y, level):
+        print('Display -- display_card_ia')
         color = Display.get_color(level)
         canvas = Canvas(canvas, width=100, height=120)
-        canvas.create_image(50, 60, image=self.get_image_deck_(level, False))
+        canvas.create_image(50, 60, image=self.get_image_deck(level, False))
         canvas.place(x=x, y=y)
 
     def display_player_tile(self, canvas, x, y, player):
+        print('Display -- display_player_tile')
         canvas = Canvas(canvas, width=100, height=100,
                         background='#725202')
         canvas.create_image(50, 50, image=self.img_tile)
@@ -365,6 +383,7 @@ class Display:
         canvas.place(x=x, y=y)
 
     def display_player_bank(self, canvas, x, y, player):
+        print('Display -- display_player_bank')
         canvas = Canvas(canvas, width=390, height=120)
         canvas.place(x=x, y=y)
         x = 0
@@ -389,6 +408,7 @@ class Display:
                 x += 60
 
     def display_player_gold(self, canvas, x, y, nb):
+        print('Display -- display_player_gold')
         canvas = Canvas(canvas, width=60, height=60)
         canvas.create_image(30, 30,
                             image=self.get_image_token_bank_gem("Gold"))
@@ -399,6 +419,7 @@ class Display:
                            g="Gold": self.game_rules.event(e, g))
 
     def display_player_gem(self, canvas, x, y, nb, gem):
+        print('Display -- display_player_gem')
         color = "white"
         if ResourceType.get_color(gem) == "white":
             color = "black"
@@ -411,6 +432,7 @@ class Display:
                            g=gem: self.game_rules.event(e, g))
 
     def display_player_income_card(self, canvas, x, y, nb, gem):
+        print('Display -- display_player_income_card')
         color = "white"
         if ResourceType.get_color(gem) == "white":
             color = "black"
@@ -420,11 +442,13 @@ class Display:
         canvas.place(x=x, y=y)
 
     def display_text_help(self):
+        print('Display -- display_text_help')
         canvas = Canvas(self.window, width=500, height=70)
         canvas.create_text(100, 30, text=self.game_board.help_text)
         canvas.place(x=0, y=0)
 
     def popup_select_card_action(self, isreserved, ispurchase, card):
+        print('Display -- opup_select_card_action')
         # GameState.toggle_modal(True)
         self.popup = Toplevel(height=250, width=280)
         self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
@@ -451,6 +475,7 @@ class Display:
             canvas.place(x=160, y=200)
 
     def popup_select_tile_action(self, tiles):
+        print('Display -- popup_select_tile_action')
         # GameState.toggle_modal(True)
         self.popup = Toplevel(height=170, width=565)
         self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
@@ -463,6 +488,7 @@ class Display:
             x += 110
 
     def popup_txt(self, txt):
+        print('Display -- popup_txt')
         # GameState.toggle_modal(True)
         self.popup = Toplevel(height=300, width=260)
         self.popup.protocol("WM_DELETE_WINDOW", self.on_exit)
@@ -472,15 +498,18 @@ class Display:
         label.place(x=20, y=50)
 
     def click_on_popup(self, event, objet):
+        print('Display -- click_on_popup')
         self.popup.destroy()
         # GameState.toggle_modal(False)
         self.game_rules.event(event, objet)
 
     def on_exit(self):
+        print('Display -- on_exit')
         self.game_rules.event(EventType.CLOSE_POPUP, None)
         self.popup.destroy()
 
     def create_image(self):
+        print('Display -- create_image')
 
         self.img_bg = PhotoImage(file='../res/bakground.gif')
         self.img_button = PhotoImage(file='../res/Button.gif')
@@ -585,7 +614,9 @@ class Display:
         self.img_tile = PhotoImage(file='../res/tuile.gif')
         self.img_tile = self.img_tile.subsample(1, 1)
 
+
     def get_image_points(self, points):
+        print('Display -- get_image_points')
         if points == 0:
             return self.img0
         elif points == 1:
@@ -604,6 +635,7 @@ class Display:
             return self.img7
 
     def get_image_card_gem(self, gem):
+        print('Display -- get_image_card_gem')
         if gem == "Diamond":
             return self.img_card_D
         elif gem == "Emerald":
@@ -615,7 +647,8 @@ class Display:
         elif gem == "Ruby":
             return self.img_card_R
 
-    def get_image_deck_(self, lvl, empty):
+    def get_image_deck(self, lvl, empty):
+        print('Display -- get_image_deck')
         if lvl == 1:
             if empty:
                 return self.img_deck_empty_1
@@ -633,6 +666,7 @@ class Display:
                 return self.img_deck_3
 
     def get_image_circle_gem(self, gem):
+        print('Display -- get_image_circle_gem')
         if gem == "Diamond":
             return self.img_circle_D
         elif gem == "Emerald":
@@ -645,6 +679,7 @@ class Display:
             return self.img_circle_R
 
     def get_image_rect_gem(self, gem):
+        print('Display -- get_image_rect_gem')
         if gem == "Diamond":
             return self.img_rect_D
         elif gem == "Emerald":
@@ -657,6 +692,7 @@ class Display:
             return self.img_rect_R
 
     def get_image_token_gem(self, gem):
+        print('Display -- get_image_token_gem')
         if gem == "Diamond":
             return self.img_token_D
         elif gem == "Emerald":
@@ -671,6 +707,7 @@ class Display:
             return self.img_token_G
 
     def get_image_rect_bank_gem(self, gem):
+        print('Display -- get_image_rect_bank_gem')
         if gem == "Diamond":
             return self.img_rect_bank_D
         elif gem == "Emerald":
@@ -683,6 +720,7 @@ class Display:
             return self.img_rect_bank_R
 
     def get_image_token_bank_gem(self, gem):
+        print('Display -- get_image_token_bank_gem')
         if gem == "Diamond":
             return self.img_token_bank_D
         elif gem == "Emerald":
@@ -698,6 +736,7 @@ class Display:
 
     @staticmethod
     def get_color(level):
+        print('Display -- get_color')
         if level == 1:
             color = '#0483f9'
         if level == 2:
@@ -707,6 +746,7 @@ class Display:
         return color
 
     def refresh(self):
+        print('Display -- refresh')
         canvas = Canvas(self.window, height=self.h, width=self.w)
         canvas.place(x=0, y=0)
         self.display_bank(self.game_board.bank)
@@ -717,6 +757,7 @@ class Display:
         self.display_text_help()
 
     def launch(self):
+        print('Display -- launch')
         canvas = Canvas(self.window, height=self.h, width=self.w)
         canvas.create_image(1000, 500, image=self.img_bg)
         button_quit = Canvas(self.window, height=100, width=300)
