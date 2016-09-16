@@ -67,14 +67,14 @@ class Display:
         self.add_player_click_action(p, c))
         canvas.pack()
 
-        self.canvas_validate = Canvas(popup, height=20,
-                                      width=60, background="grey")
-        self.canvas_validate.create_text(30, 10, text="Valider",
-                                         fill="black")
-        self.canvas_validate.bind("<Button-1>", lambda event,
-                                                       p=popup:
-        self.validate_popup_action(p))
-        self.canvas_validate.pack()
+        # self.canvas_validate = Canvas(popup, height=20,
+        #                               width=60, background="grey")
+        # self.canvas_validate.create_text(30, 10, text="Valider",
+        #                                  fill="black")
+        # self.canvas_validate.bind("<Button-1>", lambda event,
+        #                                                p=popup:
+        # self.validate_popup_action(p))
+        # self.canvas_validate.pack()
 
     def add_player_click_action(self, popup, canvas):
         print('Display -- add_player_click_action')
