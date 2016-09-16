@@ -6,7 +6,7 @@ from src.player.Player import Player
 from src.mvc.EventType import EventType
 from src.mvc import GameBoard
 from src.mvc import GameRules
-
+import time
 import random
 
 
@@ -27,6 +27,10 @@ class AI(Player):
 
     def play(self):
         print("AI !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        self.game_board.display.refresh()
+        self.game_board.display.window.update()
+        time.sleep(1)
+
         self.play_basic()
 
     def play_basic(self):
